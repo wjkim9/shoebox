@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style th:fragment="style">
+        .new-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .new-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .new-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .item-info {
+            padding: 15px;
+            background: white;
+        }
+
+        .item-info h3 {
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <section th:fragment="content" class="new-items-section">
+        <div class="section-header">
+            <h1>5월 신상템</h1>
+            <a href="#" class="view-more">MORE ></a>
+        </div>
+        <div class="new-grid">
+            <div class="new-item">
+                <img src="/common/images/23732_1712905511772.jpg" alt="아디다스">
+                <div class="item-info">
+                    <h3>아디다스</h3>
+                    <p>삼바</p>
+                    <p class="price">109,000원</p>
+                </div>
+            </div>
+            <div class="new-item">
+                <img src="/common/images/23732_1712905511772.jpg" alt="아디다스">
+                <div class="item-info">
+                    <h3>아디다스</h3>
+                    <p>삼바</p>
+                    <p class="price">109,000원</p>
+                </div>
+            </div>
+            <div class="new-item">
+                <img src="/common/images/23732_1712905511772.jpg" alt="아디다스">
+                <div class="item-info">
+                    <h3>아디다스</h3>
+                    <p>삼바</p>
+                    <p class="price">99,000원</p>
+                </div>
+            </div>
+            <div class="new-item">
+                <img src="/common/images/23732_1712905511772.jpg" alt="뉴발란스">
+                <div class="item-info">
+                    <h3>뉴발란스</h3>
+                    <p>M2002R</p>
+                    <p class="price">109,000원</p>
+                </div>
+            </div>
+        </div>
+        <div class="new-grid">
+            <div class="new-item">
+                <img src="/common/images/23732_1712905511772.jpg" alt="아디다스">
+                <div class="item-info">
+                    <h3>아디다스</h3>
+                    <p>삼바</p>
+                    <p class="price">109,000원</p>
+                </div>
+            </div>
+            <div class="new-item">
+                <img src="/common/images/23732_1712905511772.jpg" alt="아디다스">
+                <div class="item-info">
+                    <h3>아디다스</h3>
+                    <p>삼바</p>
+                    <p class="price">109,000원</p>
+                </div>
+            </div>
+            <div class="new-item">
+                <img src="/common/images/23732_1712905511772.jpg" alt="아디다스">
+                <div class="item-info">
+                    <h3>아디다스</h3>
+                    <p>삼바</p>
+                    <p class="price">99,000원</p>
+                </div>
+            </div>
+            <div class="new-item">
+                <img src="/common/images/23732_1712905511772.jpg" alt="뉴발란스">
+                <div class="item-info">
+                    <h3>뉴발란스</h3>
+                    <p>M2002R</p>
+                    <p class="price">109,000원</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html> 

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style th:fragment="style">
+        /* 추천 브랜드 섹션 */
+        .recommended-brands {
+            background: #f8f8f8;
+            padding: 40px 0;
+            margin: 0;
+            max-width: none;
+            position: relative;
+        }
+
+        .brand-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            padding: 0;
+            position: relative;
+        }
+
+        .brand-names {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding: 10px 0;
+            justify-content: center;
+            background: transparent;
+        }
+
+        .brand-names::-webkit-scrollbar {
+            display: none;
+        }
+
+        .brand-nav-item {
+            padding: 5px 15px;
+            cursor: pointer;
+            white-space: nowrap;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .brand-nav-item.active {
+            color: #000;
+            font-weight: bold;
+        }
+
+        .nav-prev, .nav-next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.8);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            z-index: 10;
+        }
+
+        .nav-prev { left: 20px; }
+        .nav-next { right: 20px; }
+
+        .brand-products {
+            display: flex;
+            gap: 20px;
+            padding: 0 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+
+        .product-item {
+            flex: 0 0 auto;
+            width: calc(25% - 15px);
+            background: white;
+            border-radius: 0;
+            overflow: hidden;
+        }
+
+        .product-item img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-info .name {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .price-info {
+            margin: 5px 0;
+        }
+
+
+        .product-tags {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 2px;
+            color: #666;
+        }
+
+        .brand-logo {
+            width: 200px;
+            margin: 0 auto 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <section th:fragment="content" class="recommended-brands">
+        <h2 class="section-title">추천 브랜드</h2>
+        <div class="brand-navigation">
+            <button class="nav-prev">&lt;</button>
+            <div class="brand-names">
+                <span class="brand-nav-item">NIKE</span>
+                <span class="brand-nav-item">ADIDAS</span>
+                <span class="brand-nav-item">NEW BALANCE</span>
+                <span class="brand-nav-item">VANS</span>
+                <span class="brand-nav-item active">SKECHERS</span>
+                <span class="brand-nav-item">CONVERSE</span>
+                <span class="brand-nav-item">ARC'TERYX</span>
+                <span class="brand-nav-item">MLBEVO</span>
+                <span class="brand-nav-item">STEFANOROSSI</span>
+            </div>
+            <button class="nav-next">&gt;</button>
+        </div>
+        <div class="brand-content">
+            <img class="brand-logo" src="/common/images/23732_1712905511772.jpg" alt="SKECHERS">
+            <div class="brand-products">
+                <div class="product-item">
+                    <img src="/common/images/23732_1712905511772.jpg" alt="스케쳐스 샌들">
+                    <div class="product-info">
+                        <div class="name">맥스 쿠셔닝 S-V.2</div>
+                        <div class="price-info">
+                            <span class="price">69,000원</span>
+                        </div>
+                        <div class="product-tags">
+                            <span class="tag">쿠폰</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="/common/images/23732_1712905511772.jpg" alt="스케쳐스 샌들">
+                    <div class="product-info">
+                        <div class="name">맥스 쿠셔닝 엣지</div>
+                        <div class="price-info">
+                            <span class="price">59,000원</span>
+                        </div>
+                        <div class="product-tags">
+                            <span class="tag">쿠폰</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="/common/images/23732_1712905511772.jpg" alt="스케쳐스 운동화">
+                    <div class="product-info">
+                        <div class="name">고 워크 조이</div>
+                        <div class="price-info">
+                            <span class="price">89,000원</span>
+                        </div>
+                        <div class="product-tags">
+                            <span class="tag">쿠폰</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="product-item">
+                    <img src="/common/images/23732_1712905511772.jpg" alt="스케쳐스 운동화">
+                    <div class="product-info">
+                        <div class="name">맥스 쿠셔닝 프로</div>
+                        <div class="price-info">
+                            <span class="price">159,000원</span>
+                        </div>
+                        <div class="product-tags">
+                            <span class="tag">쿠폰</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script th:fragment="script">
+        // 추천 브랜드 네비게이션
+        $('.brand-nav-item').click(function() {
+            $('.brand-nav-item').removeClass('active');
+            $(this).addClass('active');
+        });
+
+        // 브랜드 네비게이션 스크롤
+        $('.nav-prev').click(function() {
+            $('.brand-names').animate({
+                scrollLeft: '-=100'
+            }, 300);
+        });
+
+        $('.nav-next').click(function() {
+            $('.brand-names').animate({
+                scrollLeft: '+=100'
+            }, 300);
+        });
+    </script>
+</body>
+</html> 
