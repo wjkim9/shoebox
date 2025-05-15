@@ -9,10 +9,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/payment")
 public class PaymentController {
 	
-	@GetMapping("/")
-	public String payment(Model model) {
+
+	@GetMapping("/orderlist")
+	public String orderlist(Model model) {
 		
-		return "payment/payment";
+		return "payment/orderlist";
 	}
 	
+	@GetMapping("/payment_completed")
+	public String payment_completed(Model model) {
+		
+		return "payment/payment_completed";
+	}
+	
+	@GetMapping("/nonuser_order_terms")
+	public String nonuser_order_terms(Model model) {
+		
+		return "payment/nonuser_order_terms";
+	}
 }
