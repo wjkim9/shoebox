@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+<meta charset="UTF-8">
+<title>주문서작성/결제</title>
+<link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
+<link rel="stylesheet" th:href="@{/member/css/shoebox_2.css}">
+<style>
+</style>
+</head>
+<body>
+	<th:block th:replace="~{inc/header.html :: header}"></th:block>
+	<div class="detail-wrap">
+		<!-- 1. 주문 단계 표시 -->
+		<div class="order-steps">
+			<span class="active">01 장바구니</span> <span class="divider">&gt;</span>
+			<span class="active">02 주문서작성/결제</span> <span class="divider">&gt;</span>
+			<span>03 주문완료</span>
+		</div>
+		<div style="font-size: 1.5em; font-weight: 700;">주문서작성/결제</div>
+		<!-- 2. 주문리스트 -->
+		<div style="font-size: 1.15em; position: relative; top: 35px;">주문
+			리스트</div>
+		<button class="order-edit-btn" onclick="window.location.href='/mypage/cart'">주문정보수정</button>
+		<div class="product-list">
+			<div class="product-header">
+				<div style="width: 90px;">상품정보</div>
+				<div style="flex: 1;">상품명</div>
+				<div style="width: 60px; text-align: center;">수량</div>
+				<div style="width: 110px; text-align: right;">상품금액</div>
+				<div style="width: 80px; text-align: center;">배송비</div>
+
+			</div>
+			<div class="product-row">
+				<img class="product-img"
+					src="https://codingapple1.github.io/shop/shoes1.jpg" alt="나이키">
+				<div class="product-info">
+					<div class="product-name">나이키 NIKE MOTIVA</div>
+					<div class="product-desc">260/1개</div>
+				</div>
+				<div class="product-qty">1개</div>
+				<div class="product-price">77,000원</div>
+				<div class="product-ship">무료배송</div>
+			</div>
+			<div class="product-row">
+				<img class="product-img"
+					src="https://codingapple1.github.io/shop/shoes2.jpg" alt="아디다스">
+				<div class="product-info">
+					<div class="product-name">아디다스 VL COURT BASE</div>
+					<div class="product-desc">250/1개</div>
+				</div>
+				<div class="product-qty">1개</div>
+				<div class="product-price">69,000원</div>
+				<div class="product-ship">무료배송</div>
+			</div>
+			<!-- 4. 결제 정보 센터 정렬 -->
+			<div class="summary-row">
+				<span class="summary-item"> 주문금액 <b>198,000원</b>
+				</span> <img src="/member/images/substract.png" class="summary-icon"
+					style="position: relative; top: 2px;" alt="substract"> <span
+					class="summary-item"> 총 할인금액 <b>52,000원</b>
+				</span> <img src="/member/images/equal.png" class="summary-icon" alt="equal"
+					style="position: relative; top: 2px;"> <span
+					class="summary-item total"> 결제예정금액 <b class="total">146,000원</b>
+				</span>
+			</div>
+
+			<div class="detail-section">
+				<div class="customer-form">
+					<div class="form-title">주문 고객정보</div>
+					<div class="section-divider"></div>
+					<div class="form-row">
+						<label for="name" class="required-label">이름</label> <input
+							type="text" id="name" placeholder="이름을 입력하세요." required>
+					</div>
+					<div class="form-row">
+						<label for="phone" class="required-label">휴대폰번호</label> <input
+							type="tel" id="phone" placeholder="전화번호를 입력하세요." required>
+					</div>
+					<div class="form-row">
+						<label for="email" class="required-label">이메일</label> <input
+							type="text" id="email" placeholder="이메일 주소를 입력하세요." required>
+					</div>
+					<div class="form-title" style="margin-top: 24px;">배송 정보</div>
+					<div class="section-divider"></div>
+					<!-- 5. 배송지 선택 체크박스(라디오) -->
+					<div class="address-select-row">
+						<label for="addselect">배송지 선택</label>
+						<input type="radio" name="addrtype" id="addr1" class="addr-radio" checked> 
+						<label for="addr1" class="addr-label">기본배송지</label> 
+						<input type="radio" name="addrtype" id="addr2" class="addr-radio"> 
+						<label for="addr2" class="addr-label">최근배송지</label> 
+						<input type="radio" name="addrtype" id="addr3" class="addr-radio"> 
+						<label for="addr3" class="addr-label">신규입력</label>
+					</div>
+					<div class="form-row">
+						<label for="name" class="required-label">이름</label> <input
+							type="text" id="name" placeholder="이름을 입력하세요.">
+					</div>
+					<div class="form-row">
+						<label for="phone" class="required-label">휴대폰번호</label> <input
+							type="tel" id="phone" placeholder="전화번호를 입력하세요.">
+					</div>
+					<div class="form-row">
+						<label for="zipcode" class="required-label">주소</label>
+						<div style="flex: 1;">
+							<div class="address-row">
+								<input type="text" class="zipcode-input" id="zipcode"
+									placeholder="우편번호" readonly>
+								<button type="button" class="zipcode-btn" id="searchZipBtn">우편번호
+									찾기</button>
+							</div>
+							<!-- 필요하다면 아래에 주소, 상세주소 input 추가 -->
+						</div>
+					</div>
+					<div class="form-row">
+						<label></label> <input type="text" placeholder="상세주소 입력" required>
+					</div>
+					<!-- 6. 배송요청사항 -->
+					<div class="form-row">
+						<label for="req">배송요청사항</label>
+						<div style="flex: 1;">
+							<div class="req-row">
+								<select class="req-select" id="req-select">
+									<option value="">배송 시 요청사항을 선택해주세요.</option>
+									<option value="경비실">부재 시 경비실에 맡겨주세요.</option>
+									<option value="문앞">부재 시 문 앞에 놓아주세요.</option>
+									<option value="연락">배송 전에 연락주세요.</option>
+									<option value="직접수령">직접 수령하겠습니다.</option>
+									<option value="직접입력">직접입력</option>
+								</select> <input type="text" class="req-input" id="req-input"
+									placeholder="요청사항을 입력하세요." disabled>
+							</div>
+						</div>
+					</div>
+
+				</div>
+				<div class="pay-methods">
+					<div class="pay-title">결제수단 선택</div>
+					<div class="section-divider"></div>
+					<div class="pay-options">
+						<button class="pay-btn">신용/체크카드</button>
+						<button class="pay-btn">무통장입금</button>
+						<button class="pay-btn">실시간계좌이체</button>
+						<button class="pay-btn">카카오페이</button>
+						<button class="pay-btn">PAYCO</button>
+						<button class="pay-btn">토스</button>
+					</div>
+					<div class="order-agree">
+						<div class="agree-title">주문 동의</div>
+						<div class="section-divider"></div>
+						<input type="checkbox" id="agree"> <label for="agree"><b
+							style="color: #ba0a0a">[필수]</b> 주문 내역에 동의</label>
+						<div class="semi-divider"></div>
+						<div class="agree-descript" style="color: #444">주문하는 상품, 가격,
+							배송정보, 할인 내역 등을 최종 확인 하였으며, 구매에 동의합니다. (전자상거래법 제 8조 제2항)</div>
+					</div>
+					<div class="semi-divider"></div>
+					<div class="order-btn-row">
+						<button class="order-btn"
+							onclick="window.location.href='/payment/payment_completed'">결제하기</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		</div>
+		<br><br><br><br>
+		<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
+</body>
+<script>
+    // 결제수단 버튼 선택 효과
+    document.querySelectorAll('.pay-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('selected'));
+        this.classList.add('selected');
+      });
+    });
+
+    // JS: 직접입력 선택 시에만 입력 가능
+    const reqSelect = document.getElementById('req-select');
+    const reqInput = document.getElementById('req-input');
+    reqSelect.addEventListener('change', function () {
+      if (this.value === '직접입력') {
+        reqInput.disabled = false;
+        reqInput.focus();
+      } else {
+        reqInput.disabled = true;
+        reqInput.value = '';
+      }
+    });
+
+
+    // 배송지 라디오 색상 제어 (이미 CSS에서 처리)
+  </script>
+
+</html>
