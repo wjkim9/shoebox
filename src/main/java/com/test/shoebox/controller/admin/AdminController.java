@@ -11,7 +11,6 @@ public class AdminController {
 
 	@GetMapping("/")
 	public String index(Model model) {
-		model.addAttribute("title", "대시보드");
 		return "admin/dashboard";
 	}
 

@@ -15,7 +15,6 @@ public class AdminProductController {
      */
     @GetMapping("/register")
     public String productRegister(Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-        model.addAttribute("title", "상품 등록");
         // 필요하다면 model.addAttribute("categories", categoryService.findAll());
         // AJAX 요청일 땐 content fragment만 반환
         if ("XMLHttpRequest".equals(requestedWith)) {
