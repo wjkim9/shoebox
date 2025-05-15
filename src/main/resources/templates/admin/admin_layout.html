@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>신발 쇼핑몰 관리자 페이지</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+    <!-- 사이드바 -->
+    <div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+
+    <!-- 헤더 -->
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+
+    <!-- 메인 콘텐츠 -->
+    <div class="main-content">
+        <!--/*<div th:replace="${contentFragment}"></div>*/-->
+        <div th:replace="~{/admin/dashboard :: content}"></div>
+    </div>
+
+    <!-- 푸터 -->
+        <!--/*<div th:replace="~{admin/fragments/footer :: footer}"></div>*/-->
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+            $(document).ready(function() {
+                // 메뉴 아코디언 기능 구현
+                $('.menu-link').on('click', function(e) {
+                    if ($(this).next('.submenu').length > 0) {
+                        e.preventDefault();
+                        $(this).toggleClass('active');
+                        $(this).next('.submenu').toggleClass('open');
+                    }
+                });
+
+                // 현재 활성화된 메뉴 항목 설정 (URL 경로에 따라)
+                function setActiveMenuItem() {
+                    const currentPath = window.location.pathname;
+                    $('.submenu-link').each(function() {
+                        const linkPath = $(this).attr('href');
+                        if (currentPath.includes(linkPath)) {
+                            $(this).addClass('active');
+                            $(this).closest('.submenu').addClass('open');
+                            $(this).closest('.submenu').prev('.menu-link').addClass('active');
+                        }
+                    });
+                }
+
+                setActiveMenuItem();
+
+                // 서브메뉴 아이템 클릭 시 AJAX 콘텐츠 로드
+                $('.submenu-link').on('click', function(e) {
+                    e.preventDefault();
+                    const url = $(this).attr('href');
+
+                    // 현재 활성화된 메뉴 초기화 및 새 메뉴 활성화
+                    $('.submenu-link').removeClass('active');
+                    $(this).addClass('active');
+
+                    // AJAX로 컨텐츠 로드
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        success: function(response) {
+                            $('.main-content').html(response);
+                            // URL 히스토리 업데이트 (선택사항)
+                            history.pushState(null, null, url);
+                        },
+                        error: function(err) {
+                            console.error('콘텐츠 로드 오류:', err);
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+    </html>

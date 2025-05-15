@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 관리</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="card">
+        <div class="card-header">
+            <h5>전체 주문 목록</h5>
+            <div class="header-controls">
+                <span class="text-muted">총 <strong th:text="${totalOrders != null ? totalOrders : 0}">0</strong>건의 주문이 있습니다.</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- 검색 영역 -->
+            <div class="search-area card mb-4">
+                <div class="card-body">
+                    <form th:action="@{/admin/orders}" method="get" class="order-search-form">
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <label for="searchType" class="form-label">검색 유형</label>
+                                <select id="searchType" name="searchType" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d3e2; border-radius: 0.35rem;">
+                                    <option value="orderNumber" th:selected="${param.searchType == 'orderNumber'}">주문번호</option>
+                                    <option value="productName" th:selected="${param.searchType == 'productName'}">상품명</option>
+                                    <option value="customerName" th:selected="${param.searchType == 'customerName'}">고객명</option>
+                                </select>
+                            </div>
+                            <div style="flex: 2; min-width: 300px;">
+                                <label for="searchKeyword" class="form-label">검색어</label>
+                                <input type="text" id="searchKeyword" name="searchKeyword" th:value="${param.searchKeyword}" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d3e2; border-radius: 0.35rem;">
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label for="startDate" class="form-label">시작일</label>
+                                <input type="date" id="startDate" name="startDate" th:value="${param.startDate}" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d3e2; border-radius: 0.35rem;">
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label for="endDate" class="form-label">종료일</label>
+                                <input type="date" id="endDate" name="endDate" th:value="${param.endDate}" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d3e2; border-radius: 0.35rem;">
+                            </div>
+                            <div style="flex: 1; min-width: 200px;">
+                                <label for="orderStatus" class="form-label">주문상태</label>
+                                <select id="orderStatus" name="orderStatus" class="form-control" style="width: 100%; padding: 0.5rem; border: 1px solid #d1d3e2; border-radius: 0.35rem;">
+                                    <option value="">전체</option>
+                                    <option value="PENDING" th:selected="${param.orderStatus == 'PENDING'}">결제대기</option>
+                                    <option value="PAID" th:selected="${param.orderStatus == 'PAID'}">결제완료</option>
+                                    <option value="PREPARING" th:selected="${param.orderStatus == 'PREPARING'}">상품준비중</option>
+                                    <option value="SHIPPING" th:selected="${param.orderStatus == 'SHIPPING'}">배송중</option>
+                                    <option value="DELIVERED" th:selected="${param.orderStatus == 'DELIVERED'}">배송완료</option>
+                                    <option value="CANCELED" th:selected="${param.orderStatus == 'CANCELED'}">주문취소</option>
+                                    <option value="REFUNDED" th:selected="${param.orderStatus == 'REFUNDED'}">환불완료</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                            <button type="submit" class="btn btn-primary" style="margin-right: 0.5rem;">검색</button>
+                            <button type="button" id="resetButton" class="btn btn-light">초기화</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- 주문 목록 테이블 -->
+            <div class="table-responsive">
+                <table class="order-table" style="width: 100%; border-collapse: collapse;">
+                    <thead style="background-color: #f8f9fc;">
+                    <tr>
+                        <th style="padding: 0.75rem; border-bottom: 1px solid #e3e6f0; text-align: center;">주문번호</th>
+                        <th style="padding: 0.75rem; border-bottom: 1px solid #e3e6f0; text-align: center;">주문일시</th>
+                        <th style="padding: 0.75rem; border-bottom: 1px solid #e3e6f0; text-align: center;">고객명</th>
+                        <th style="padding: 0.75rem; border-bottom: 1px solid #e3e6f0; text-align: center;">상품명</th>
+                        <th style="padding: 0.75rem; border-bottom: 1px solid #e3e6f0; text-align: center;">총 금액</th>
+                        <th style="padding: 0.75rem; border-bottom: 1px solid #e3e6f0; text-align: center;">주문상태</th>
+                        <th style="padding: 0.75rem; border-bottom: 1px solid #e3e6f0; text-align: center;">결제수단</th>
+                        <th style="padding: 0.75rem; border-bottom: 1px solid #e3e6f0; text-align: center;">상세</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- 주문 데이터가 없을 경우 -->
+                    <tr th:if="${#lists.isEmpty(orders)}">
+                        <td colspan="8" style="padding: 1rem; text-align: center; border-bottom: 1px solid #e3e6f0;">
+                            주문 데이터가 없습니다.
+                        </td>
+                    </tr>
+
+                    <!-- 주문 목록 데이터 -->
+                    <tr th:each="order : ${orders}" th:if="${!#lists.isEmpty(orders)}" style="cursor: pointer;" th:onclick="'location.href=\'' + @{/admin/orders/{id}(id=${order.id})} + '\''">
+                        <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #e3e6f0;" th:text="${order.orderNumber}">20240512-001234</td>
+                        <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #e3e6f0;" th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}">2024-05-12 14:30</td>
+                        <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #e3e6f0;" th:text="${order.customerName}">홍길동</td>
+                        <td style="padding: 0.75rem; text-align: left; border-bottom: 1px solid #e3e6f0;">
+                            <span th:text="${order.mainProductName}">유기농 사과 세트</span>
+                            <span th:if="${order.productCount > 1}" th:text="'외 ' + (${order.productCount} - 1) + '건'">&nbsp;외 2건</span>
+                        </td>
+                        <td style="padding: 0.75rem; text-align: right; border-bottom: 1px solid #e3e6f0;" th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}">32,000원</td>
+                        <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #e3e6f0;">
+                                <span th:class="${'status-badge ' + order.status.toLowerCase()}" th:text="${order.statusName}" style="padding: 0.25rem 0.5rem; border-radius: 50px; font-size: 0.8rem; display: inline-block;">
+                                    결제완료
+                                </span>
+                        </td>
+                        <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #e3e6f0;" th:text="${order.paymentMethod}">카드결제</td>
+                        <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid #e3e6f0;">
+                            <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="btn btn-light btn-sm">상세보기</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div class="pagination-area" style="margin-top: 2rem; display: flex; justify-content: center;">
+                <ul class="pagination" style="display: flex; list-style: none; gap: 0.5rem;">
+                    <!-- 처음 페이지로 -->
+                    <li class="page-item" th:classappend="${page.first ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/admin/orders(page=0, searchType=${param.searchType}, searchKeyword=${param.searchKeyword}, startDate=${param.startDate}, endDate=${param.endDate}, orderStatus=${param.orderStatus})}"
+                           style="padding: 0.5rem 0.75rem; border: 1px solid #dddfeb; border-radius: 0.35rem; text-decoration: none; color: #5a5c69;">&laquo;</a>
+                    </li>
+                    <!-- 이전 페이지로 -->
+                    <li class="page-item" th:classappend="${page.first ? 'disabled' : ''}">
+                        <a class="page-link" th:href="${page.first} ? '#' : @{/admin/orders(page=${page.number - 1}, searchType=${param.searchType}, searchKeyword=${param.searchKeyword}, startDate=${param.startDate}, endDate=${param.endDate}, orderStatus=${param.orderStatus})}"
+                           style="padding: 0.5rem 0.75rem; border: 1px solid #dddfeb; border-radius: 0.35rem; text-decoration: none; color: #5a5c69;">&lt;</a>
+                    </li>
+                    <!-- 페이지 번호 -->
+                    <li class="page-item" th:each="pageNum : ${#numbers.sequence(startPage, endPage)}"
+                        th:classappend="${pageNum == page.number + 1 ? 'active' : ''}">
+                        <a class="page-link" th:href="@{/admin/orders(page=${pageNum - 1}, searchType=${param.searchType}, searchKeyword=${param.searchKeyword}, startDate=${param.startDate}, endDate=${param.endDate}, orderStatus=${param.orderStatus})}"
+                           th:text="${pageNum}"
+                           style="padding: 0.5rem 0.75rem; border: 1px solid #dddfeb; border-radius: 0.35rem; text-decoration: none; color: #5a5c69;">1</a>
+                    </li>
+                    <!-- 다음 페이지로 -->
+                    <li class="page-item" th:classappend="${page.last ? 'disabled' : ''}">
+                        <a class="page-link" th:href="${page.last} ? '#' : @{/admin/orders(page=${page.number + 1}, searchType=${param.searchType}, searchKeyword=${param.searchKeyword}, startDate=${param.startDate}, endDate=${param.endDate}, orderStatus=${param.orderStatus})}"
+                           style="padding: 0.5rem 0.75rem; border: 1px solid #dddfeb; border-radius: 0.35rem; text-decoration: none; color: #5a5c69;">&gt;</a>
+                    </li>
+                    <!-- 마지막 페이지로 -->
+                    <li class="page-item" th:classappend="${page.last ? 'disabled' : ''}">
+                        <a class="page-link" th:href="@{/admin/orders(page=${page.totalPages - 1}, searchType=${param.searchType}, searchKeyword=${param.searchKeyword}, startDate=${param.startDate}, endDate=${param.endDate}, orderStatus=${param.orderStatus})}"
+                           style="padding: 0.5rem 0.75rem; border: 1px solid #dddfeb; border-radius: 0.35rem; text-decoration: none; color: #5a5c69;">&raquo;</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* 상태별 배지 색상 */
+    .status-badge.pending {
+        background-color: #f6c23e;
+        color: #fff;
+    }
+    .status-badge.paid {
+        background-color: #36b9cc;
+        color: #fff;
+    }
+    .status-badge.preparing {
+        background-color: #4e73df;
+        color: #fff;
+    }
+    .status-badge.shipping {
+        background-color: #1cc88a;
+        color: #fff;
+    }
+    .status-badge.delivered {
+        background-color: #1e7e34;
+        color: #fff;
+    }
+    .status-badge.canceled {
+        background-color: #e74a3b;
+        color: #fff;
+    }
+    .status-badge.refunded {
+        background-color: #858796;
+        color: #fff;
+    }
+
+    /* 페이지네이션 활성화 스타일 */
+    .pagination .page-item.active .page-link {
+        background-color: #4e73df;
+        color: white;
+        border-color: #4e73df;
+    }
+
+    /* 테이블 행 호버 효과 */
+    .order-table tbody tr:hover {
+        background-color: #f8f9fc;
+    }
+
+    /* 폼 입력 필드 포커스 효과 */
+    .form-control:focus {
+        border-color: #bac8f3;
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        outline: none;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 폼 초기화 버튼
+        document.getElementById('resetButton').addEventListener('click', function() {
+            const form = document.querySelector('.order-search-form');
+            const inputs = form.querySelectorAll('input, select');
+
+            inputs.forEach(input => {
+                if (input.type === 'text' || input.type === 'date') {
+                    input.value = '';
+                } else if (input.type === 'select-one') {
+                    input.selectedIndex = 0;
+                }
+            });
+
+            form.submit();
+        });
+
+        // 오늘 날짜를 기본값으로 설정
+        if (!document.getElementById('endDate').value) {
+            const today = new Date();
+            const formattedDate = today.toISOString().substring(0, 10);
+            document.getElementById('endDate').value = formattedDate;
+
+            // 시작일은 30일 전으로 설정
+            const thirtyDaysAgo = new Date(today);
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            const formattedStartDate = thirtyDaysAgo.toISOString().substring(0, 10);
+
+            if (!document.getElementById('startDate').value) {
+                document.getElementById('startDate').value = formattedStartDate;
+            }
+        }
+    });
+</script>
+</body>
+</html>

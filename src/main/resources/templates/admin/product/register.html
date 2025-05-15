@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상품 등록</title>
+</head>
+<body>
+<div th:fragment="content">
+  <div class="card">
+    <div class="card-header">
+      <h5>상품 등록</h5>
+      <div>
+        <a href="/admin/products" class="btn btn-light">
+          <i class="fas fa-list"></i> 상품 목록
+        </a>
+      </div>
+    </div>
+    <div class="card-body">
+      <form id="productForm" th:action="@{/admin/products/add}" method="post" enctype="multipart/form-data">
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label for="productName" class="form-label">상품명 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="productName" name="productName" required>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="brand" class="form-label">브랜드 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="brand" name="brand" required>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="category" class="form-label">카테고리 <span class="text-danger">*</span></label>
+              <select class="form-control" id="category" name="categoryId" required>
+                <option value="">카테고리 선택</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}">카테고리명</option>
+              </select>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="price" class="form-label">가격 (원) <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" id="price" name="price" min="0" required>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="discountRate" class="form-label">할인율 (%)</label>
+              <input type="number" class="form-control" id="discountRate" name="discountRate" min="0" max="100" value="0">
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group mb-3">
+              <label for="productCode" class="form-label">상품 코드 <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="productCode" name="productCode" required>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="stock" class="form-label">재고 수량 <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" id="stock" name="stock" min="0" required>
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label d-block">성별</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" id="genderMen" value="MEN" checked>
+                <label class="form-check-label" for="genderMen">남성</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" id="genderWomen" value="WOMEN">
+                <label class="form-check-label" for="genderWomen">여성</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" id="genderUnisex" value="UNISEX">
+                <label class="form-check-label" for="genderUnisex">공용</label>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label d-block">상품 상태</label>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="status" id="statusActive" value="ACTIVE" checked>
+                <label class="form-check-label" for="statusActive">판매중</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="status" id="statusInactive" value="INACTIVE">
+                <label class="form-check-label" for="statusInactive">판매중지</label>
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label class="form-label">추천/신상품 설정</label>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="featured" name="featured">
+                <label class="form-check-label" for="featured">추천 상품</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="newArrival" name="newArrival">
+                <label class="form-check-label" for="newArrival">신상품</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h6 class="mb-0">사이즈 및 재고 관리</h6>
+              </div>
+              <div class="card-body">
+                <div id="sizeStockContainer">
+                  <div class="row mb-2 size-stock-row">
+                    <div class="col-md-4">
+                      <select class="form-control size-select" name="sizes[]" required>
+                        <option value="">사이즈 선택</option>
+                        <option value="220">220</option>
+                        <option value="225">225</option>
+                        <option value="230">230</option>
+                        <option value="235">235</option>
+                        <option value="240">240</option>
+                        <option value="245">245</option>
+                        <option value="250">250</option>
+                        <option value="255">255</option>
+                        <option value="260">260</option>
+                        <option value="265">265</option>
+                        <option value="270">270</option>
+                        <option value="275">275</option>
+                        <option value="280">280</option>
+                        <option value="285">285</option>
+                        <option value="290">290</option>
+                        <option value="295">295</option>
+                        <option value="300">300</option>
+                      </select>
+                    </div>
+                    <div class="col-md-4">
+                      <input type="number" class="form-control size-stock" name="sizeStocks[]" placeholder="재고 수량" min="0" required>
+                    </div>
+                    <div class="col-md-4">
+                      <button type="button" class="btn btn-light add-size-btn">
+                        <i class="fas fa-plus"></i>
+                      </button>
+                      <button type="button" class="btn btn-danger remove-size-btn" disabled>
+                        <i class="fas fa-minus"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="form-group mb-3">
+              <label for="mainImage" class="form-label">메인 이미지 <span class="text-danger">*</span></label>
+              <input type="file" class="form-control" id="mainImage" name="mainImage" accept="image/*" required>
+              <div class="mt-2">
+                <img id="mainImagePreview" src="#" alt="메인 이미지 미리보기" style="max-height: 200px; display: none;">
+              </div>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="additionalImages" class="form-label">추가 이미지 (최대 5개)</label>
+              <input type="file" class="form-control" id="additionalImages" name="additionalImages" accept="image/*" multiple>
+              <div id="additionalImagesPreview" class="d-flex flex-wrap mt-2 gap-2">
+                <!-- 이미지 미리보기가 여기에 추가됩니다 -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="form-group mb-3">
+              <label for="shortDescription" class="form-label">간단 설명</label>
+              <textarea class="form-control" id="shortDescription" name="shortDescription" rows="2"></textarea>
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="description" class="form-label">상품 상세 설명</label>
+              <textarea class="form-control" id="description" name="description" rows="5"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-center mt-4">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> 상품 등록
+          </button>
+          <button type="button" class="btn btn-light ms-2" onclick="history.back()">
+            <i class="fas fa-times"></i> 취소
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 필요한 CSS 스타일 추가 -->
+<style>
+  /* 폼 스타일링 */
+  .form-group label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-control {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d3e2;
+    border-radius: 0.35rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  .form-control:focus {
+    border-color: #bac8f3;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+    outline: 0;
+  }
+
+  .form-check-input {
+    cursor: pointer;
+  }
+
+  .text-danger {
+    color: #e74a3b;
+  }
+
+  /* 버튼 간격 */
+  .btn {
+    margin-right: 0.25rem;
+  }
+
+  /* 레이아웃 */
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.75rem;
+    margin-left: -0.75rem;
+  }
+
+  .col-md-4, .col-md-6, .col-12 {
+    position: relative;
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .col-md-4 {
+      flex: 0 0 33.333333%;
+      max-width: 33.333333%;
+    }
+
+    .col-md-6 {
+      flex: 0 0 50%;
+      max-width: 50%;
+    }
+  }
+
+  .mb-2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .mb-3 {
+    margin-bottom: 1rem;
+  }
+
+  .mb-4 {
+    margin-bottom: 1.5rem;
+  }
+
+  .mt-2 {
+    margin-top: 0.5rem;
+  }
+
+  .mt-4 {
+    margin-top: 1.5rem;
+  }
+
+  .ms-2 {
+    margin-left: 0.5rem;
+  }
+
+  .d-flex {
+    display: flex;
+  }
+
+  .d-block {
+    display: block;
+  }
+
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+
+  .justify-content-center {
+    justify-content: center;
+  }
+
+  .gap-2 {
+    gap: 0.5rem;
+  }
+
+  .form-check-inline {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 1rem;
+  }
+</style>
+
+<!-- 자바스크립트 -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 사이즈 및 재고 추가/제거 기능
+    const sizeStockContainer = document.getElementById('sizeStockContainer');
+
+    // 이벤트 위임을 사용하여 동적 요소 이벤트 처리
+    sizeStockContainer.addEventListener('click', function(e) {
+      // 사이즈 추가 버튼 클릭
+      if (e.target.closest('.add-size-btn')) {
+        const currentRow = e.target.closest('.size-stock-row');
+        const newRow = currentRow.cloneNode(true);
+
+        // 새 행의 입력값 초기화
+        newRow.querySelectorAll('input, select').forEach(input => {
+          input.value = '';
+        });
+
+        // 새 행의 제거 버튼 활성화
+        newRow.querySelector('.remove-size-btn').disabled = false;
+
+        // 새 행 추가
+        sizeStockContainer.appendChild(newRow);
+      }
+
+      // 사이즈 제거 버튼 클릭
+      if (e.target.closest('.remove-size-btn') && !e.target.closest('.remove-size-btn').disabled) {
+        const currentRow = e.target.closest('.size-stock-row');
+        currentRow.remove();
+      }
+    });
+
+    // 메인 이미지 미리보기
+    const mainImage = document.getElementById('mainImage');
+    const mainImagePreview = document.getElementById('mainImagePreview');
+
+    mainImage.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          mainImagePreview.src = e.target.result;
+          mainImagePreview.style.display = 'block';
+        }
+        reader.readAsDataURL(this.files[0]);
+      }
+    });
+
+    // 추가 이미지 미리보기
+    const additionalImages = document.getElementById('additionalImages');
+    const additionalImagesPreview = document.getElementById('additionalImagesPreview');
+
+    additionalImages.addEventListener('change', function() {
+      additionalImagesPreview.innerHTML = '';
+
+      if (this.files && this.files.length > 0) {
+        for (let i = 0; i < Math.min(this.files.length, 5); i++) {
+          const reader = new FileReader();
+          const imgContainer = document.createElement('div');
+          imgContainer.className = 'position-relative';
+
+          reader.onload = function(e) {
+            imgContainer.innerHTML = `
+                                <img src="${e.target.result}" alt="추가 이미지 ${i+1}" style="max-height: 150px;">
+                            `;
+            additionalImagesPreview.appendChild(imgContainer);
+          }
+
+          reader.readAsDataURL(this.files[i]);
+        }
+      }
+    });
+
+    // 폼 제출 전 유효성 검사
+    const productForm = document.getElementById('productForm');
+
+    productForm.addEventListener('submit', function(e) {
+      // 여기에 추가적인 폼 유효성 검사 로직을 구현할 수 있습니다.
+      // 예: 사이즈 중복 체크, 특수문자 검사 등
+
+      // 간단한 예시: 모든 필수 필드 검사
+      const requiredFields = productForm.querySelectorAll('[required]');
+      let isValid = true;
+
+      requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+          isValid = false;
+          field.classList.add('is-invalid');
+        } else {
+          field.classList.remove('is-invalid');
+        }
+      });
+
+      if (!isValid) {
+        e.preventDefault();
+        alert('필수 입력 항목을 모두 입력해주세요.');
+      }
+    });
+  });
+</script>
+</div>
+</body>
+</html>
