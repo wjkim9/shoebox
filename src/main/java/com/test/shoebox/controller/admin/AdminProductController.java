@@ -1,7 +1,9 @@
 package com.test.shoebox.controller.admin;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -12,8 +14,13 @@ public class AdminProductController {
      * 상품 리스트 조회 / 등록 / 수정 / 삭제 / 재고관리 페이지
      */
     @GetMapping("/register")
-    public String productRegister() {
-        // TODO: Model에 상품 목록, 페이징 정보 등 필요한 데이터 추가
+    public String productRegister(Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+        model.addAttribute("title", "상품 등록");
+        // 필요하다면 model.addAttribute("categories", categoryService.findAll());
+        // AJAX 요청일 땐 content fragment만 반환
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            return "admin/product/register :: content";
+        }
         return "admin/product/register";
     }
 

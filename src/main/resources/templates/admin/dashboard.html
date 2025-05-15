@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+
+    <title layout:fragment="title">대시보드</title>
+
+</head>
 <body>
     <!-- 대시보드 메인 콘텐츠 -->
-    <div th:fragment="content">
+    <section layout:fragment="content">
         <!-- 페이지 제목 -->
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h3 mb-0 text-gray-800">대시보드</h1>
+            <h1 class="h3 mb-0 text-gray-800">관리자 대시보드</h1>
             <div>
                 <button class="btn btn-primary">
                     <i class="fas fa-download fa-sm"></i> 리포트 다운로드
@@ -323,6 +330,6 @@
                 },
             });
         </script>
-    </div>
+    </section>
 </body>
 </html>

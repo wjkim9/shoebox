@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-	
+
 	@GetMapping("/")
 	public String index(Model model) {
-		
-		return "admin/admin_layout";
+		model.addAttribute("title", "대시보드");
+		return "admin/dashboard";
 	}
-	
+
 }

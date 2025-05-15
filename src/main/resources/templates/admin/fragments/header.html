@@ -1,37 +1,30 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<body>
-    <!-- 헤더 조각 -->
-    <div class="header" th:fragment="header">
+<!-- src/main/resources/templates/admin/fragments/header.html -->
+<div th:fragment="header">
+    <div class="header">
         <div class="header-title">
             <span th:text="${pageTitle ?: '관리자 페이지'}">관리자 페이지</span>
         </div>
-        
         <div class="header-controls">
             <div class="admin-info">
                 <div>
-<!--/*                    <div class="admin-name" th:text="${#authentication.principal.name}">관리자명</div>*/-->
-<!--/*                    <div class="admin-email" th:text="${#authentication.principal.email}">admin@example.com</div>*/-->
-                    <div class="admin-name" >관리자명</div>
-                    <div class="admin-email" >admin@example.com</div>
+                    <!-- 로그인한 사용자 이름 출력 -->
+                    <div class="admin-name" th:text="${#authentication.name}">관리자명</div>
+                    <!-- OAuth2 또는 UserDetails 이메일 속성 필요 시 아래와 같이 사용 -->
+                    <!-- <div class="admin-email" th:text="${#authentication.principal instanceof T(org.springframework.security.oauth2.core.user.OAuth2User) ? #authentication.principal.attributes['email'] : ''}">admin@example.com</div> -->
                 </div>
             </div>
-            
             <a href="/" target="_blank" class="btn btn-light">
                 <i class="fas fa-home"></i> 홈 가기
             </a>
-            
             <a href="/shop" target="_blank" class="btn btn-light">
                 <i class="fas fa-store"></i> 쇼핑몰 가기
             </a>
-            
-            <form action="/logout" method="post" style="display: inline;">
-                <!--/*<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />*/-->
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <input type="hidden" />
                 <button type="submit" class="btn btn-danger">
                     <i class="fas fa-sign-out-alt"></i> 로그아웃
                 </button>
             </form>
         </div>
     </div>
-</body>
-</html>
+</div>
