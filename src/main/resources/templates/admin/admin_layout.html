@@ -1,79 +1,65 @@
+<!-- src/main/resources/templates/admin/admin_layout.html -->
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>신발 쇼핑몰 관리자 페이지</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/admin/css/admin.css">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>신발 쇼핑몰 관리자</title>
+
+    <!-- 공통 CSS -->
+    <link rel="stylesheet" th:href="@{/admin/css/admin.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+    <!-- 레이아웃 전용 스타일 -->
+    <style>
+        .layout-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;       /* 사이드바 고정 너비 */
+            flex-shrink: 0;     /* 축소되지 않도록 */
+        }
+        .main-area {
+            flex-grow: 1;       /* 남은 공간 전부 차지 */
+            display: flex;
+            flex-direction: column;
+        }
+        .content-wrapper {
+            flex-grow: 1;       /* 헤더/푸터 제외한 영역 채우기 */
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
+<div class="layout-wrapper">
     <!-- 사이드바 -->
-    <div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+    <aside class="sidebar" layout:fragment="sidebar">
+        <div th:insert="~{admin/fragments/sidebar :: sidebar}"></div>
+    </aside>
 
-    <!-- 헤더 -->
-    <div th:replace="~{admin/fragments/header :: header}"></div>
+    <!-- 메인 영역 (헤더 + 콘텐츠 + 푸터) -->
+    <div class="main-area">
+        <!-- 헤더 -->
+        <header layout:fragment="header">
+            <div th:insert="~{admin/fragments/header :: header}"></div>
+        </header>
 
-    <!-- 메인 콘텐츠 -->
-    <div class="main-content">
-        <!--/*<div th:replace="${contentFragment}"></div>*/-->
-        <div th:replace="~{/admin/dashboard :: content}"></div>
+        <!-- 콘텐츠 -->
+        <main class="content-wrapper" layout:fragment="content">
+            <!-- 자식 템플릿의 content fragment가 여기로 삽입됩니다 -->
+        </main>
+
+        <!-- 푸터 -->
+        <footer layout:fragment="footer">
+            <div th:insert="~{admin/fragments/footer :: footer}"></div>
+            <!-- 공통 스크립트 -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            <script th:src="@{/admin/js/admin.js}"></script>
+        </footer>
     </div>
-
-    <!-- 푸터 -->
-        <!--/*<div th:replace="~{admin/fragments/footer :: footer}"></div>*/-->
-
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                // 메뉴 아코디언 기능 구현
-                $('.menu-link').on('click', function(e) {
-                    if ($(this).next('.submenu').length > 0) {
-                        e.preventDefault();
-                        $(this).toggleClass('active');
-                        $(this).next('.submenu').toggleClass('open');
-                    }
-                });
-
-                // 현재 활성화된 메뉴 항목 설정 (URL 경로에 따라)
-                function setActiveMenuItem() {
-                    const currentPath = window.location.pathname;
-                    $('.submenu-link').each(function() {
-                        const linkPath = $(this).attr('href');
-                        if (currentPath.includes(linkPath)) {
-                            $(this).addClass('active');
-                            $(this).closest('.submenu').addClass('open');
-                            $(this).closest('.submenu').prev('.menu-link').addClass('active');
-                        }
-                    });
-                }
-
-                setActiveMenuItem();
-
-                // 서브메뉴 아이템 클릭 시 AJAX 콘텐츠 로드
-                $('.submenu-link').on('click', function(e) {
-                    e.preventDefault();
-                    const url = $(this).attr('href');
-
-                    // 현재 활성화된 메뉴 초기화 및 새 메뉴 활성화
-                    $('.submenu-link').removeClass('active');
-                    $(this).addClass('active');
-
-                    // AJAX로 컨텐츠 로드
-                    $.ajax({
-                        url: url,
-                        type: 'GET',
-                        success: function(response) {
-                            $('.main-content').html(response);
-                            // URL 히스토리 업데이트 (선택사항)
-                            history.pushState(null, null, url);
-                        },
-                        error: function(err) {
-                            console.error('콘텐츠 로드 오류:', err);
-                        }
-                    });
-                });
-            });
-        </script>
-    </body>
-    </html>
+</div>
+</body>
+</html>
