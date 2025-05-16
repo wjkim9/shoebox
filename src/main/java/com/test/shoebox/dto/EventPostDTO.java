@@ -2,18 +2,29 @@ package com.test.shoebox.dto;
 
 import java.time.LocalDateTime;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.test.shoebox.entity.EventPost;
 
-@Getter
-@Setter
-@ToString
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class EventPostDTO {
-	private Long eventPostId;
-	private String title;
-	private String content;
-	private LocalDateTime writeDate;
+    private Long eventPostId;
+    private String title;
+    private String content;
+    private LocalDateTime writeDate;
+
+    public EventPost toEntity() {
+        return EventPost.builder()
+                .eventPostId(this.eventPostId)
+                .title(this.title)
+                .content(this.content)
+                .writeDate(this.writeDate != null ? this.writeDate : LocalDateTime.now())
+                .build();
+    }
 }

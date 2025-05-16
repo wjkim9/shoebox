@@ -1,4 +1,4 @@
-package com.test.shoebox.controller;
+package com.test.shoebox.controller.review;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/payment")
-public class PaymentController {
+@RequestMapping("/review")
+public class ReviewController {
 	
 	@GetMapping("/")
-	public String payment(Model model) {
+	public String review(Model model) {
 		
-		return "payment/payment";
+		return "review/review";
 	}
 	
 }

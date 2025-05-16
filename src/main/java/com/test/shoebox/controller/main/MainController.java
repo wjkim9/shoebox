@@ -1,4 +1,4 @@
-package com.test.shoebox.controller;
+package com.test.shoebox.controller.main;
 
 import java.time.LocalDateTime;
 import java.util.List;

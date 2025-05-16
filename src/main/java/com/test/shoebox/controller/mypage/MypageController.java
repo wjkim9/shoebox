@@ -1,4 +1,4 @@
-package com.test.shoebox.controller;
+package com.test.shoebox.controller.mypage;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/admin")
-public class AdminController {
+@RequestMapping("/mypage")
+public class MypageController {
 	
 	@GetMapping("/")
 	public String index(Model model) {
 		
-		return "admin/index";
+		return "mypage/index";
 	}
 	
 }

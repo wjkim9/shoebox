@@ -1,16 +1,24 @@
 package com.test.shoebox.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.test.shoebox.entity.Brand;
 
-@Getter
-@Setter
-@ToString
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class BrandDTO {
-	private Long brandId;
-	private String brandName;
-	
+    private Long brandId;
+    private String brandName;
+
+    public Brand toEntity() {
+        return Brand.builder()
+                .brandId(this.brandId)
+                .brandName(this.brandName)
+                .build();
+    }
 }
