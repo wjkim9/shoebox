@@ -34,6 +34,8 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final StringPath productName = createString("productName");
 
+    public final ListPath<ProductPost, QProductPost> productPost = this.<ProductPost, QProductPost>createList("productPost", ProductPost.class, QProductPost.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> productPrice = createNumber("productPrice", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> productRegisterDate = createDateTime("productRegisterDate", java.time.LocalDateTime.class);

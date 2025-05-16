@@ -12,7 +12,26 @@
 	 */-->
 	
 	<!-- 배너 테스트 -->
-	<img th:each="item : ${banner}" th:src="'/img/banner/' + ${item.fileName}">
+	<img th:each="item : ${banner}" th:src="'/common/images/banner/' + ${item.fileName}">
+	
+	<!-- 큐레이션 -->
+	<th:block th:each="eventPost : ${eventPostList}">
+		<div th:text="${eventPost.title}">큐레이션 제목</div>
+		<div th:text="${eventPost.content}">큐레이션 내용</div>
+		<!-- 이미지 테이블이 없음 논의 필요 -->
+	</th:block>
+	
+	
+	<!-- 이달의 신상품 -->
+	<hr>
+	
+	<div th:each="productImage : ${newProductList}">
+		<img th:src="'/common/images/product/' + ${productImage.fileName}">
+		<div th:text="${productImage.product.brand.brandName}">브랜드명</div>
+		<div th:text="${productImage.product.productName}">상품명</div>
+		<div th:text="${productImage.product.productPrice}">가격</div>
+	</div>
+	
 	
 	
 

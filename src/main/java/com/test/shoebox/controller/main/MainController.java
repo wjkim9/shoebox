@@ -8,10 +8,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.test.shoebox.entity.EventPost;
 import com.test.shoebox.entity.MainBanner;
 import com.test.shoebox.entity.Product;
+import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.repository.MainBannerRepository;
-import com.test.shoebox.service.ListProductService;
+import com.test.shoebox.service.main.ListProductService;
+import com.test.shoebox.service.main.MainService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +27,8 @@ public class MainController {
 	
 	private final ListProductService listProductService;
 	
+	private final MainService mainService;
+	
 	@GetMapping("/")
 	public String index(Model model) {
 		
@@ -31,14 +36,18 @@ public class MainController {
 		List<MainBanner> banner = mainBannerRepository.findAllByOrderBySortOrder();
 		
 		//당월 신상템
- 
-		List<Product> newProductList = listProductService.getNewProductList(LocalDateTime.now());
+		List<ProductImage> newProductList = listProductService.getNewProductList(LocalDateTime.now());
 		
-		
+		//큐레이션
+		List<EventPost> eventPostList = mainService.getCurationList();
 		
 		
 		
 		model.addAttribute("banner", banner);
+		
+		model.addAttribute("newProductList", newProductList);
+		
+		model.addAttribute("eventPostList", eventPostList);
 		
 		return "main/index";
 	}

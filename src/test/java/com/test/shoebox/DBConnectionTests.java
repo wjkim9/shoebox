@@ -10,9 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.test.shoebox.dto.EventPostDTO;
+import com.test.shoebox.dto.ProductDTO;
+import com.test.shoebox.entity.EventPost;
 import com.test.shoebox.entity.Product;
+import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.repository.ProductRepository;
-import com.test.shoebox.service.ListProductService;
+import com.test.shoebox.service.main.ListProductService;
+import com.test.shoebox.service.main.MainService;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +35,9 @@ public class DBConnectionTests {
 	
 	@Autowired
 	private ListProductService listProductService;
+	
+	@Autowired
+	private MainService mainService;
 	
 	
 	@Test
@@ -60,10 +68,21 @@ public class DBConnectionTests {
 	@Test
 	public void getNewProductListTests() {
 		
-		List<Product> productList = listProductService.getNewProductList(LocalDateTime.now());
+		List<ProductImage> productList = listProductService.getNewProductList(LocalDateTime.now());
 		
 		
 		System.out.println(productList);
+		
+		
+	}
+	
+	@Test
+	public void getEventPostListTests() {
+		
+		List<EventPost> list = mainService.getCurationList();
+		
+		
+		System.out.println(list);
 		
 		
 	}
