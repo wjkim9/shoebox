@@ -158,8 +158,7 @@
 					</div>
 					<div class="semi-divider"></div>
 					<div class="order-btn-row">
-						<button class="order-btn"
-							onclick="window.location.href='/payment/payment_completed'">결제하기</button>
+						<button class="order-btn">결제하기</button>
 					</div>
 				</div>
 			</div>
@@ -168,12 +167,19 @@
 		<br><br><br><br>
 		<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
 </body>
+
+<!-- jQuery -->
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<!-- iamport.payment.js -->
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
 <script>
     // 결제수단 버튼 선택 효과
     document.querySelectorAll('.pay-btn').forEach(btn => {
       btn.addEventListener('click', function () {
+
         document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('selected'));
         this.classList.add('selected');
+
       });
     });
 
@@ -190,8 +196,70 @@
       }
     });
 
+	// 결제 버튼 누르면 결제로 넘어감
+	document.querySelectorAll('.order-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
 
-    // 배송지 라디오 색상 제어 (이미 CSS에서 처리)
+        // selected 클래스를 가진 pay-btn이 있는지 확인
+        if (!document.querySelector('.pay-btn.selected')) {
+            alert('결제수단을 선택해주세요.');
+            return;
+        }
+
+        if (!document.getElementById('agree').checked) {
+			alert('주문내역에 동의해주세요.');
+			return;
+        }
+
+		requestPay();
+
+    });
+});
+
+
+
+	// 결제 구현
+	var IMP = window.IMP;
+		IMP.init('imp62156183'); // 아임포트 테스트 계정 식별코드
+
+	function requestPay() {
+		const merchantUid = 'order_' + new Date().getTime(); // 주문번호 생성
+
+		IMP.request_pay({
+		pg: "html5_inicis.INIpayTest",  // 이니시스 테스트 모드
+		pay_method: "card",
+		merchant_uid: merchantUid,
+		name: "테스트 상품",
+		amount: 500,
+		buyer_email: "test@test.com",
+		buyer_name: "테스트",
+		buyer_tel: "010-1234-5678"
+	}, function (rsp) {
+		if (rsp.success) {
+			// 결제 성공 시 백엔드 검증 요청
+			fetch(`/api/v1/payments/verify/${rsp.imp_uid}?merchant_uid=${merchantUid}&amount=${rsp.paid_amount}`)
+			.then(response => response.json())
+			.then(data => {
+				if (data.status === 'paid') {
+					alert('결제가 완료되었습니다.');
+					// 결제 완료 후 결제 완료 창
+					window.location.href='/payment/payment_completed';
+				} else {
+					alert('결제 검증에 실패하였습니다.');
+					// 결제 실패 시 장바구니로 돌아가기
+					window.location.href='/payment/orderlist';
+				}
+			})
+			.catch(error => {
+				console.error('결제 검증 중 오류 발생:', error);
+				alert('결제 검증 중 오류가 발생했습니다.');
+			});
+		} else {
+			alert(`결제에 실패하였습니다. 에러 메시지: ${rsp.error_msg}`);
+		}
+	});
+	}
+
   </script>
 
 </html>
