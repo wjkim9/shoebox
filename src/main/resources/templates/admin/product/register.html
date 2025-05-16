@@ -4,16 +4,13 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{admin/admin_layout}">
 <head>
-  <!-- 페이지별 title 프래그먼트 -->
-
-  <!-- 개별 CSS -->
 
 </head>
 <body>
 <!-- content 프래그먼트 -->
 <section layout:fragment="content" th:fragment="content">
   <link rel="stylesheet" th:href="@{/admin/css/product-register.css}"/>
-  <div class="admin-container">
+  <div class="admin-container" style="margin-top: var(--header-height);">
     <div class="page-header">
       <h2>상품 등록</h2>
       <div>
