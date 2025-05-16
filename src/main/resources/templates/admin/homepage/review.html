@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">  <!-- 레이아웃 데코레이터 적용 :contentReference[oaicite:0]{index=0}:contentReference[oaicite:1]{index=1} -->
+<head>
+</head>
+<body>
+<section layout:fragment="content" th:fragment="content">
+    <!-- 페이지별 CSS -->
+    <link rel="stylesheet" th:href="@{/admin/css/homepage-review.css}"/>  <!-- orders-list.css 구조 참고 :contentReference[oaicite:2]{index=2}:contentReference[oaicite:3]{index=3} -->
+
+    <div class="admin-container" style="margin-top: var(--header-height);">
+        <!-- 페이지 헤더 -->
+        <div class="page-header">
+            <h2>리뷰 관리</h2>
+        </div>
+
+        <!-- 검색 폼 -->
+        <div class="panel">
+            <div class="panel-header">
+                <h3>리뷰 검색</h3>
+            </div>
+            <div class="panel-body">
+                <form id="searchForm" th:action="@{/admin/reviews}" method="get">
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="reviewDateStart">작성 기간</label>
+                                <div class="date-range-picker">
+                                    <input type="date" class="form-input" id="reviewDateStart" name="reviewDateStart"
+                                           th:value="${#dates.format(param.reviewDateStart,'yyyy-MM-dd')}"
+                                           placeholder="시작일">
+                                    <span class="date-separator">~</span>
+                                    <input type="date" class="form-input" id="reviewDateEnd" name="reviewDateEnd"
+                                           th:value="${#dates.format(param.reviewDateEnd,'yyyy-MM-dd')}"
+                                           placeholder="종료일">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="searchType">검색어 유형</label>
+                                <select class="form-select" id="searchType" name="searchType">
+                                    <option value="reviewerName" th:selected="${param.searchType=='reviewerName'}">작성자</option>
+                                    <option value="productName" th:selected="${param.searchType=='productName'}">상품명</option>
+                                    <option value="content" th:selected="${param.searchType=='content'}">내용</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="searchKeyword">검색어</label>
+                                <input type="text" class="form-input" id="searchKeyword" name="searchKeyword"
+                                       th:value="${param.searchKeyword}" placeholder="검색어 입력">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="search-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> 검색
+                        </button>
+                        <button type="button" id="resetBtn" class="btn btn-outline">
+                            <i class="fas fa-redo"></i> 초기화
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 리뷰 목록 -->
+        <div class="panel">
+            <div class="panel-header">
+                <h3>리뷰 목록</h3>
+                <span class="order-count" th:text="'총 ' + ${reviews.size()} + '건'">총 0건</span>
+            </div>
+            <div class="table-responsive">
+                <table class="order-table">
+                    <thead>
+                    <tr>
+                        <th>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="selectAll">
+                                <span class="checkmark"></span>
+                            </label>
+                        </th>
+                        <th>작성자</th>
+                        <th>작성일시</th>
+                        <th>별점</th>
+                        <th>내용</th>
+                        <th>관리</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${reviews.empty}">
+                        <td colspan="6" class="no-data">리뷰가 없습니다.</td>
+                    </tr>
+                    <tr th:each="review : ${reviews}">
+                        <td>
+                            <label class="checkbox-label">
+                                <input type="checkbox" class="order-checkbox" th:value="${review.id}">
+                                <span class="checkmark"></span>
+                            </label>
+                        </td>
+                        <td th:text="${review.reviewerName}">홍길동</td>
+                        <td th:text="${#dates.format(review.writeDate,'yyyy-MM-dd HH:mm')}">2025-05-16 17:00</td>
+                        <td th:text="${review.rating}">4.5</td>
+                        <td>
+                            <span th:if="${review.deleted}">관리자에 의해 삭제된 댓글입니다.</span>
+                            <span th:unless="${review.deleted}" th:text="${review.content}">정말 편하고 예뻐요!</span>
+                        </td>
+                        <td class="action-buttons">
+                            <button type="button"
+                                    th:if="${!review.deleted}"
+                                    class="btn btn-icon btn-danger delete-btn"
+                                    th:data-id="${review.id}">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                            <button type="button"
+                                    th:if="${review.deleted}"
+                                    class="btn btn-icon btn-outline"
+                                    disabled>
+                                <i class="fas fa-ban"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script th:src="@{/admin/js/homepage-review.js}"></script>
+</body>
+</html>
