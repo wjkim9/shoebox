@@ -2,6 +2,22 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <style th:fragment="style">
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .launches-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            padding: 20px 0;
+            position: relative;
+        }
+
         .launches-slider {
             position: relative;
             padding: 40px;
@@ -14,6 +30,8 @@
             justify-content: center;
             overflow: visible;
             margin: 0 auto;
+            transform: translateX(-50%);
+            left: 50%;
         }
 
         .slider-container {
@@ -113,22 +131,14 @@
             background: #333;
         }
 
-        .launches-section {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto;
-            padding: 20px 0;
-        }
-
         .section-header {
             width: 1300px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         .view-all {
@@ -143,6 +153,13 @@
         .view-all:hover {
             color: #000;
             font-weight: bold;
+        }
+
+        @media screen and (max-width: 1300px) {
+            .launches-slider {
+                transform: none;
+                left: auto;
+            }
         }
     </style>
 </head>

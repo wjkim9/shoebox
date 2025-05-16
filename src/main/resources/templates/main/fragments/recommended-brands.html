@@ -7,7 +7,7 @@
             position: relative;
             margin: 0;
             max-width: none;
-            padding-top: 300px;
+            margin-bottom: 100px;  /* footer와의 간격 */
         }
 
         .recommended-brands::before {
@@ -37,10 +37,9 @@
             font-size: 24px;
             font-weight: bold;
             color: #fff;
-            position: absolute;
-            top: 40px;
-            left: 0;
-            right: 0;
+            position: relative;
+            padding-top: 40px;
+            margin-bottom: 20px;
             z-index: 2;
         }
 
@@ -49,11 +48,9 @@
             align-items: center;
             justify-content: center;
             padding: 0 60px;
-            position: absolute;
-            top: 100px;
-            left: 0;
-            right: 0;
+            position: relative;
             z-index: 2;
+            margin-bottom: 60px;
         }
 
         .brand-names {
@@ -120,17 +117,22 @@
 
         .brand-content {
             position: relative;
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 40px;
-            background: #f8f8f8;
+            border-radius: 10px;
+            margin-top: -60px;
+            z-index: 12;
+            min-height: 400px;  /* 최소 높이 설정 */
+            display: flex;
+            flex-direction: column;
         }
 
         .brand-name {
             text-align: center;
             font-size: 18px;
             font-weight: bold;
-            color: #333;
+            color: #fff;
             margin-bottom: 30px;
         }
 
@@ -140,10 +142,13 @@
             margin: 0 auto;
             position: relative;
             justify-content: center;
+            min-height: 200px;  /* 최소 높이 설정 */
+            flex-wrap: wrap;
         }
 
         .product-item {
             flex: 0 0 calc(25% - 15px);
+            min-height: 300px;  /* 최소 높이 설정 */
             background: white;
             border-radius: 0;
             overflow: hidden;
@@ -182,10 +187,12 @@
             display: none;
             opacity: 0;
             transition: opacity 0.3s ease;
+            min-height: 300px;  /* 최소 높이 설정 */
         }
 
         .brand-products-container.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
             opacity: 1;
         }
     </style>

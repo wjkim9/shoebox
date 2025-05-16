@@ -2,11 +2,31 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <style th:fragment="style">
+        .section-header {
+            width: 1300px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         .new-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin-bottom: 50px;
+            width: 1300px;
+            padding: 0 40px;
+            box-sizing: border-box;
+        }
+
+        .new-items-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .new-item {
