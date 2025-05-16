@@ -30,7 +30,7 @@ public class CustomerServiceDTO {
                 .customerServiceId(this.customerServiceId)
                 .title(this.title)
                 .content(this.content)
-                .writeDate(this.writeDate != null ? this.writeDate : LocalDateTime.now())
+                .writeDate(this.writeDate)
                 .answerContent(this.answerContent)
                 .answerDate(this.answerDate)
                 .category(this.category)

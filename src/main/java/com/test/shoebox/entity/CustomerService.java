@@ -58,7 +58,7 @@ public class CustomerService {
     private Members members;
 
     @ManyToOne
-    @JoinColumn(name = "parents_customerservice_id", nullable = false)
+    @JoinColumn(name = "parents_customerservice_id")
     private CustomerService parent;
 
     public CustomerServiceDTO toDTO() {
@@ -71,19 +71,14 @@ public class CustomerService {
                 .answerDate(this.answerDate)
                 .category(this.category)
                 .membersId(this.members.getMembersId())
-                .parentId(this.parent.getCustomerServiceId())
+                .parentId(this.parent != null ? this.parent.getCustomerServiceId() : null)
                 .build();
     }
-    
+
     @PrePersist
     public void prePersist() {
         if (this.writeDate == null) {
             this.writeDate = LocalDateTime.now();
         }
-        if (this.answerDate == null) {
-            this.answerDate = LocalDateTime.now();
-        }
     }
-
-    
 }

@@ -80,10 +80,6 @@ public class ProductPostQna {
         if (this.writeDate == null) {
             this.writeDate = LocalDateTime.now();
         }
-        if (this.answerDate == null) {
-            this.answerDate = LocalDateTime.now();
-        }
     }
-
 }
 
