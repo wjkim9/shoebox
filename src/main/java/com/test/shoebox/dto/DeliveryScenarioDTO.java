@@ -1,18 +1,30 @@
 package com.test.shoebox.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.test.shoebox.entity.DeliveryScenario;
 
-@Getter
-@Setter
-@ToString
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class DeliveryScenarioDTO {
-	private Long deliveryScenarioId;
-	private String step;
-	private String location;
-	private String status;
-	private Integer waitTime;
+    private Long deliveryScenarioId;
+    private String step;
+    private String location;
+    private String status;
+    private Integer waitTime;
+
+    public DeliveryScenario toEntity() {
+        return DeliveryScenario.builder()
+                .deliveryScenarioId(this.deliveryScenarioId)
+                .step(this.step)
+                .location(this.location)
+                .status(this.status)
+                .waitTime(this.waitTime)
+                .build();
+    }
 }

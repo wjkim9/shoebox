@@ -51,7 +51,7 @@ spring:
 
 # MyBatis 설정
 mybatis:
-  type-aliases-package: com.test.thymeleaf.dto
+  type-aliases-package: com.test.shoebox.dto
   mapper-locations: classpath:mapper/*.xml
 
 server:

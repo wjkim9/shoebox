@@ -1,4 +1,4 @@
-package com.test.shoebox.controller;
+package com.test.shoebox.controller.payment;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

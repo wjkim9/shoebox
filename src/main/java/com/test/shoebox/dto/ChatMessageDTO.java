@@ -1,20 +1,31 @@
 package com.test.shoebox.dto;
 
-import java.time.LocalDateTime;
+import com.test.shoebox.entity.ChatMessage;
+import com.test.shoebox.entity.ChatRoom;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@ToString
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ChatMessageDTO {
-	private Long chatMessageId;
+    private Long chatMessageId;
     private String content;
     private Integer writerClassify;
-    private LocalDateTime sendDatetime;
+    private java.time.LocalDateTime sendDatetime;
     private Long chatRoomId;
+
+    public ChatMessage toEntity(ChatRoom chatRoom) {
+        return ChatMessage.builder()
+                .chatMessageId(this.chatMessageId)
+                .content(this.content)
+                .writerClassify(this.writerClassify)
+                .sendDatetime(this.sendDatetime != null ? this.sendDatetime : java.time.LocalDateTime.now())
+                .chatRoom(chatRoom)
+                .build();
+    }
 }
