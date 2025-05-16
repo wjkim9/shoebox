@@ -7,3 +7,4 @@ import com.test.shoebox.entity.Product;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
 }
+
