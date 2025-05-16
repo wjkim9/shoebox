@@ -4,66 +4,49 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import com.test.shoebox.service.main.CustomOAuth2UserService;
+import com.test.shoebox.service.main.OAuth2SuccessHandler;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-	//암호 인코더
-	@Bean
-	BCryptPasswordEncoder bCryptPasswordEncoder() {
-
-		return new BCryptPasswordEncoder();
-	}
-
+	private final CustomOAuth2UserService customOAuth2UserService;
+	private final OAuth2SuccessHandler oAuth2SuccessHandler;
+	
 	@Bean
 	SecurityFilterChain filterchain(HttpSecurity http) throws Exception {
-
-
-		http.authorizeHttpRequests(
-			auth -> auth.requestMatchers("/**").permitAll()
-						//.requestMatchers("/register", "/registerok").permitAll()
-						//.requestMatchers("/member").hasAnyRole("MEMBER", "ADMIN")
-						//.requestMatchers("/admin").hasRole("ADMIN")
-						.anyRequest().authenticated()
+		
+		//CRSF > 비활성화
+		http.csrf(auth -> auth.disable());
+		
+		//Form 로그인 방식(X) > 소셜 인증
+		http.formLogin(auth -> auth.disable());
+		
+		//기본 인증 > 사용 안함
+		http.httpBasic(auth -> auth.disable());
+		
+		//허가 URI
+		http.authorizeHttpRequests(auth -> auth
+			.requestMatchers("/**").permitAll()
+			//.requestMatchers("/css").permitAll()
+			.anyRequest().authenticated()
 		);
 		
-		http.csrf(
-			auth -> auth.disable()
-		);
-		
-		//커스텀 로그인 페이지
-		http.formLogin(
-				auth -> auth.loginPage("/login")
-							.loginProcessingUrl("/loginok")
-							//.defaultSuccessUrl("/")
-		);
-		
-		//로그아웃
-		http.logout(
-			auth -> auth.logoutUrl("/logout")
-						.logoutSuccessUrl("/")
+		http.oauth2Login(auth -> auth
+			.loginPage("/main/login")
+			.userInfoEndpoint(config 
+						-> config.userService(customOAuth2UserService))
+			//.defaultSuccessUrl("/main/") // 로그인 성공 후 항상 이동
+		    .successHandler(oAuth2SuccessHandler) // 동적 리다이렉션 하고 싶으면 이 방식
 		);
 		
 		return http.build();
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
