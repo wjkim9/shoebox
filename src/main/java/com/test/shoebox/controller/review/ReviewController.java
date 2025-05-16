@@ -15,4 +15,22 @@ public class ReviewController {
 		return "review/review";
 	}
 	
+	@GetMapping("/create")
+	public String review_create(Model model) {
+		
+		return "review/review_create";
+	}
+	
+	
+	// 보기전용 (예시)
+	@GetMapping("/static")
+	public String static_review(Model model) {
+		
+		return "review/static_review";
+	}
+	@GetMapping("/static/create")
+	public String static_review_create(Model model) {
+		
+		return "review/static_review_create";
+	}
 }
