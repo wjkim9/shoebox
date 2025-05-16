@@ -38,7 +38,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-column">
+                        <div class="form-column short-column">
                             <div class="form-group">
                                 <label for="searchType">검색어 유형</label>
                                 <select class="form-select" id="searchType" name="searchType">
@@ -48,7 +48,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-column">
+                        <div class="form-column long-column">
                             <div class="form-group">
                                 <label for="searchKeyword">검색어</label>
                                 <input type="text" class="form-input" id="searchKeyword" name="searchKeyword"
@@ -92,7 +92,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:if="${reviews.empty}">
+                    <tr th:if="${reviews}">
                         <td colspan="6" class="no-data">리뷰가 없습니다.</td>
                     </tr>
                     <tr th:each="review : ${reviews}">

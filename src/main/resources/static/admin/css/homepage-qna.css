@@ -298,28 +298,103 @@ label {
     cursor: not-allowed;
 }
 
-/* 별점 표시 스타일 */
-.rating {
-    display: flex;
-    align-items: center;
-}
-
-.rating .star {
-    color: var(--warning-color);
-    margin-right: 2px;
-}
-
-/* 리뷰 내용 스타일 */
-.review-content {
+/* QnA 페이지 특화 스타일 */
+.qna-title {
     max-width: 300px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.deleted-review {
-    color: var(--text-lighter);
-    font-style: italic;
+.qna-category {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: #edf2ff;
+    color: var(--primary-color);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.answer-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.answer-status-completed {
+    background-color: #e6f7eb;
+    color: var(--success-color);
+}
+
+.answer-status-pending {
+    background-color: #fff3e0;
+    color: var(--warning-color);
+}
+
+/* QnA 상세보기 모달 */
+.qna-modal .modal-content {
+    max-width: 700px;
+}
+
+.qna-details {
+    margin-bottom: 24px;
+}
+
+.qna-details-row {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.qna-details-label {
+    flex: 0 0 100px;
+    background-color: #f8fafc;
+    padding: 12px 16px;
+    font-weight: 500;
+}
+
+.qna-details-value {
+    flex: 1;
+    padding: 12px 16px;
+}
+
+.qna-content {
+    margin-bottom: 24px;
+}
+
+.qna-content h4,
+.answer-form h4 {
+    margin-top: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 16px;
+}
+
+.qna-content-text {
+    background-color: #f8fafc;
+    padding: 16px;
+    border-radius: var(--border-radius);
+    white-space: pre-line;
+}
+
+.answer-form textarea {
+    width: 100%;
+    height: 150px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    resize: vertical;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.answer-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
 }
 
 /* No data 스타일 */
@@ -433,6 +508,14 @@ label {
     .action-buttons {
         flex-direction: column;
     }
+
+    .qna-details-row {
+        flex-direction: column;
+    }
+
+    .qna-details-label {
+        flex: 0 0 auto;
+    }
 }
 
 @media (max-width: 768px) {
@@ -464,6 +547,7 @@ label {
     /* 남은 공간 전부 차지 */
     flex: 1 1 auto;
 }
+
 .order-table th:last-child {
     text-align: center;
 }
