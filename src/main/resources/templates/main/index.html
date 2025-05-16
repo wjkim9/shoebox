@@ -7,6 +7,14 @@
 </head>
 <body>
 	<!-- main/index.html -->
+	<!--/* 
+	<div th:each="item : ${banner}" th:text="'/img/' + ${item.fileName}">
+	 */-->
+	
+	<!-- 배너 테스트 -->
+	<img th:each="item : ${banner}" th:src="'/img/banner/' + ${item.fileName}">
+	
+	
 
 	<script>
 
