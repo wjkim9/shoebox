@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.test.shoebox.dto.ProductDTO;
+import com.test.shoebox.entity.Brand;
 import com.test.shoebox.entity.Product;
 import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.repository.CustomRepository;
@@ -40,5 +41,12 @@ public class ListProductService {
 		return newProductImageList;
 	}
 	
+	//추천 브랜드 상품(인기상품 -> 조회수)
+	public List<ProductImage> getRecommendProductList(Brand brand, Integer maxFetch) {
+		
+		List<ProductImage> rcmdPrdtList = customRepository.findByProductImageByBrand(brand, maxFetch);
+		
+		return rcmdPrdtList;
+	}
 	
 }

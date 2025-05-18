@@ -74,14 +74,17 @@
             <a href="#" class="view-more">MORE ></a>
         </div>
         <div class="new-grid">
-            <div class="new-item">
-                <img src="/common/images/23732_1712905511772.jpg" alt="아디다스">
+            <div class="new-item" th:each="newProduct, status : ${newProductList}">
+            	<th:block th:if="${status.count}">
+                <img th:src="'/common/images/product/' + ${newProduct.fileName}" th:alt="${newProduct.product.brand.brandName}" src="/common/images/23732_1712905511772.jpg" alt="아디다스">
                 <div class="item-info">
-                    <h3>아디다스</h3>
-                    <p>삼바</p>
-                    <p class="price">109,000원</p>
+                    <h3 th:text="${newProduct.product.brand.brandName}">아디다스</h3>
+                    <p th:text="${newProduct.product.productName}">삼바</p>
+                    <p th:text="${#numbers.formatInteger(newProduct.product.productPrice, 0, 'COMMA')} + '원'" class="price">109,000원</p>
                 </div>
+                </th:block>
             </div>
+            <!-- 
             <div class="new-item">
                 <img src="/common/images/23732_1712905511772.jpg" alt="아디다스">
                 <div class="item-info">
@@ -106,7 +109,9 @@
                     <p class="price">109,000원</p>
                 </div>
             </div>
+             -->
         </div>
+        <!-- 
         <div class="new-grid">
             <div class="new-item">
                 <img src="/common/images/23732_1712905511772.jpg" alt="아디다스">
@@ -141,6 +146,7 @@
                 </div>
             </div>
         </div>
+         -->
     </section>
 </body>
 </html> 
