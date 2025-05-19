@@ -64,7 +64,7 @@ public class AdminOrderController {
      * 주문 상세 페이지
      */
     @GetMapping("/{orderId}")
-    public String orderDetail(@PathVariable Long orderId, Model model) {
+    public String orderDetail(@PathVariable Long orderId, Model model,@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
         // 서비스에서 주문 상세 정보 가져오기
         //OrderDetailDto order = orderService.getOrderDetail(orderId);
         Map<String,Object> order = new HashMap<>();
@@ -132,6 +132,11 @@ public class AdminOrderController {
 
 
         model.addAttribute("order", order);
+
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            return "admin/orders/detail :: content";
+        }
+
         return "admin/orders/detail";  // resources/templates/admin/orders/detail.html
     }
 

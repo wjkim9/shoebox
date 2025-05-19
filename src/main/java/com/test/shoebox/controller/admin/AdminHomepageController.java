@@ -124,11 +124,58 @@ public class AdminHomepageController {
 
 
     /** 공지사항 설정 페이지 */
+
     @GetMapping("/notice")
-    public String noticeSettings() {
-        // TODO: Model에 공지사항 리스트, 등록/수정 폼 등 추가
-        return "admin/homepage/notice";
+    public String viewNoticeList(Model model,@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+        List<Map<String, Object>> notices = new ArrayList<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        for (int i = 1; i <= 5; i++) {
+            Map<String, Object> notice = new HashMap<>();
+            notice.put("id", (long) i);
+            notice.put("title", "공지사항 제목 " + i);
+            notice.put("author", "관리자");
+            notice.put("createdAt", LocalDateTime.of(2025, 5, 19, 9, 30).format(formatter));
+            notice.put("viewCount", i * 10);
+            notices.add(notice);
+        }
+
+        model.addAttribute("notices", notices);
+
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            return "admin/homepage/notice :: content";
+        }
+        return "admin/homepage/notice";  // Thymeleaf 경로
     }
+
+
+    @GetMapping("/notice/{id}")
+    public String viewNoticeDetail(@PathVariable("id") Long id, Model model) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        Map<String, Object> notice = new HashMap<>();
+        notice.put("id", id);
+        notice.put("title", "서버 점검 안내");
+        notice.put("author", "관리자");
+        notice.put("createdAt", LocalDateTime.of(2025, 5, 19, 9, 30).format(formatter));
+        notice.put("viewCount", 123);
+        notice.put("content", """
+            안녕하세요. 고객님 여러분 😊
+            
+            시스템 안정화를 위한 서버 점검이 아래 일정으로 진행됩니다.
+
+            - 일정: 2025년 5월 20일(화) 02:00 ~ 04:00
+            - 영향: 사이트 접속 일시 중단
+
+            이용에 불편을 드려 죄송하며, 더 나은 서비스를 위해 노력하겠습니다.
+            감사합니다.
+            """);
+
+        model.addAttribute("notice", notice);
+        return "admin/homepage/notice-details";
+    }
+
 
     /** 팝업 공지 설정 페이지 */
     @GetMapping("/popup")
