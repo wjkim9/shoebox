@@ -878,3 +878,23 @@ text-align: center;
     font-size: 1.12em;
 }
 
+.order-table-horizontal {
+    width: 100%;
+    border-collapse: collapse;
+    gap: 10px;
+    margin: auto;
+}
+.order-table-horizontal th,
+.order-table-horizontal td {
+    text-align: center;
+}
+.order-table-horizontal th {
+    background: #f7f7f7;
+    font-weight: 600;
+    color: #222;
+}
+.order-table-horizontal td {
+    background: #fff;
+    color: #444;
+}
+

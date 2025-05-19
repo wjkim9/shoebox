@@ -152,5 +152,15 @@ public class MainController {
 
 		return "main/register";
 	}
+	@GetMapping("/category")
+	public String category(Model model) {
+
+		return "main/category";
+	}
+	@GetMapping("/detailpage")
+	public String detailpage(Model model) {
+
+		return "main/detailpage";
+	}
 
 }
