@@ -3,7 +3,6 @@
 <head>
     <style th:fragment="style">
         html, body {
-            max-width: 100%;
             overflow-x: hidden;
         }
 
@@ -14,14 +13,13 @@
             align-items: center;
             justify-content: center;
             margin: 0 auto;
-            padding: 20px 0;
+            padding: 10px 0;
             position: relative;
         }
 
         .launches-slider {
             position: relative;
-            padding: 40px;
-            height: 550px;
+            height: 450px;
             width: 1300px;
             display: flex;
             flex-direction: column;
@@ -94,15 +92,14 @@
 
         .slider-prev, .slider-next {
             position: absolute;
-            top: 50%;
             transform: translateY(-50%);
             background: rgba(255,255,255,0.8);
             border: none;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 25px;
             z-index: 10;
         }
 
@@ -136,7 +133,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
             padding: 0;
             box-sizing: border-box;
         }
@@ -155,19 +151,12 @@
             font-weight: bold;
         }
 
-        @media screen and (max-width: 1300px) {
-            .launches-slider {
-                transform: none;
-                left: auto;
-            }
-        }
     </style>
 </head>
 <body>
     <section th:fragment="content" class="launches-section">
         <div class="section-header">
             <h1>LAUNCHES</h1>
-            <a href="#" class="view-all">VIEW ALL</a>
         </div>
         <div class="launches-slider">
             <button class="slider-prev" aria-label="이전 슬라이드">&lt;</button>
@@ -189,24 +178,31 @@
             	</th:block>
             	<!-- 
                 <div class="slide prev">
-                    <img src="/common/images/sample1.jpg" alt="나이키 신발">
+                    <img src="/common/images/nike.png" alt="나이키 신발">
                 </div>
                 <div class="slide active">
-                    <img src="/common/images/sample2.jpg" alt="아식스 신발">
+                    <img src="/common/images/adidas.png" alt="아디다스 신발">
                 </div>
                 <div class="slide next">
-                    <img src="/common/images/sample3.jpg" alt="나이키 신발">
+                    <img src="/common/images/newbalance.png" alt="뉴발란스 신발">
                 </div>
                 <div class="slide">
-                    <img src="/common/images/sample1.jpg" alt="나이키 신발">
+                    <img src="/common/images/컨버스.png" alt="컨버스 신발">
                 </div>
                 <div class="slide">
-                    <img src="/common/images/sample2.jpg" alt="아식스 신발">
+                    <img src="/common/images/adidas.png" alt="아디다스 신발">
                 </div>
                 <div class="slide">
-                    <img src="/common/images/sample3.jpg" alt="나이키 신발">
+                    <img src="/common/images/newbalance.png" alt="뉴발란스 신발">
                 </div>
                  -->
+                <div class="slide prev">
+                    <img src="/common/images/nike.png" alt="나이키 신발">
+                </div>
+                <div class="slide">
+                    <img src="/common/images/컨버스.png" alt="컨버스 신발">
+                </div>
+                
             </div>
             <button class="slider-next" aria-label="다음 슬라이드">&gt;</button>
             <div class="slider-indicators">

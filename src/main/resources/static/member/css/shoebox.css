@@ -34,9 +34,10 @@ header {
 }
 
 .logo img {
-	width: 150px;
+	width: 170px;
 	align-content: center;
 	position: relative;
+	top:2px;
 	right: 500px;
 }
 
