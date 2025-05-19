@@ -484,6 +484,7 @@ table.cart-table tr:last-child td {
 	font-weight: 600;
 	font-size: 1.05em;
 	margin-bottom: 2px;
+	text-decoration: none;
 }
 
 .cart-prod-desc {
