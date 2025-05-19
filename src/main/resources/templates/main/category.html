@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" lang="ko" xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
 <link rel="stylesheet" th:href="@{/member/css/shoebox_2.css}">
 <link rel="stylesheet" th:href="@{/member/css/shoebox_3.css}">
@@ -12,6 +11,7 @@
 </head>
 <body>
 	<th:block th:replace="~{inc/header.html :: header}"></th:block>
+	
 	<div class="container">
 		<!-- 좌측 카테고리/필터 -->
 		<aside class="side-filter">
@@ -92,8 +92,7 @@
 		</aside>
 		<!-- 우측 상품 리스트 -->
 		<main class="main-area">
-			<div class="breadcrumb">HOME &gt; WOMEN &gt; 신발 &gt; 스포츠 &gt;
-				런닝화</div>
+			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(targetCustomerType)} + ' > 런닝화'"></div>
 			<div class="topbar">
 				<div class="category-title">런닝화</div>
 				<div class="sort-dropdown">
@@ -108,7 +107,17 @@
 				</div>
 			</div>
 			<div class="product-grid">
-
+				<a th:each="image : ${productImageList.getContent()}" th:href="'/main/detailpage/productPostId=' + ${image.product.productPost.get(0).productPostId}" href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img th:src="'/common/images/product/' + ${image.fileName}" th:alt="${image.product.productName}" src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
+						<div class="item-info">
+							<h3 th:text="${image.product.brand.brandName}" class="item-info-brand" style="color: #222">아디다스</h3>
+							<p th:text="${image.product.productName}" class="item-info-name">GRADAS</p>
+							<p th:text="${#numbers.formatInteger(image.product.productPrice, '0', 'COMMA')} + '원'" class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+				<!-- 
 				<a href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
 						<img src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
@@ -119,7 +128,7 @@
 						</div>
 					</div>
 				</a>
-                    <a href="/main/detailpage" class="new-item-link">
+                <a href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
 						<img src="/common/images/adidas/CLOUDFOAM WALK LOUNGER (3).jpg"
 							alt="아디다스">
@@ -202,7 +211,7 @@
 						</div>
 					</div>
 				</a>
-
+				 -->
 			</div>
 			<!--  <nav class="pagination">
         <button class="active">1</button>
@@ -212,7 +221,7 @@
         <button>5</button>
       </nav> -->
 			<br> <br> <br> <br>
-			<th:block th:text="${sb}"></th:block>
+			<th:block th:utext="${sb}"></th:block>
 		</main>
 	</div>
 	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>

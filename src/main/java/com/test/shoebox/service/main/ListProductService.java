@@ -60,7 +60,7 @@ public class ListProductService {
 		Page<ProductImage> page = customRepository.findProductPage(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
 		
 		
-		return null;
+		return page;
 	}
 	
 }

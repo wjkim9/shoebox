@@ -61,10 +61,15 @@ public class CustomRepository {
 		
 		BooleanBuilder builder = new BooleanBuilder();
 		
+		//첫번째 이미지만
 		builder.and(productImage.sortOrder.eq(1));
 		
 		if(targetCustomerType != null) {
-			builder.and(product.targetCustomerType.eq(targetCustomerType));
+			if(targetCustomerType.equals("men") || targetCustomerType.equals("women")) {
+				builder.and((product.targetCustomerType.eq("unisex").or(product.targetCustomerType.eq(targetCustomerType))));
+			} else {
+				builder.and(product.targetCustomerType.eq(targetCustomerType));
+			}
 		}
 		
 		if(categoriesId != null) {
@@ -84,22 +89,22 @@ public class CustomRepository {
 		}
 		
 		List<ProductImage> content = jpaQueryFactory
-												.select(productImage)
-												.from(productImage)
-												.innerJoin(productImage.product, product)
-												.innerJoin(product.productPost, productPost)
-												.innerJoin(product.brand, brand)
-												.offset(pageRequest.getOffset())
-												.limit(pageRequest.getPageSize())
-												.fetch();
-		
-		Long count = jpaQueryFactory.select(product.count())
+									.select(productImage)
 									.from(productImage)
 									.innerJoin(productImage.product, product)
 									.innerJoin(product.productPost, productPost)
 									.innerJoin(product.brand, brand)
+									.where(builder)
 									.offset(pageRequest.getOffset())
 									.limit(pageRequest.getPageSize())
+									.fetch();
+		
+		Long count = jpaQueryFactory.select(productImage.count())
+									.from(productImage)
+									.innerJoin(productImage.product, product)
+									.innerJoin(product.productPost, productPost)
+									.innerJoin(product.brand, brand)
+									.where(builder)
 									.fetchOne();
 		
 		

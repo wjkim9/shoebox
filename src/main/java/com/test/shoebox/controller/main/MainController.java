@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.test.shoebox.dto.BrandDTO;
 import com.test.shoebox.dto.CategoriesDTO;
@@ -114,16 +115,26 @@ public class MainController {
 		
 		return "main/main";
 	}
-	
-	@GetMapping(value = "/listProduct")
-	public String listProduct(Model model, @PageableDefault(page = 1, size = 20) Pageable pageable, String order, String targetCustomerType, Long categoriesId, Long brandId, Integer startPrice, Integer endPrice) {
+//	http://localhost:8090/main/listProduct?targetCustomerType=asdf&categoriesId=1&brandId=1&startPrice=18000&endPrice=30000
+	@GetMapping(value = "listProduct")
+	public String listProduct(Model model, 
+		@PageableDefault(page = 0, size = 20) Pageable pageable,
+		@RequestParam(value = "order", required = false, defaultValue = "postDate") String order,
+		@RequestParam(value = "targetCustomerType", required = false) String targetCustomerType,
+		@RequestParam(value = "categoriesId", required = false) Long categoriesId, 
+		@RequestParam(value = "brandId", required = false) Long brandId, 
+		@RequestParam(value = "startPrice", required = false) Integer startPrice, 
+		@RequestParam(value = "endPrice", required = false) Integer endPrice
+	) {
 		
+		System.out.println("==============================");
 		System.out.println("order: " + order);
 		System.out.println("targetCustomerType: " + targetCustomerType);
 		System.out.println("categoriesId: " + categoriesId);
 		System.out.println("brandId: " + brandId);
 		System.out.println("startPrice: " + startPrice);
 		System.out.println("endPrice: " + endPrice);
+		
 		
 		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(order));
 		
@@ -142,17 +153,23 @@ public class MainController {
 		
 		for(int i=0; i<productImageList.getTotalPages(); i++) {
 			sb.append("""
-					<a href="/listProduct?page=%d&size=20&sort=%s,desc">%d</a>
+					<a href="/main/listProduct?page=%d&size=20&sort=%s,desc">%d</a>
 					""".formatted(i, order, i+1));
 		}
 		
 		System.out.println("sb: " + sb);
 		
+		//상품경로
+		model.addAttribute("targetCustomerType", targetCustomerType);
+		
+		//필터 출력 항목
 		model.addAttribute("brandOnFilterList", brandOnFilterList);
 		model.addAttribute("categoriesOnFilterList", categoriesOnFilterList);
 		
+		//상품 정보
 		model.addAttribute("productImageList", productImageList);
 		
+		//페이지네이션
 		model.addAttribute("sb", sb);
 		
 		
@@ -183,11 +200,11 @@ public class MainController {
 
 		return "main/register";
 	}
-	@GetMapping("/category")
-	public String category(Model model) {
-
-		return "main/category";
-	}
+//	@GetMapping("/category")
+//	public String category(Model model) {
+//
+//		return "main/category";
+//	}
 	@GetMapping("/detailpage")
 	public String detailpage(Model model) {
 

@@ -11,6 +11,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import com.test.shoebox.dto.BrandDTO;
 import com.test.shoebox.dto.CategoriesDTO;
@@ -130,6 +133,24 @@ public class DBConnectionTests {
 		
 		assertEquals(7, dtoList.size());
 		System.out.println(dtoList);
+		
+	}
+	
+	@Test
+	public void getProductListTests() {
+		PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("postDate"));
+		Page<ProductImage> pageList = listProductService.getProductList(pageRequest, "men", null, null, null, null);
+		
+		List<ProductImageDTO> list = new ArrayList<>();
+		for(ProductImage image : pageList.getContent()) {
+			list.add(image.toDTO()); 
+		}
+		
+		//남자 or 남여공용
+		assertEquals(8, list.size());
+		
+		System.out.println(list);
+		
 		
 	}
 }
