@@ -1,27 +1,112 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="inc/asset-member :: head">
-	<style>
-		
-	</style>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>로그인</title>
+  <link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
+<style>
+
+</style>
 </head>
 <body>
-	<!-- main/login -->
-	<div>
-		<button type="button" onclick="location.href='/oauth2/authorization/naver';">네이버 로그인</button>
-	</div>
-	<div>
-		<button type="button" onclick="location.href='/oauth2/authorization/google';">구글 로그인</button>
-	</div>
-	
-	<script>
+	<th:block th:replace="~{inc/header.html :: header}"></th:block>
 
-	</script>
+	<!-- 로그인/비회원 주문조회 -->
+	<div class="login-container">
+		<div class="login-title">로그인</div>
+		<div class="login-tabs">
+			<button class="login-tab active" id="tab-login" type="button">회원 로그인</button>
+			<button class="login-tab" id="tab-nonuser" type="button">비회원 주문</button>
+			<button class="login-tab" id="tab-guest" type="button">비회원 주문조회</button>
+		</div>
+		<!-- 회원 로그인 폼 -->
+		<form class="login-form" id="login-form" autocomplete="off">
+			<input type="text" placeholder="아이디를 입력해 주세요." required>
+			<input type="password" placeholder="비밀번호를 입력해 주세요." required>
+			<button class="login-btn" type="submit">로그인</button>
+		</form>
+		<!-- <!-- 비회원 로그인 폼 -->
+		<form class="login-form" id="nonuser-form" autocomplete="off">
+            <input type="text" placeholder="연락처를 입력해 주세요." required>
+            <input type="password" placeholder="생년월일을 입력해 주세요." required>
+            <button class="login-btn" type="submit" onclick="window.location='/payment/nonuser_order_terms'">비회원 주문</button>
+        </form>
+		<!-- 비회원 주문조회 폼 -->
+		<form class="guest-form" id="guest-form" autocomplete="off">
+			<input type="text" placeholder="주문번호 또는 13자리 전화번호를 입력해 주세요." required>
+			<input type="password" placeholder="생년월일을 입력해 주세요." required>
+			<button class="guest-btn" type="submit">주문/배송 조회</button>
+		</form>
+		  <div class="login-links">
+            <a href="/main/findid">아이디 찾기</a>
+            <span>|</span>
+            <a href="/main/findpw">비밀번호 찾기</a>
+            <span>|</span>
+            <a href="/main/register">회원가입</a>
+        </div>
+        <div class="login-social">
+            <button type="button" class="login-social-btn">
+                <img src="/member/images/naver_logo.png"
+                    alt="네이버"> 네이버 아이디로 로그인
+            </button>
+            <button type="button" class="login-social-btn">
+                <img
+                    src="/member/images/KakaoTalk_logo.png"
+                    alt="카카오"> 카카오 아이디로 로그인
+            </button>
+        </div>
+        <div class="guest-guide">
+                주문/배송조회 비밀번호를 잊으셨다면, 고객센터 070-123-4567로 문의해 주세요.
+                <br> 주문 시 입력한 비밀번호가 일치해야 조회가 가능합니다.
+            </div>
+	</div>
+	<a href="#" class="admin_login">관리자 로그인</a>
+	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
 </body>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tabLogin = document.getElementById('tab-login');
+    const tabNonuser = document.getElementById('tab-nonuser');
+    const tabGuest = document.getElementById('tab-guest');
+    const loginForm = document.getElementById('login-form');
+    const nonuserForm = document.getElementById('nonuser-form');
+    const guestForm = document.getElementById('guest-form');
+
+    // 기본값: 회원 로그인 폼만 보이기
+    loginForm.style.display = 'flex';
+    nonuserForm.style.display = 'none';
+    guestForm.style.display = 'none';
+
+    // 회원 로그인 탭 클릭
+    tabLogin.addEventListener('click', function() {
+        tabLogin.classList.add('active');
+        tabNonuser.classList.remove('active');
+        tabGuest.classList.remove('active');
+        loginForm.style.display = 'flex';
+        nonuserForm.style.display = 'none';
+        guestForm.style.display = 'none';
+    });
+
+    // 비회원 주문 탭 클릭
+    tabNonuser.addEventListener('click', function() {
+        tabLogin.classList.remove('active');
+        tabNonuser.classList.add('active');
+        tabGuest.classList.remove('active');
+        loginForm.style.display = 'none';
+        nonuserForm.style.display = 'flex';
+        guestForm.style.display = 'none';
+    });
+
+    // 비회원 주문조회 탭 클릭
+    tabGuest.addEventListener('click', function() {
+        tabLogin.classList.remove('active');
+        tabNonuser.classList.remove('active');
+        tabGuest.classList.add('active');
+        loginForm.style.display = 'none';
+        nonuserForm.style.display = 'none';
+        guestForm.style.display = 'flex';
+    });
+});
+</script>
+
 </html>
-
-
-
-
-
-

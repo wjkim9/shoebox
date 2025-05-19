@@ -21,7 +21,6 @@ public class OrdersDTO {
 	
     private Long ordersId;
 
-    
     private Integer ordersStatus;
 
     private Integer paymentAmount;

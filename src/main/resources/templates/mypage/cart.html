@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>장바구니</title>
+<link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
+<style>
+</style>
+</head>
+<body>
+	<th:block th:replace="~{inc/header.html :: header}"></th:block>
+
+	<div class="cart-wrap">
+		<!-- 진행 단계 표시 -->
+		<div class="cart-location">
+			<span class="active">01 장바구니</span>
+			<span class="divider"> > </span>
+			<span>02 주문서작성/결제</span>
+			<span class="divider"> > </span>
+			<span>03 주문완료</span>
+		</div>
+
+		<!-- 타이틀 -->
+		<div class="cart-title">장바구니</div>
+
+		<!-- 배송 탭 -->
+		<div class="cart-tab-row">
+			<span class="cart-tab active">일반배송</span>
+		</div>
+
+		<!-- 장바구니 테이블 -->
+		<div class="cart-table-wrap">
+			<table class="cart-table">
+				<colgroup>
+					<col style="width: 44px;">
+					<col style="width: 90px;">
+					<col style="width: auto;">
+					<col style="width: 110px;">
+					<col style="width: 90px;">
+					<col style="width: 110px;">
+					<col style="width: 120px;">
+				</colgroup>
+				<thead>
+					  <tr>
+					    <th><input type="checkbox" id="cart-check-all" class="cart-chk"></th>
+					    <th>상품정보</th>
+					    <th>상품명</th>
+					    <th>수량</th>
+					    <th>적립</th>
+					    <th>상품금액</th>
+					    <th></th>
+					  </tr>
+					</thead>
+					<tbody>
+					  <tr>
+					    <td><input type="checkbox" class="cart-chk cart-chk-item"></td>
+						<td><img class="cart-img"
+							src="https://codingapple1.github.io/shop/shoes1.jpg" alt="나이키"></td>
+						<td class="cart-prod-info">
+							<div class="cart-prod-name">나이키 NIKE MOTIVA</div>
+							<div class="cart-prod-desc">260 / 1개</div>
+						</td>
+						<td>
+							<div class="cart-qty-wrap">
+								<button class="cart-qty-btn minus">-</button>
+								<input type="number" class="cart-qty-input" value="1" min="1" max="99">
+								<button class="cart-qty-btn plus">+</button>
+							</div>
+							<button class="cart-qty-change-btn">변경</button>
+						</td>
+						<td class="cart-point">350P</td>
+						<td>
+							<div class="cart-price">77,000원</div>
+							<button class="cart-coupon-btn">쿠폰적용</button>
+						</td>
+						<td>
+							<div class="cart-row-actions">
+								<button class="cart-buy-btn">바로구매</button>
+								<button class="cart-delete-btn">
+								<img src="/member/images/delete.png" class="delete-icon" style="width: 18px; position: relative; top: 2px;">
+								삭제</button>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<th><input type="checkbox" class="cart-chk cart-chk-item"></th>
+						<td><img class="cart-img"
+							src="https://codingapple1.github.io/shop/shoes2.jpg" alt="아디다스"></td>
+						<td class="cart-prod-info">
+							<div class="cart-prod-name">아디다스 VL COURT BASE</div>
+							<div class="cart-prod-desc">250 / 1개</div>
+						</td>
+						<td>
+							<div class="cart-qty-wrap">
+								<button class="cart-qty-btn minus">-</button>
+								<input type="number" class="cart-qty-input" value="1" min="1" max="99">
+								<button class="cart-qty-btn plus">+</button>
+							</div>
+							<button class="cart-qty-change-btn">변경</button>
+						</td>
+						<td class="cart-point">350P</td>
+						<td>
+							<div class="cart-price">69,000원</div>
+							<button class="cart-coupon-btn">쿠폰적용</button>
+						</td>
+						<td>
+							<div class="cart-row-actions">
+								<button class="cart-buy-btn">바로구매</button>
+								<button class="cart-delete-btn">
+                                <img src="/member/images/delete.png" class="delete-icon" style="width: 18px; position: relative; top: 2px;
+                                ">
+                                삭제</button>
+								
+							</div>
+						</td>
+					</tr>
+				</tbody>
+				<tfoot>
+					<!-- 필요시 합계, 안내문구 등 추가 -->
+				</tfoot>
+			</table>
+		</div>
+
+		<!-- 상단 선택삭제/배송변경/품절삭제 버튼 -->
+		<div class="cart-top-actions">
+			<button class="cart-top-btn">선택삭제</button>
+			<button class="cart-top-btn">배송변경</button>
+			<button class="cart-top-btn red">품절/판매종료 삭제</button>
+		</div>
+
+		<!-- 금액 요약 -->
+		<div class="cart-summary-wrap">
+			<div class="cart-summary-row">
+				<div class="cart-summary-item">
+					<span class="cart-summary-label">주문금액</span>
+					<span class="cart-summary-value">198,000원</span>
+				</div>
+				<img src="/member/images/substract.png" class="cart-summary-icon"
+					alt="substract">
+				<div class="cart-summary-item">
+					<span class="cart-summary-label">총 할인금액</span>
+					<span class="cart-summary-value">52,000원</span>
+				</div>
+				<img src="/member/images/equal.png" class="cart-summary-icon" alt="equal">
+				<div class="cart-summary-item total">
+					<span class="cart-summary-label">결제예정금액</span>
+					<span class="cart-summary-value">146,000원</span>
+				</div>
+			</div>
+			<div class="cart-summary-detail-row">
+				<div class="cart-summary-detail-col">
+					<span class="cart-summary-detail-label">상품금액</span>
+					<span class="cart-summary-detail-value">198,000원</span>
+				</div>
+				<div class="cart-summary-detail-col">
+					<span class="cart-summary-detail-label">추가 배송비</span>
+					<span class="cart-summary-detail-value">0원</span>
+				</div>
+				<div class="cart-summary-detail-col">
+					<span class="cart-summary-detail-label">총 할인금액</span> 
+					<span class="cart-summary-detail-value">52,000원</span>
+				</div>
+				<div class="cart-summary-detail-col">
+					<span class="cart-summary-detail-label">예상 적립금</span>
+                <span class="cart-summary-detail-value">700P</span>
+				</div>
+				<div class="cart-summary-detail-col">
+					<span class="cart-summary-detail-label">결제예정금액</span>
+					<span class="cart-summary-detail-value" style="color: #ba0a0a;">146,000원</span>
+				</div>
+			</div>
+		</div>
+
+		<!-- 주문/쇼핑 계속 버튼 -->
+		<div class="cart-action-row">
+			<button class="cart-action-btn" onclick="window.location.href='/payment/orderlist'">주문하기</button>
+			<button class="cart-action-btn_secondary" onclick="window.location.href='/main/'">계속 쇼핑하기</button>
+		</div>
+
+		<!-- 안내문구 -->
+		<div class="cart-info-box">
+			<img src="/member/images/exclamation.png"
+				style="width: 17px; margin-right: 5px; position: relative; top: 3px;">
+			<b style="color: black;">상품 주문 전 꼭 확인해주세요!</b>
+			<br>
+			- A/S는 제품 ABC
+			A/S센터 및 제조사별 A/S센터에서 가능합니다.<br>
+			- 상품 주문 후 7일 이내에 교환/반품이 가능합니다.<br>
+			- 상품에 따라 배송비가 추가될 수 있습니다.<br>
+			- 기타 자세한 내용은 고객센터를 참고해 주세요.<br>
+			- 일부 상품은 주문 후 품절될 수 있습니다.<br>
+			- 결제완료 후 주문내역은 마이페이지에서 확인 가능합니다.<br>
+			- 주문 전 상품정보와 배송정보를 반드시 확인하세요.<br>
+		</div>
+	</div>
+	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
+</body>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const checkAll = document.getElementById('cart-check-all');
+  const items = document.querySelectorAll('.cart-chk-item');
+
+  // 상단 체크박스 클릭 시 하위 모두 체크/해제
+  checkAll.addEventListener('change', function() {
+    items.forEach(function(chk) {
+      chk.checked = checkAll.checked;
+    });
+  });
+
+  // 하위 체크박스 상태에 따라 상단 체크박스도 자동 변경
+  items.forEach(function(chk) {
+    chk.addEventListener('change', function() {
+      // 모두 체크되어 있으면 상단도 체크, 아니면 해제
+      checkAll.checked = Array.from(items).every(function(item) {return item.checked;});
+    });
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+	  // 모든 수량 조절 영역에 대해 이벤트 바인딩
+	  document.querySelectorAll('.cart-qty-wrap').forEach(function(wrap) {
+	    const minusBtn = wrap.querySelector('.cart-qty-btn.minus');
+	    const plusBtn = wrap.querySelector('.cart-qty-btn.plus');
+	    const input = wrap.querySelector('.cart-qty-input');
+
+	    // - 버튼 클릭
+	    minusBtn.addEventListener('click', function() {
+	      let value = parseInt(input.value, 10);
+	      if (value > parseInt(input.min, 10)) {
+	        input.value = value - 1;
+	      }
+	    });
+
+	    // + 버튼 클릭
+	    plusBtn.addEventListener('click', function() {
+	      let value = parseInt(input.value, 10);
+	      if (input.max === "" || value < parseInt(input.max, 10)) {
+	        input.value = value + 1;
+	      }
+	    });
+	  });
+	});
+
+</script>
+
+
+</html>
