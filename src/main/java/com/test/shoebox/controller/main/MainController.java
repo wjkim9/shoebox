@@ -17,6 +17,7 @@ import com.test.shoebox.entity.EventPost;
 import com.test.shoebox.entity.MainBanner;
 import com.test.shoebox.entity.Product;
 import com.test.shoebox.entity.ProductImage;
+import com.test.shoebox.entity.ProductPost;
 import com.test.shoebox.repository.BrandRepository;
 import com.test.shoebox.repository.MainBannerRepository;
 import com.test.shoebox.service.main.ListProductService;
@@ -93,7 +94,6 @@ public class MainController {
 				rcmdPrdtList.add(itemList);
 			}
 		}
-		
 		
 		model.addAttribute("banner", banner);
 		

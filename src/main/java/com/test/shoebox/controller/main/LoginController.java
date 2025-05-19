@@ -9,16 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/main")
 public class LoginController {
 	
-	@GetMapping("/login")
-	public String login(Model model) {
-		
-		return "main/login";
-	}
-	
-	@GetMapping("/register")
-	public String register(Model model) {
-		
-		return "main/register";
-	}
+//	@GetMapping("/login")
+//	public String login(Model model) {
+//		
+//		return "main/login";
+//	}
+//	
+//	@GetMapping("/register")
+//	public String register(Model model) {
+//		
+//		return "main/register";
+//	}
 	
 }

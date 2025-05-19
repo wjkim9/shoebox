@@ -76,7 +76,7 @@
         <div class="new-grid">
             <div class="new-item" th:each="newProduct, status : ${newProductList}">
             	<th:block th:if="${status.count}">
-                <img th:src="'/common/images/product/' + ${newProduct.fileName}" th:alt="${newProduct.product.brand.brandName}" src="/common/images/23732_1712905511772.jpg" alt="아디다스">
+                <img th:src="'/common/images/product/' + ${newProduct.fileName}" th:alt="${newProduct.product.brand.brandName}"/>
                 <div class="item-info">
                     <h3 th:text="${newProduct.product.brand.brandName}">아디다스</h3>
                     <p th:text="${newProduct.product.productName}">삼바</p>
