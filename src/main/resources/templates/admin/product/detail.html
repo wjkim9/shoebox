@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/default_layout}">
+<head>
+    <title>상품 상세보기</title>
+    <link rel="stylesheet" th:href="@{/css/product-detail.css}" />
+</head>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<body>
+<section layout:fragment="content">
+    <div class="product-detail-container">
+        <!-- 상단 네비게이션 -->
+        <div class="breadcrumb">
+            <a th:href="@{/}">홈</a> &gt;
+            <a th:href="@{/category/{id}(id=${product.categoriesId})}" th:text="${category.name}">카테고리</a> &gt;
+            <span th:text="${product.productName}">상품명</span>
+        </div>
+
+        <div class="product-detail-content">
+            <!-- 상품 이미지 섹션 -->
+            <div class="product-image-section">
+                <div class="main-image-container">
+                    <img th:src="@{/images/products/{id}/{mainImage}(id=${product.productId}, mainImage=${product.mainImage})}" alt="상품 메인 이미지" class="main-image">
+                </div>
+                <div class="additional-images" th:if="${not #lists.isEmpty(additionalImages)}">
+                    <div class="thumbnail" th:each="image : ${additionalImages}">
+                        <img th:src="@{/images/products/{id}/{image}(id=${product.productId}, image=${image})}" alt="추가 이미지" class="thumbnail-image">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상품 정보 섹션 -->
+            <div class="product-info-section">
+                <div class="brand-name" th:text="${brand.brandName}">브랜드명</div>
+                <h1 class="product-name" th:text="${product.productName}">상품명</h1>
+
+                <div class="product-code">
+                    <span>상품코드: </span>
+                    <span th:text="${product.productId}">상품코드</span>
+                </div>
+
+                <div class="price-section">
+                    <div class="original-price" th:if="${product.discountRate > 0}">
+                        <del th:text="${#numbers.formatDecimal(product.productPrice, 0, 'COMMA', 0, 'POINT')} + '원'">원래가격</del>
+                    </div>
+                    <div class="current-price">
+                        <span class="discount-rate" th:if="${product.discountRate > 0}" th:text="${product.discountRate} + '%'">할인율</span>
+                        <span class="price" th:text="${#numbers.formatDecimal(product.productPrice * (100 - product.discountRate) / 100, 0, 'COMMA', 0, 'POINT')} + '원'">가격</span>
+                    </div>
+                </div>
+
+                <div class="product-info">
+                    <div class="info-row">
+                        <span class="info-label">성별</span>
+                        <span class="info-value" th:switch="${product.targetCustomerType}">
+                            <span th:case="'MEN'">남성</span>
+                            <span th:case="'WOMEN'">여성</span>
+                            <span th:case="'UNISEX'">공용</span>
+                            <span th:case="'KIDS'">키즈</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 사이즈 선택 -->
+                <div class="size-selection">
+                    <div class="section-title">사이즈 선택</div>
+                    <div class="size-options">
+                        <div th:each="stock : ${stocks}" class="size-option"
+                             th:classappend="${stock.stock <= 0 ? 'out-of-stock' : ''}"
+                             th:data-size="${stock.size}"
+                             th:data-stock="${stock.stock}">
+                            <span th:text="${stock.size}">사이즈</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 수량 선택 -->
+                <div class="quantity-selection">
+                    <div class="section-title">수량</div>
+                    <div class="quantity-controls">
+                        <button class="quantity-btn decrease-btn">-</button>
+                        <input type="number" id="quantity" class="quantity-input" value="1" min="1" max="99">
+                        <button class="quantity-btn increase-btn">+</button>
+                    </div>
+                </div>
+
+                <div class="selected-options">
+                    <div class="selected-option-row" style="display: none;" id="selected-option-template">
+                        <div class="selected-size">사이즈: <span class="size-value"></span></div>
+                        <div class="selected-quantity">
+                            <button class="option-quantity-btn decrease-btn">-</button>
+                            <input type="number" class="option-quantity-input" value="1" min="1" max="99" readonly>
+                            <button class="option-quantity-btn increase-btn">+</button>
+                        </div>
+                        <div class="selected-price">
+                            <span class="option-price-value"></span>원
+                        </div>
+                        <button class="remove-option-btn">X</button>
+                    </div>
+                </div>
+
+                <!-- 총 금액 -->
+                <div class="total-price-section">
+                    <div class="total-price-label">총 상품 금액</div>
+                    <div class="total-price-value">0원</div>
+                </div>
+
+                <!-- 구매 버튼 -->
+                <div class="purchase-buttons">
+                    <button id="add-to-cart" class="btn btn-secondary">장바구니 담기</button>
+                    <button id="buy-now" class="btn btn-primary">바로 구매하기</button>
+                </div>
+
+                <!-- 좋아요 및 공유 버튼 -->
+                <div class="social-buttons">
+                    <button id="wishlist-button" class="social-btn">
+                        <i class="far fa-heart"></i> <span>찜하기</span>
+                    </button>
+                    <button id="share-button" class="social-btn">
+                        <i class="fas fa-share-alt"></i> <span>공유하기</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 상품 상세 정보 탭 -->
+        <div class="product-tabs">
+            <div class="tab-navigation">
+                <button class="tab-button active" data-tab="description">상품 설명</button>
+                <button class="tab-button" data-tab="details">상세 정보</button>
+                <button class="tab-button" data-tab="reviews">리뷰 <span th:text="'(' + ${#lists.size(reviews)} + ')'"></span></button>
+                <button class="tab-button" data-tab="qa">문의</button>
+                <button class="tab-button" data-tab="shipping">배송/교환/반품 안내</button>
+            </div>
+
+            <div class="tab-content">
+                <!-- 상품 설명 탭 -->
+                <div id="description" class="tab-pane active">
+                    <div class="product-description" th:utext="${product.description}">
+                        상품 설명 내용이 들어갑니다.
+                    </div>
+                </div>
+
+                <!-- 상세 정보 탭 -->
+                <div id="details" class="tab-pane">
+                    <div class="product-details">
+                        <table class="details-table">
+                            <tbody>
+                            <tr>
+                                <th>브랜드</th>
+                                <td th:text="${brand.brandName}">브랜드명</td>
+                            </tr>
+                            <tr>
+                                <th>상품명</th>
+                                <td th:text="${product.productName}">상품명</td>
+                            </tr>
+                            <tr>
+                                <th>상품코드</th>
+                                <td th:text="${product.productId}">상품코드</td>
+                            </tr>
+                            <tr>
+                                <th>타겟 고객</th>
+                                <td th:switch="${product.targetCustomerType}">
+                                    <span th:case="'MEN'">남성</span>
+                                    <span th:case="'WOMEN'">여성</span>
+                                    <span th:case="'UNISEX'">공용</span>
+                                    <span th:case="'KIDS'">키즈</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>상품 그룹</th>
+                                <td th:text="${productGroup.productGroupName}">상품그룹명</td>
+                            </tr>
+                            <tr>
+                                <th>출시일</th>
+                                <td th:text="${#temporals.format(product.productRegisterDate, 'yyyy-MM-dd')}">출시일</td>
+                            </tr>
+                            <!-- 추가 상품 상세 정보 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 리뷰 탭 -->
+                <div id="reviews" class="tab-pane">
+                    <div class="reviews-container">
+                        <div class="review-summary">
+                            <div class="average-rating">
+                                <div class="rating-value" th:text="${averageRating}">4.5</div>
+                                <div class="rating-stars">
+                                    <!-- 별점 표현 -->
+                                    <span class="stars" th:data-rating="${averageRating}">★★★★★</span>
+                                </div>
+                                <div class="rating-count" th:text="${#lists.size(reviews)} + '개의 리뷰'">리뷰 개수</div>
+                            </div>
+                            <div class="rating-breakdown">
+                                <!-- 별점 분포 -->
+                                <div class="rating-bar" th:each="i : ${#numbers.sequence(5, 1, -1)}">
+                                    <div class="rating-label" th:text="${i} + '점'">5점</div>
+                                    <div class="rating-bar-container">
+                                        <div class="rating-bar-filled" th:style="'width:' + ${ratingCounts.get(i) * 100 / #lists.size(reviews)} + '%'"></div>
+                                    </div>
+                                    <div class="rating-percentage" th:text="${ratingCounts.get(i) * 100 / #lists.size(reviews)} + '%'">퍼센트</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="review-list">
+                            <div class="review-sort">
+                                <select id="review-sort-option" class="form-select">
+                                    <option value="recent">최신순</option>
+                                    <option value="rating-high">평점 높은순</option>
+                                    <option value="rating-low">평점 낮은순</option>
+                                </select>
+                            </div>
+
+                            <div class="review-item" th:each="review : ${reviews}">
+                                <div class="review-header">
+                                    <div class="review-rating">
+                                        <span class="stars" th:data-rating="${review.rating}">★★★★★</span>
+                                    </div>
+                                    <div class="review-user" th:text="${review.username}">사용자명</div>
+                                    <div class="review-date" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd')}">작성일</div>
+                                </div>
+                                <div class="review-product-option" th:text="'구매 옵션: ' + ${review.size}">구매 옵션</div>
+                                <div class="review-content" th:text="${review.content}">리뷰 내용</div>
+                                <div class="review-images" th:if="${not #lists.isEmpty(review.images)}">
+                                    <img th:each="image : ${review.images}" th:src="@{/images/reviews/{image}(image=${image})}" alt="리뷰 이미지" class="review-image">
+                                </div>
+                                <div class="review-helpful">
+                                    <button class="helpful-btn" th:data-review-id="${review.id}">
+                                        <i class="far fa-thumbs-up"></i> 도움돼요
+                                        <span class="helpful-count" th:text="${review.helpfulCount}">0</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 리뷰 페이지네이션 -->
+                            <div class="pagination" th:if="${reviewsTotalPages > 1}">
+                                <a th:href="@{/product/{id}(id=${product.productId}, reviewPage=1)}" class="page-link" th:class="${reviewsCurrentPage == 1 ? 'disabled' : ''}">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                                <a th:href="@{/product/{id}(id=${product.productId}, reviewPage=${reviewsCurrentPage - 1})}" class="page-link" th:class="${reviewsCurrentPage == 1 ? 'disabled' : ''}">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                                <a th:each="page : ${#numbers.sequence(reviewsStartPage, reviewsEndPage)}"
+                                   th:href="@{/product/{id}(id=${product.productId}, reviewPage=${page})}"
+                                   class="page-link" th:class="${reviewsCurrentPage == page ? 'active' : ''}">
+                                    <span th:text="${page}">1</span>
+                                </a>
+                                <a th:href="@{/product/{id}(id=${product.productId}, reviewPage=${reviewsCurrentPage + 1})}" class="page-link" th:class="${reviewsCurrentPage == reviewsTotalPages ? 'disabled' : ''}">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                                <a th:href="@{/product/{id}(id=${product.productId}, reviewPage=${reviewsTotalPages})}" class="page-link" th:class="${reviewsCurrentPage == reviewsTotalPages ? 'disabled' : ''}">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 문의 탭 -->
+                <div id="qa" class="tab-pane">
+                    <div class="qa-container">
+                        <div class="qa-header">
+                            <button id="write-question-btn" class="btn btn-primary">문의하기</button>
+                        </div>
+
+                        <div class="qa-list">
+                            <div class="qa-item" th:each="question : ${questions}">
+                                <div class="qa-title" th:classappend="${question.isAnswered ? 'answered' : 'waiting'}">
+                                    <span class="qa-status" th:text="${question.isAnswered ? '답변완료' : '답변대기'}">상태</span>
+                                    <span class="qa-type" th:text="${question.type}">문의유형</span>
+                                    <span class="qa-subject" th:text="${question.subject}">문의제목</span>
+                                    <span class="qa-user" th:text="${question.username}">작성자</span>
+                                    <span class="qa-date" th:text="${#temporals.format(question.createdAt, 'yyyy-MM-dd')}">작성일</span>
+                                    <span class="qa-toggle">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </span>
+                                </div>
+                                <div class="qa-content">
+                                    <div class="qa-question-content">
+                                        <span class="q-label">Q</span>
+                                        <div th:text="${question.content}">문의 내용</div>
+                                    </div>
+                                    <div class="qa-answer-content" th:if="${question.isAnswered}">
+                                        <span class="a-label">A</span>
+                                        <div>
+                                            <div class="answer-date" th:text="${#temporals.format(question.answeredAt, 'yyyy-MM-dd')}">답변일</div>
+                                            <div th:text="${question.answer}">답변 내용</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 문의 페이지네이션 -->
+                            <div class="pagination" th:if="${questionsTotalPages > 1}">
+                                <a th:href="@{/product/{id}(id=${product.productId}, qaPage=1)}" class="page-link" th:class="${questionsCurrentPage == 1 ? 'disabled' : ''}">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </a>
+                                <a th:href="@{/product/{id}(id=${product.productId}, qaPage=${questionsCurrentPage - 1})}" class="page-link" th:class="${questionsCurrentPage == 1 ? 'disabled' : ''}">
+                                    <i class="fas fa-angle-left"></i>
+                                </a>
+                                <a th:each="page : ${#numbers.sequence(questionsStartPage, questionsEndPage)}"
+                                   th:href="@{/product/{id}(id=${product.productId}, qaPage=${page})}"
+                                   class="page-link" th:class="${questionsCurrentPage == page ? 'active' : ''}">
+                                    <span th:text="${page}">1</span>
+                                </a>
+                                <a th:href="@{/product/{id}(id=${product.productId}, qaPage=${questionsCurrentPage + 1})}" class="page-link" th:class="${questionsCurrentPage == questionsTotalPages ? 'disabled' : ''}">
+                                    <i class="fas fa-angle-right"></i>
+                                </a>
+                                <a th:href="@{/product/{id}(id=${product.productId}, qaPage=${questionsTotalPages})}" class="page-link" th:class="${questionsCurrentPage == questionsTotalPages ? 'disabled' : ''}">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 배송/교환/반품 안내 탭 -->
+                <div id="shipping" class="tab-pane">
+                    <div class="shipping-info">
+                        <h3>배송 안내</h3>
+                        <table class="info-table">
+                            <tbody>
+                            <tr>
+                                <th>배송 방법</th>
+                                <td>택배</td>
+                            </tr>
+                            <tr>
+                                <th>배송 지역</th>
+                                <td>전국</td>
+                            </tr>
+                            <tr>
+                                <th>배송 비용</th>
+                                <td>무료 (30,000원 이상 구매 시)</td>
+                            </tr>
+                            <tr>
+                                <th>배송 기간</th>
+                                <td>결제확인 후 1~3일 이내 발송 (주말 및 공휴일 제외)</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <h3>교환 및 반품 안내</h3>
+                        <table class="info-table">
+                            <tbody>
+                            <tr>
+                                <th>교환/반품 기간</th>
+                                <td>상품 수령 후 7일 이내</td>
+                            </tr>
+                            <tr>
+                                <th>교환/반품 비용</th>
+                                <td>고객 변심: 고객 부담 / 상품 하자: 판매자 부담</td>
+                            </tr>
+                            <tr>
+                                <th>교환/반품 불가 사유</th>
+                                <td>
+                                    <ul>
+                                        <li>상품 수령 후 7일이 경과한 경우</li>
+                                        <li>고객의 책임으로 상품이 훼손된 경우</li>
+                                        <li>고객의 사용으로 상품 가치가 현저히 감소한 경우</li>
+                                        <li>포장이 훼손되어 상품가치가 상실된 경우</li>
+                                        <li>고객의 요청에 따라 주문제작된 상품의 경우</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>교환/반품 절차</th>
+                                <td>
+                                    <ol>
+                                        <li>마이페이지 > 주문내역에서 교환/반품 신청</li>
+                                        <li>고객센터(1234-5678)로 연락하여 반품 접수</li>
+                                        <li>안내에 따라 상품 발송</li>
+                                        <li>반품 상품 확인 후 환불 진행</li>
+                                    </ol>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 관련 상품 -->
+        <div class="related-products">
+            <h3 class="section-title">관련 상품</h3>
+            <div class="products-slider">
+                <div class="product-card" th:each="relatedProduct : ${relatedProducts}">
+                    <a th:href="@{/product/{id}(id=${relatedProduct.productId})}">
+                        <div class="product-image">
+                            <img th:src="@{/images/products/{id}/{mainImage}(id=${relatedProduct.productId}, mainImage=${relatedProduct.mainImage})}" alt="관련 상품 이미지">
+                        </div>
+                        <div class="product-info">
+                            <div class="product-brand" th:text="${relatedProduct.brandName}">브랜드명</div>
+                            <div class="product-name" th:text="${relatedProduct.productName}">상품명</div>
+                            <div class="product-price">
+                                <span class="price" th:text="${#numbers.formatDecimal(relatedProduct.productPrice * (100 - relatedProduct.discountRate) / 100, 0, 'COMMA', 0, 'POINT')} + '원'">가격</span>
+                                <span class="discount-rate" th:if="${relatedProduct.discountRate > 0}" th:text="${relatedProduct.discountRate} + '%'">할인율</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 문의하기 모달 -->
+    <div id="question-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3>상품 문의하기</h3>
+            <form th:action="@{/product/question}" method="post">
+                <input type="hidden" name="productId" th:value="${product.productId}">
+                <div class="form-group">
+                    <label for="questionType">문의 유형</label>
+                    <select id="questionType" name="type" class="form-select" required>
+                        <option value="">선택하세요</option>
+                        <option value="상품">상품</option>
+                        <option value="배송">배송</option>
+                        <option value="교환/반품">교환/반품</option>
+                        <option value="기타">기타</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="questionSubject">제목</label>
+                    <input type="text" id="questionSubject" name="subject" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="questionContent">내용</label>
+                    <textarea id="questionContent" name="content" class="form-textarea" rows="5" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="isPrivate"> 비공개 문의
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">등록하기</button>
+                    <button type="button" class="btn btn-cancel close-modal-btn">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/js/product-detail.js}"></script>
+</section>
+</body>
+</html>

@@ -189,8 +189,12 @@
             </td>
             <td th:text="${#dates.format(product.createdAt, 'yyyy-MM-dd')}">2024-05-16</td>
             <td class="action-buttons">
-              <a th:href="@{'/admin/product/' + ${product.id}}" class="btn btn-icon btn-outline">
+              <a th:href="@{/admin/product/detail/{id}(id=${product.id})}" class="btn btn-icon btn-outline">
                 <i class="fas fa-eye"></i>
+              </a>
+
+             <!-- /*<a th:href="@{'/admin/product/detail' + ${product.id}}" class="btn btn-icon btn-outline">
+                <i class="fas fa-eye"></i>*/-->
               </a>
              <a th:href="@{'/admin/product/edit/' + ${product.id}}" class="btn btn-icon btn-outline">
                 <i class="fas fa-edit"></i>
