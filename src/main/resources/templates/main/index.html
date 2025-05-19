@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="inc/asset :: head">
-	<style>
-		
-	</style>
+<head th:replace="inc/asset-member :: head">
 </head>
+<th:block th:replace="main/fragments/main-common :: style"></th:block>
+<th:block th:replace="main/fragments/launches :: style"></th:block>
+<th:block th:replace="main/fragments/curation :: style"></th:block>
+<th:block th:replace="main/fragments/new-items :: style"></th:block>
+<th:block th:replace="main/fragments/recommended-brands :: style"></th:block>
 <body>
-	<!-- main/index.html -->
+	<!-- LAUNCHES -->
+	<th:block th:replace="main/fragments/launches :: content"></th:block>
 
-	<script>
+	<!-- CURATION -->
+	<th:block th:replace="main/fragments/curation :: content"></th:block>
 
-	</script>
+	<!-- 신상템 -->
+	<th:block th:replace="main/fragments/new-items :: content"></th:block>
+
+	<!-- 추천 브랜드 -->
+	<th:block th:replace="main/fragments/recommended-brands :: content"></th:block>
+
+	<script th:replace="main/fragments/launches :: script"></script>
+	<script th:replace="main/fragments/curation :: script"></script>
+	<script th:replace="main/fragments/recommended-brands :: script"></script>
 </body>
 </html>
 

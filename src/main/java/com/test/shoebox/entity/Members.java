@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -67,13 +68,6 @@ public class Members {
     @Column(name = "is_deleted", nullable = false)
     private Integer isDeleted;
 
-    @PrePersist
-    public void prePersist() {
-        if (this.joinDatetime == null) {
-            this.joinDatetime = LocalDateTime.now();
-        }
-    }
-
     public MembersDTO toDTO() {
         return MembersDTO.builder()
                 .membersId(this.membersId)
@@ -89,5 +83,29 @@ public class Members {
                 .isDeleted(this.isDeleted)
                 .build();
     }
+    
+    @PrePersist
+    public void prePersist() {
+        if (this.joinDatetime == null) {
+            this.joinDatetime = LocalDateTime.now();
+        }
+
+        if (this.point == null) {
+            this.point = 0;
+        }
+
+        if (this.isDeleted == null) {
+            this.isDeleted = 0;
+        }
+    }
+    
+    @PreUpdate
+    public void preUpdate() {
+        if (this.modifiedDatetime == null) {
+            this.modifiedDatetime = LocalDateTime.now();
+        }
+
+    }
+    
 }
 

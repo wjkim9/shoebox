@@ -2,24 +2,40 @@ package com.test.shoebox.dto;
 
 import java.time.LocalDateTime;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.test.shoebox.entity.CustomerService;
+import com.test.shoebox.entity.Members;
 
-@Getter
-@Setter
-@ToString
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class CustomerServiceDTO {
-	private Long customerServiceId;
-	private String title;
-	private String content;
-	private LocalDateTime writeDate;
-	private String answerContent;
-	private LocalDateTime answerDate;
-	private String category;
-	private Long membersId;
-	private Long parentId;
+    private Long customerServiceId;
+    private String title;
+    private String content;
+    private LocalDateTime writeDate;
+    private String answerContent;
+    private LocalDateTime answerDate;
+    private String category;
+    private Long membersId;
+    private Long parentId;
 
+    public CustomerService toEntity(Members members, CustomerService parent) {
+        return CustomerService.builder()
+                .customerServiceId(this.customerServiceId)
+                .title(this.title)
+                .content(this.content)
+                .writeDate(this.writeDate)
+                .answerContent(this.answerContent)
+                .answerDate(this.answerDate)
+                .category(this.category)
+                .members(members)
+                .parent(parent)
+                .build();
+    }
 }
