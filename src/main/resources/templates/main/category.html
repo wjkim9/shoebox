@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
 <link rel="stylesheet" th:href="@{/member/css/shoebox_2.css}">
 <link rel="stylesheet" th:href="@{/member/css/shoebox_3.css}">
@@ -211,6 +212,7 @@
         <button>5</button>
       </nav> -->
 			<br> <br> <br> <br>
+			<th:block th:text="${sb}"></th:block>
 		</main>
 	</div>
 	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>

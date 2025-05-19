@@ -3,8 +3,12 @@ package com.test.shoebox.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.test.shoebox.entity.Brand;
 import com.test.shoebox.entity.Product;
@@ -15,6 +19,13 @@ import lombok.RequiredArgsConstructor;
 import static com.test.shoebox.entity.QProduct.product;
 import static com.test.shoebox.entity.QProductPost.productPost;
 import static com.test.shoebox.entity.QProductImage.productImage;
+import static com.test.shoebox.entity.QCategories.categories;
+import static com.test.shoebox.entity.QBrand.brand;
+import static com.test.shoebox.entity.QProductStock.productStock;
+import static com.test.shoebox.entity.QProductStockOrder.productStockOrder;
+import static com.test.shoebox.entity.QOrderReview.orderReview;
+
+
 
 @Repository
 @RequiredArgsConstructor
@@ -44,8 +55,57 @@ public class CustomRepository {
 								.orderBy(productPost.viewCount.desc())
 								.fetch();
 	}
+
+	public Page<ProductImage> findProductPage(PageRequest pageRequest, String targetCustomerType,
+			Long categoriesId, Long brandId, Integer startPrice, Integer endPrice) {
+		
+		BooleanBuilder builder = new BooleanBuilder();
+		
+		builder.and(productImage.sortOrder.eq(1));
+		
+		if(targetCustomerType != null) {
+			builder.and(product.targetCustomerType.eq(targetCustomerType));
+		}
+		
+		if(categoriesId != null) {
+			builder.and(categories.categoriesId.eq(categoriesId));
+		}
+		
+		if(brandId != null) {
+			builder.and(brand.brandId.eq(brandId));
+		}
+		
+		if(startPrice != null) {
+			builder.and(product.productPrice.goe(startPrice));
+		}
+		
+		if(startPrice != null) {
+			builder.and(product.productPrice.loe(endPrice));
+		}
+		
+		List<ProductImage> content = jpaQueryFactory
+												.select(productImage)
+												.from(productImage)
+												.innerJoin(productImage.product, product)
+												.innerJoin(product.productPost, productPost)
+												.innerJoin(product.brand, brand)
+												.offset(pageRequest.getOffset())
+												.limit(pageRequest.getPageSize())
+												.fetch();
+		
+		Long count = jpaQueryFactory.select(product.count())
+									.from(productImage)
+									.innerJoin(productImage.product, product)
+									.innerJoin(product.productPost, productPost)
+									.innerJoin(product.brand, brand)
+									.offset(pageRequest.getOffset())
+									.limit(pageRequest.getPageSize())
+									.fetchOne();
+		
+		
+		return new PageImpl<>(content, pageRequest, count);
 	
-	
+	}
 	
 	
 }

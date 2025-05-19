@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -111,7 +116,17 @@ public class MainController {
 	}
 	
 	@GetMapping(value = "/listProduct")
-	public String listProduct(Model model) {
+	public String listProduct(Model model, @PageableDefault(page = 1, size = 20) Pageable pageable, String order, String targetCustomerType, Long categoriesId, Long brandId, Integer startPrice, Integer endPrice) {
+		
+		System.out.println("order: " + order);
+		System.out.println("targetCustomerType: " + targetCustomerType);
+		System.out.println("categoriesId: " + categoriesId);
+		System.out.println("brandId: " + brandId);
+		System.out.println("startPrice: " + startPrice);
+		System.out.println("endPrice: " + endPrice);
+		
+		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(order));
+		
 		
 		//필터로 보여줄 항목
 		//브랜드
@@ -120,12 +135,28 @@ public class MainController {
 		List<CategoriesDTO> categoriesOnFilterList = mainService.getCategoriesOnFilter();
 		
 		
+		//상품목록
+		Page<ProductImage> productImageList = listProductService.getProductList(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
+		
+		StringBuilder sb = new StringBuilder();
+		
+		for(int i=0; i<productImageList.getTotalPages(); i++) {
+			sb.append("""
+					<a href="/listProduct?page=%d&size=20&sort=%s,desc">%d</a>
+					""".formatted(i, order, i+1));
+		}
+		
+		System.out.println("sb: " + sb);
+		
 		model.addAttribute("brandOnFilterList", brandOnFilterList);
 		model.addAttribute("categoriesOnFilterList", categoriesOnFilterList);
 		
+		model.addAttribute("productImageList", productImageList);
+		
+		model.addAttribute("sb", sb);
 		
 		
-		return "main/listProduct";
+		return "main/category";
 	}
 	
 

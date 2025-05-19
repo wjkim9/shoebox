@@ -5,6 +5,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.test.shoebox.dto.ProductDTO;
@@ -47,6 +49,18 @@ public class ListProductService {
 		List<ProductImage> rcmdPrdtList = customRepository.findByProductImageByBrand(brand, maxFetch);
 		
 		return rcmdPrdtList;
+	}
+	
+	
+	//상품 목록
+	public Page<ProductImage> getProductList(PageRequest pageRequest, String targetCustomerType, Long categoriesId,
+			Long brandId, Integer startPrice, Integer endPrice) {
+		
+		//Page<ProductImage> page = CustomRepository.findProductPage(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
+		Page<ProductImage> page = customRepository.findProductPage(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
+		
+		
+		return null;
 	}
 	
 }
