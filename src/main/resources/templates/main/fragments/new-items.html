@@ -77,8 +77,8 @@
             <a href="/main/category" class="view-more">MORE ></a>
         </div>
         <div class="new-grid">
-            <a href="/main/detailpage" class="new-item-link">
-                <div class="new-item" th:each="newProduct, status : ${newProductList}">
+            <a th:href="'/main/detailpage?productPostId=' + ${newProduct.product.productPost.get(0).productPostId}" href="/main/detailpage" class="new-item-link"  th:each="newProduct, status : ${newProductList}">
+                <div class="new-item">
                     <th:block th:if="${status.count}">
                     <img th:src="'/common/images/product/' + ${newProduct.fileName}" th:alt="${newProduct.product.brand.brandName}" src="/common/images/23732_1712905511772.jpg" alt="아디다스">
                     <div class="item-infoma">
