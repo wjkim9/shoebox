@@ -101,12 +101,6 @@
                 <table class="order-table">
                     <thead>
                     <tr>
-                        <th>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="selectAllOrders">
-                                <span class="checkmark"></span>
-                            </label>
-                        </th>
                         <th>주문번호</th>
                         <th>주문일시</th>
                         <th>주문자</th>
@@ -118,162 +112,59 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:if="${orders}">
+                    <tr th:if="${orders.isEmpty()}">
                         <td colspan="9" class="no-data">주문 내역이 없습니다.</td>
                     </tr>
-                    <tr th:each="order : ${orders}">
-                        <td>
-                            <label class="checkbox-label">
-                                <input type="checkbox" class="order-checkbox" th:value="${order.id}">
-                                <span class="checkmark"></span>
-                            </label>
-                        </td>
-                        <td th:text="${order.orderNumber}">20240516-123456</td>
-                        <td th:text="${order.orderDateStr}">2024-05-16 14:30</td>
-
+                    <tr th:each="order : ${orders}" th:unless="${orders.isEmpty()}">
+                        <td th:text="${order.ordersId}">20240516-123456</td>
+                        <td th:text="${#temporals.format(order.ordersDate, 'yyyy-MM-dd HH:mm')}">2024-05-16 14:30</td>
                         <td class="customer-info">
-                            <div th:text="${order.customerName}">홍길동</div>
-                            <div class="text-light" th:text="${order.customerPhone}">010-1234-5678</div>
+                            <div th:text="${order.receiverName}">홍길동</div>
+                            <div class="text-light" th:text="${order.receiverContact}">010-1234-5678</div>
                         </td>
                         <td class="product-info">
-                            <div class="product-name" th:text="${order.mainProductName + (order.productCount > 1 ? ' 외 ' + (order.productCount - 1) + '건' : '')}">
-                                나이키 에어맥스 90 외 2건
+                            <div class="product-name"
+                                 th:text="${order.mainProductName + ' 외 ' + (order.productCount - 1) + '건'}">
                             </div>
-                            <div class="order-option text-light" th:text="${'사이즈: ' + order.mainProductSize}">사이즈: 260</div>
+                            <div class="order-option text-light"
+                                 th:text="${'사이즈: ' + order.mainProductSize}">
+                            </div>
                         </td>
                         <td class="price-info">
-                            <div th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}">89,000원</div>
+                            <div th:text="${#numbers.formatInteger(order.paymentAmount + order.shippingFee, 0, 'COMMA') + '원'}">89,000원</div>
                             <div class="payment-method text-light" th:text="${order.paymentMethod}">카드결제</div>
                         </td>
                         <td>
-                <span class="status-badge" th:classappend="${'status-' + #strings.toLowerCase(order.status)}"
-                      th:text="${order.statusName}">결제완료</span>
+        <span class="status-badge"
+              th:classappend="${'status-' + order.ordersStatus}"
+              th:text="${order.statusName}">
+        </span>
                         </td>
                         <td class="shipping-info">
-                            <div th:text="${order.trackingCompany}">CJ대한통운</div>
-                            <div th:if="${order.trackingNumber}" class="tracking-number">
-                                <a href="#" target="_blank" th:href="${order.trackingLink}" th:text="${order.trackingNumber}">
-                                    123456789012
-                                </a>
+                            <div>택배사</div> <!-- DTO 확장 필요 -->
+                            <div class="tracking-number">
+                                <a href="#" target="_blank">123456789012</a> <!-- DTO 확장 필요 -->
                             </div>
-                            <div th:unless="${order.trackingNumber}" class="text-light">미등록</div>
                         </td>
-                        <td class="action-buttons">
-                            <a th:href="@{'/admin/orders/' + ${order.id}}" class="btn btn-icon btn-outline">
+                        <td>
+                            <a th:href="@{'/admin/orders/' + ${order.ordersId}}" class="btn btn-icon btn-outline">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <button th:if="${order.status == 'PAYMENT_COMPLETE'}"
-                                    type="button" class="btn btn-icon btn-primary status-update-btn"
-                                    th:data-id="${order.id}" data-action="preparing">
-                                <i class="fas fa-box"></i>
-                            </button>
-                            <button th:if="${order.status == 'PREPARING'}"
-                                    type="button" class="btn btn-icon btn-primary tracking-btn"
-                                    th:data-id="${order.id}">
-                                <i class="fas fa-truck"></i>
-                            </button>
                         </td>
                     </tr>
                     </tbody>
+
                 </table>
             </div>
+        </div>
+    </div>
 
-            <div class="batch-actions">
-                <button id="batchStatusBtn" class="btn btn-outline" disabled>
-                    <i class="fas fa-tasks"></i> 일괄 상태 변경
-                </button>
-                <button id="batchPrintBtn" class="btn btn-outline" disabled>
-                    <i class="fas fa-print"></i> 송장 일괄 출력
-                </button>
-            </div>
 
             <!-- 페이징 -->
             <!--/*<div class="pagination-container" >
-                <ul class="pagination">
-                    <li th:class="${orders.first ? 'disabled' : ''}">
-                        <a th:if="${!orders.first}" th:href="@{${#httpServletRequest.requestURI}(
-              page=0,
-              size=${orders.size},
-              orderDateStart=${param.orderDateStart},
-              orderDateEnd=${param.orderDateEnd},
-              orderStatus=${param.orderStatus},
-              searchType=${param.searchType},
-              searchKeyword=${param.searchKeyword}
-            )}">
-                            <i class="fas fa-angle-double-left"></i>
-                        </a>
-                        <span th:if="${orders.first}">
-              <i class="fas fa-angle-double-left"></i>
-            </span>
-                    </li>
-
-                    <li th:class="${orders.first ? 'disabled' : ''}">
-                        <a th:if="${!orders.first}" th:href="@{${#httpServletRequest.requestURI}(
-              page=${orders.number - 1},
-              size=${orders.size},
-              orderDateStart=${param.orderDateStart},
-              orderDateEnd=${param.orderDateEnd},
-              orderStatus=${param.orderStatus},
-              searchType=${param.searchType},
-              searchKeyword=${param.searchKeyword}
-            )}">
-                            <i class="fas fa-angle-left"></i>
-                        </a>
-                        <span th:if="${orders.first}">
-              <i class="fas fa-angle-left"></i>
-            </span>
-                    </li>
-
-                    <li th:each="i : ${#numbers.sequence(0, orders.totalPages - 1)}"
-                        th:if="${i >= orders.number - 2 && i <= orders.number + 2}"
-                        th:class="${i == orders.number ? 'active' : ''}">
-                        <a th:href="@{${#httpServletRequest.requestURI}(
-              page=${i},
-              size=${orders.size},
-              orderDateStart=${param.orderDateStart},
-              orderDateEnd=${param.orderDateEnd},
-              orderStatus=${param.orderStatus},
-              searchType=${param.searchType},
-              searchKeyword=${param.searchKeyword}
-            )}" th:text="${i + 1}">1</a>
-                    </li>
-
-                    <li th:class="${orders.last ? 'disabled' : ''}">
-                        <a th:if="${!orders.last}" th:href="@{${#httpServletRequest.requestURI}(
-              page=${orders.number + 1},
-              size=${orders.size},
-              orderDateStart=${param.orderDateStart},
-              orderDateEnd=${param.orderDateEnd},
-              orderStatus=${param.orderStatus},
-              searchType=${param.searchType},
-              searchKeyword=${param.searchKeyword}
-            )}">
-                            <i class="fas fa-angle-right"></i>
-                        </a>
-                        <span th:if="${orders.last}">
-              <i class="fas fa-angle-right"></i>
-            </span>
-                    </li>
-
-                    <li th:class="${orders.last ? 'disabled' : ''}">
-                        <a th:if="${!orders.last}" th:href="@{${#httpServletRequest.requestURI}(
-              page=${orders.totalPages - 1},
-              size=${orders.size},
-              orderDateStart=${param.orderDateStart},
-              orderDateEnd=${param.orderDateEnd},
-              orderStatus=${param.orderStatus},
-              searchType=${param.searchType},
-              searchKeyword=${param.searchKeyword}
-            )}">
-                            <i class="fas fa-angle-double-right"></i>
-                        </a>
-                        <span th:if="${orders.last}">
-              <i class="fas fa-angle-double-right"></i>
-            </span>
-                    </li>
-                </ul>
-            </div>
+                 Pagination content (commented out)
         </div>
+    </div>
     </div>*/-->
 
     <!-- 송장 번호 등록 모달 -->
@@ -340,8 +231,6 @@
                     </div>
                 </form>
             </div>
-        </div>
-    </div>
         </div>
     </div>
 </section>
