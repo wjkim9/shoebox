@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>마이페이지</title>
+<link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
+<link rel="stylesheet" th:href="@{/member/css/shoebox_2.css}">
+<style>
+</style>
+</head>
+<body>
+	<th:block th:replace="~{inc/header.html :: header}"></th:block>
+
+	<div class="mypage-container">
+		<!-- 상단 프로필/포인트/장바구니/찜 -->
+		<div class="profile-box">
+			<div class="profile-info">
+				<div class="profile-img">👤</div>
+				<div class="profile-text">
+					<strong>이승진 님은 통합멤버십 회원입니다.</strong>
+					<div class="profile-detail">
+						MEMBERSHIP<br>멤버십 회원 가입일 2025.05.08
+					</div>
+				</div>
+			</div>
+			<div class="profile-status">
+				<span class="status-item"> <img
+					src="/member/images/point.png" alt="포인트" width="34"> <a
+					class="status-label point" href="#" style="text-decoration: none;">5,000P</a>
+				</span> <span class="status-item"> <img
+					src="/member/images/coupon.png" alt="쿠폰" width="34"> <a
+					class="status-label coupon" href="#" style="text-decoration: none;">쿠폰
+						1개</a>
+				</span> <span class="status-item"> <img
+					src="/member/images/cart.png" alt="장바구니" width="34"> <a
+					class="status-label cart" href="/mypage/cart"
+					style="text-decoration: none;">장바구니 2개</a>
+				</span> <span class="status-item"> <img
+					src="/member/images/heart.png" alt="찜" width="34"> <a
+					class="status-label wish" href="#" style="text-decoration: none;">찜상품
+						1개</a>
+				</span>
+			</div>
+		</div>
+
+		<!-- 메인 flex 레이아웃 -->
+		<div class="mypage-main">
+			<!-- 좌측 메뉴 -->
+			<div class="mypage-menu">
+				<ul>
+					<li>
+						<button class="menu-title" type="button">나의 쇼핑내역</button>
+						<ul class="submenu">
+							<li>취소/교환/반품 신청</li>
+							<li>포인트 / 쿠폰</li>
+						</ul>
+					</li>
+					<li>
+						<button class="menu-title" type="button">나의 문의</button>
+						<ul class="submenu">
+							<li>나의 문의 내역</li>
+							<li>1:1 문의 내역</li>
+							<li>나의 상품 문의</li>
+						</ul>
+					</li>
+					<li>
+						<button class="menu-title" type="button">개인정보</button>
+						<ul class="submenu">
+							<li onclick="">배송지관리</li>
+							<li>회원정보 수정</li>
+							<li>비밀번호 변경</li>
+							<li>회원 탈퇴</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+
+			<!-- 우측 메인 컨텐츠 -->
+			<div class="mypage-content">
+				<!-- 주문 현황 -->
+				<div class="order-status">
+					<div class="order-status-item">
+						<strong>0</strong>
+						<div class="order-status-label">입금예정</div>
+					</div>
+					<div class="order-status-item">
+						<strong>0</strong>
+						<div class="order-status-label">입금확인</div>
+					</div>
+					<div class="order-status-item">
+						<strong>0</strong>
+						<div class="order-status-label">배송준비중</div>
+					</div>
+					<div class="order-status-item">
+						<strong>0</strong>
+						<div class="order-status-label">배송중</div>
+					</div>
+					<div class="order-status-item">
+						<strong>0</strong>
+						<div class="order-status-label">배송완료</div>
+					</div>
+					<div class="order-status-item">
+						<strong>0</strong>
+						<div class="order-status-label">주문취소</div>
+					</div>
+					<div class="order-status-item">
+						<strong>0</strong>
+						<div class="order-status-label">반품신청</div>
+					</div>
+
+				</div>
+
+				<!-- 1:1 문의 내역 -->
+				<div class="inquiry-section">
+					<div class="inquiry-title">최근 주문 목록</div>
+						<div class="order-item">
+							<table class="order-table-horizontal">
+								<tr>
+									<th>주문번호</th>
+									<th>상품 명</th>
+									<th>배송 현황</th>
+								</tr>
+								<tr>
+									<td>2025051101</td>
+									<td>나이키 에어맥스 365</td>
+									<td>배송 완료</td>
+								</tr>
+							</table>
+						</div>
+					<div class="no-inquiry" style="display: none;">
+						<div style="font-size: 2em;">!</div>
+						최근 주문 내역이 없습니다.
+					</div>
+				</div>
+				<div class="inquiry-section">
+					<div class="inquiry-title">나의 문의</div>
+					<div class="order-item">
+                            <table class="order-table-horizontal">
+                                <tr>
+                                    <th>주문번호</th>
+                                    <th>문의 내용</th>
+                                    <th>문의 보기</th>
+                                </tr>
+                                <tr>
+                                    <td>2025051101</td>
+                                    <td>연휴 배송은 언제쯤 오나요?</td>
+                                    <td>답변완료</td>
+                                </tr>
+                            </table>
+                        </div>
+					<div class="no-inquiry" style="display: none;">
+						<div style="font-size: 2em;">!</div>
+						문의 내역이 없습니다.
+					</div>
+				</div>
+				<div class="inquiry-section">
+					<div class="inquiry-title">나의 리뷰</div>
+					<div class="order-item">
+                            <table class="order-table-horizontal">
+                                <tr>
+                                    <th>작성일자</th>
+                                    <th>리뷰 보기</th>
+                                </tr>
+                                <tr>
+                                    <td>2025.05.27</td>
+                                    <td>나이키 에어맥스 365완전 편해요~</td>
+                                </tr>
+                            </table>
+                        </div>
+					<div class="no-inquiry" style="display: none;">
+						<div style="font-size: 2em;">!</div>
+						리뷰 작성 내역이 없습니다.
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- .mypage-main -->
+	</div>
+	<!-- .mypage-container -->
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
+	<script>
+		document.querySelectorAll('.menu-title').forEach(
+				function(btn) {
+					btn.addEventListener('click', function() {
+						const li = btn.parentElement;
+						if (li.classList.contains('active')) {
+							li.classList.remove('active');
+						} else {
+							document.querySelectorAll('.mypage-menu li')
+									.forEach(function(otherLi) {
+										otherLi.classList.remove('active');
+									});
+							li.classList.add('active');
+						}
+					});
+				});
+	</script>
+
+</body>
+</html>
