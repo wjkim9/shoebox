@@ -1,21 +1,41 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="inc/asset-damin :: head">
-	<style>
-		
-	</style>
+<html lang="ko"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{admin/admin_layout}">
+<head>
 </head>
 <body>
-	<!-- main.html -->
 
-	<script>
+<!-- 실제로 삽입되는 부분 -->
+<section layout:fragment="content" th:fragment="content">
+	<!-- 페이지 전용 CSS -->
+	<link rel="stylesheet" th:href="@{/admin/css/page-specific.css}" />
 
-	</script>
+	<div class="admin-container" style="margin-top: var(--header-height);">
+		<div class="page-header">
+			<h2>페이지 제목</h2>
+			<div>
+				<a href="#" class="btn btn-outline">
+					<i class="fas fa-chevron-left"></i> 버튼
+				</a>
+			</div>
+		</div>
+
+		<!-- 본문 내용 -->
+		<div class="panel">
+			<div class="panel-header">
+				<h3>섹션 제목</h3>
+			</div>
+			<div class="panel-body">
+				<p>이곳에 원하는 내용을 작성하세요.</p>
+			</div>
+		</div>
+	</div>
+
+	<!-- 페이지 전용 JS -->
+	<script th:src="@{/admin/js/page-specific.js}"></script>
+</section>
+
 </body>
 </html>
-
-
-
-
-
-

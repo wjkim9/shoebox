@@ -1,0 +1,235 @@
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #858796;
+    --success-color: #1cc88a;
+    --danger-color: #e74a3b;
+    --sidebar-width: 250px;
+    --header-height: 60px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f8f9fc;
+}
+
+.content-wrapper {
+    margin-left: 250px;   /* 사이드바 너비와 동일하게 */
+    padding: 20px;        /* 필요에 따라 여백 */
+}
+
+/* 헤더 스타일 */
+.header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: var(--sidebar-width);
+    height: var(--header-height);
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 0 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.header-title {
+    font-size: 1.2rem;
+    color: var(--secondary-color);
+}
+
+.header-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.admin-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-name {
+    font-weight: 600;
+}
+
+.admin-email {
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+}
+
+.btn {
+    padding: 0.375rem 0.75rem;
+    border-radius: 4px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-light {
+    background-color: #f1f3f9;
+    color: var(--secondary-color);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: linear-gradient(180deg, var(--primary-color), #224abe);
+    color: rgba(255, 255, 255, 0.8);
+    overflow-y: auto;
+    z-index: 200;
+}
+
+.sidebar-header {
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+}
+
+.sidebar-menu {
+    padding: 1rem 0;
+}
+
+.menu-item {
+    list-style: none;
+}
+
+.menu-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s;
+}
+
+.menu-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.menu-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-weight: 600;
+}
+
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.submenu.open {
+    max-height: 1000px;
+}
+
+.submenu-item {
+    list-style: none;
+}
+
+.submenu-link {
+    display: block;
+    padding: 0.6rem 1.5rem 0.6rem 3rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.submenu-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.submenu-link.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-weight: 600;
+}
+
+/* 메인 콘텐츠 영역 */
+.main-content {
+    margin-left: var(--sidebar-width);
+    margin-top: var(--header-height);
+    padding: 1.5rem;
+    flex: 1;
+    min-height: calc(100vh - var(--header-height));
+}
+
+/* 푸터 영역 */
+.footer {
+    margin-left: var(--sidebar-width);
+    padding: 1rem 1.5rem;
+    background-color: #fff;
+    color: var(--secondary-color);
+    font-size: 0.8rem;
+    text-align: center;
+    border-top: 1px solid #eaecf4;
+}
+
+/* 공통 스타일 */
+.card {
+    background-color: #fff;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.15rem 1.75rem rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #e3e6f0;
+    background-color: #f8f9fc;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.card-header h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #5a5c69;
+    margin: 0;
+}
+
+.card-body {
+    padding: 1.25rem;
+}

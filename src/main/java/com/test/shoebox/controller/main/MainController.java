@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.test.shoebox.dto.BrandDTO;
+import com.test.shoebox.dto.CategoriesDTO;
 import com.test.shoebox.entity.Brand;
 import com.test.shoebox.entity.EventPost;
 import com.test.shoebox.entity.MainBanner;
@@ -107,6 +109,25 @@ public class MainController {
 		
 		return "main/main";
 	}
+	
+	@GetMapping(value = "/listProduct")
+	public String listProduct(Model model) {
+		
+		//필터로 보여줄 항목
+		//브랜드
+		List<BrandDTO> brandOnFilterList = mainService.getBrandOnFilter();
+		//카테고리
+		List<CategoriesDTO> categoriesOnFilterList = mainService.getCategoriesOnFilter();
+		
+		
+		model.addAttribute("brandOnFilterList", brandOnFilterList);
+		model.addAttribute("categoriesOnFilterList", categoriesOnFilterList);
+		
+		
+		
+		return "main/listProduct";
+	}
+	
 
 	@GetMapping("/login")
 	public String login(Model model) {
@@ -130,6 +151,16 @@ public class MainController {
 	public String register(Model model) {
 
 		return "main/register";
+	}
+	@GetMapping("/category")
+	public String category(Model model) {
+
+		return "main/category";
+	}
+	@GetMapping("/detailpage")
+	public String detailpage(Model model) {
+
+		return "main/detailpage";
 	}
 
 }

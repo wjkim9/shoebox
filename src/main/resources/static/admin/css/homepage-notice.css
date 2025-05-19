@@ -1,0 +1,756 @@
+:root {
+    --primary-color: #4361ee;
+    --primary-light: #4895ef;
+    --primary-dark: #3f37c9;
+    --danger-color: #e63946;
+    --success-color: #38b000;
+    --warning-color: #ffb703;
+    --text-color: #333;
+    --text-light: #555;
+    --text-lighter: #777;
+    --background-color: #f8f9fa;
+    --border-color: #e0e0e0;
+    --border-radius: 8px;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --transition: all 0.2s ease;
+    --header-height: 60px;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* 레이아웃 컨테이너 */
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 페이지 헤더 */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.page-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* 패널 디자인 */
+.panel {
+    background-color: #fff;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.panel:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+.panel-header {
+    background-color: #f8fafc;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-body {
+    padding: 20px;
+}
+
+.panel-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.order-count {
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+/* 테이블 스타일 */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.order-table th,
+.order-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.order-table th {
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: var(--text-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.order-table tr {
+    transition: background-color 0.15s ease;
+}
+
+.order-table tr:hover {
+    background-color: #f1f5f9;
+}
+
+.order-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* 액션 버튼 스타일 */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    text-decoration: none;
+    gap: 6px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+}
+
+.btn-outline:hover {
+    background-color: #f1f5f9;
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #d32f2f;
+    transform: translateY(-1px);
+}
+
+.btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: 6px;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 공지사항 페이지 특화 스타일 */
+.notice-title {
+    max-width: 400px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notice-category {
+    display: inline-block;
+    padding: 4px 8px;
+    background-color: #edf2ff;
+    color: var(--primary-color);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.notice-category:hover {
+    background-color: #dae3ff;
+}
+
+.notice-status {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.notice-status-important {
+    background-color: #ffebee;
+    color: var(--danger-color);
+}
+
+.notice-status-normal {
+    background-color: #e3f2fd;
+    color: var(--primary-color);
+}
+
+/* 공지사항 상세보기 스타일 */
+.notice-details {
+    margin-bottom: 24px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.notice-details-row {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.notice-details-row:last-child {
+    border-bottom: none;
+}
+
+.notice-details-label {
+    flex: 0 0 100px;
+    background-color: #f8fafc;
+    padding: 12px 16px;
+    font-weight: 500;
+}
+
+.notice-details-value {
+    flex: 1;
+    padding: 12px 16px;
+}
+
+.notice-content {
+    margin-bottom: 24px;
+}
+
+.notice-content h4 {
+    margin-top: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 16px;
+}
+
+.notice-content-text {
+    background-color: #f8fafc;
+    padding: 16px;
+    border-radius: var(--border-radius);
+    white-space: pre-line;
+    border: 1px solid var(--border-color);
+}
+
+/* 공지사항 작성/편집 폼 */
+.notice-form {
+    margin-bottom: 24px;
+}
+
+.notice-form .form-group {
+    margin-bottom: 20px;
+}
+
+.notice-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 14px;
+}
+
+.notice-form .form-input,
+.notice-form .form-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: #fff;
+    color: var(--text-color);
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.notice-form .form-input:focus,
+.notice-form .form-select:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+.notice-form textarea {
+    width: 100%;
+    height: 300px;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    resize: vertical;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.notice-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+.notice-form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* 페이지네이션 */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.pagination li {
+    margin: 0 4px;
+}
+
+.pagination li a,
+.pagination li span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 5px;
+    border-radius: var(--border-radius);
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.pagination li a:hover {
+    background-color: #f1f5f9;
+    transform: translateY(-1px);
+}
+
+.pagination li.active a {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination li.disabled span {
+    color: var(--text-lighter);
+    background-color: #f9f9f9;
+    cursor: not-allowed;
+}
+
+/* 검색 폼 */
+.search-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-form .form-select,
+.search-form .form-input {
+    height: 42px;
+}
+
+.search-form .form-select {
+    width: 120px;
+    flex-shrink: 0;
+}
+
+.search-form .form-input {
+    flex-grow: 1;
+}
+
+/* No data 스타일 */
+.no-data {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-light);
+}
+
+/* 알림 메시지 */
+.alert {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    animation: alertFadeIn 0.3s ease;
+}
+
+.alert-success {
+    background-color: #e6f7eb;
+    color: var(--success-color);
+    border: 1px solid #d4edda;
+}
+
+.alert-danger {
+    background-color: #ffebee;
+    color: var(--danger-color);
+    border: 1px solid #f5c6cb;
+}
+
+/* 파일 첨부 */
+.file-upload {
+    margin-bottom: 20px;
+}
+
+.file-input-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.file-input {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.file-input-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: #f1f5f9;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    cursor: pointer;
+    gap: 6px;
+    transition: var(--transition);
+}
+
+.file-input-label:hover {
+    background-color: #e2e8f0;
+}
+
+.file-list {
+    margin-top: 12px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background-color: #f8fafc;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    margin-bottom: 8px;
+    transition: var(--transition);
+}
+
+.file-item:hover {
+    background-color: #f1f5f9;
+}
+
+.file-item-name {
+    flex-grow: 1;
+    font-size: 14px;
+}
+
+.file-item-action {
+    flex-shrink: 0;
+}
+
+/* 체크박스 스타일 */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 20px;
+}
+
+.checkbox-label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+}
+
+.checkbox-label input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkbox-custom {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    margin-right: 8px;
+    transition: var(--transition);
+}
+
+.checkbox-label:hover input ~ .checkbox-custom {
+    background-color: #f1f5f9;
+}
+
+.checkbox-label input:checked ~ .checkbox-custom {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.checkbox-custom:after {
+    content: "";
+    position: absolute;
+    display: none;
+    transition: var(--transition);
+}
+
+.checkbox-label input:checked ~ .checkbox-custom:after {
+    display: block;
+}
+
+.checkbox-label .checkbox-custom:after {
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+/* 모달 스타일 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 0;
+    border-radius: var(--border-radius);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    animation: modalFadeIn 0.3s;
+}
+
+.modal-header {
+    padding: 16px 20px;
+    background-color: #f8fafc;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h4 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.close-modal {
+    color: var(--text-lighter);
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.close-modal:hover {
+    color: var(--text-color);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* 애니메이션 */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes alertFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 반응형 스타일 */
+@media (max-width: 992px) {
+    .notice-details-row {
+        flex-direction: column;
+    }
+
+    .notice-details-label {
+        flex: 0 0 auto;
+    }
+
+    .search-form {
+        flex-direction: column;
+    }
+
+    .search-form .form-select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .panel-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-count {
+        margin-top: 5px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .pagination-link {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+/* 애니메이션 및 효과 추가 */
+.panel, .btn, .form-input, .form-select, .notice-category, .notice-status, .file-item {
+    will-change: transform, box-shadow;
+}
+
+/* 테이블 행 애니메이션 */
+.order-table tbody tr {
+    opacity: 0;
+    animation: fadeInRow 0.3s ease forwards;
+}
+
+@keyframes fadeInRow {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 각 행에 지연 애니메이션 적용 */
+.order-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+.order-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+.order-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+.order-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+.order-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
+.order-table tbody tr:nth-child(6) { animation-delay: 0.3s; }
+.order-table tbody tr:nth-child(7) { animation-delay: 0.35s; }
+.order-table tbody tr:nth-child(8) { animation-delay: 0.4s; }
+.order-table tbody tr:nth-child(9) { animation-delay: 0.45s; }
+.order-table tbody tr:nth-child(10) { animation-delay: 0.5s; }
+
+/* 공지사항 항목 호버 효과 */
+.order-table tr:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    z-index: 1;
+    position: relative;
+}
+
+/* 버튼 호버 효과 개선 */
+.btn:active {
+    transform: translateY(0);
+}

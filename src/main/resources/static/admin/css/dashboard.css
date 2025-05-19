@@ -1,0 +1,392 @@
+:root {
+    --primary-color: #4361ee;
+    --primary-light: #4895ef;
+    --primary-dark: #3f37c9;
+    --danger-color: #e63946;
+    --success-color: #38b000;
+    --warning-color: #ffb703;
+    --text-color: #333;
+    --text-light: #555;
+    --text-lighter: #777;
+    --background-color: #f8f9fa;
+    --border-color: #e0e0e0;
+    --border-radius: 8px;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --transition: all 0.2s ease;
+    --header-height: 60px;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* 레이아웃 컨테이너 */
+.d-flex {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.text-gray-800 {
+    color: var(--text-color);
+}
+
+.h3 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* 버튼 스타일 */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    text-decoration: none;
+    gap: 6px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-sm {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.fas {
+    margin-right: 4px;
+}
+
+/* 카드 스타일 */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin-right: -0.75rem;
+    margin-left: -0.75rem;
+}
+
+.col-xl-3, .col-md-6, .col-xl-8, .col-lg-7, .col-xl-4, .col-lg-5 {
+    position: relative;
+    width: 100%;
+    padding-right: 0.75rem;
+    padding-left: 0.75rem;
+}
+
+.col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+.col-xl-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+}
+
+.col-xl-8, .col-lg-7 {
+    flex: 0 0 66.666667%;
+    max-width: 66.666667%;
+}
+
+.col-xl-4, .col-lg-5 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+}
+
+.mb-4 {
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+.card-body {
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 1.25rem;
+}
+
+/* 상태 카드 스타일 */
+.border-left-primary, .border-left-success, .border-left-info, .border-left-warning {
+    border-left: 0.25rem solid;
+}
+
+.border-left-primary {
+    border-left-color: var(--primary-color);
+}
+
+.border-left-success {
+    border-left-color: var(--success-color);
+}
+
+.border-left-info {
+    border-left-color: var(--primary-light);
+}
+
+.border-left-warning {
+    border-left-color: var(--warning-color);
+}
+
+.shadow {
+    box-shadow: var(--shadow);
+}
+
+.h-100 {
+    height: 100% !important;
+}
+
+.py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.no-gutters {
+    margin-right: 0;
+    margin-left: 0;
+}
+
+.no-gutters > .col, .no-gutters > [class*="col-"] {
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.mr-2 {
+    margin-right: 0.5rem;
+}
+
+.text-xs {
+    font-size: 0.7rem;
+}
+
+.font-weight-bold {
+    font-weight: 600;
+}
+
+.text-primary {
+    color: var(--primary-color);
+}
+
+.text-success {
+    color: var(--success-color);
+}
+
+.text-info {
+    color: var(--primary-light);
+}
+
+.text-warning {
+    color: var(--warning-color);
+}
+
+.text-uppercase {
+    text-transform: uppercase;
+}
+
+.mb-1 {
+    margin-bottom: 0.25rem;
+}
+
+.h5 {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.col-auto {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: 100%;
+}
+
+.text-gray-300 {
+    color: var(--text-lighter);
+}
+
+/* 차트 카드 스타일 */
+.card-header {
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 0;
+    background-color: #f8fafc;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.py-3 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.m-0 {
+    margin: 0;
+}
+
+.chart-area, .chart-pie {
+    position: relative;
+    height: 20rem;
+    width: 100%;
+}
+
+.chart-pie {
+    height: 15rem;
+}
+
+.pt-4 {
+    padding-top: 1.5rem;
+}
+
+.pb-2 {
+    padding-bottom: 0.5rem;
+}
+
+/* 테이블 스타일 */
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    border-collapse: collapse;
+}
+
+.table-bordered {
+    border: 1px solid var(--border-color);
+}
+
+.table th, .table td {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-top: 1px solid var(--border-color);
+}
+
+.table-bordered th, .table-bordered td {
+    border: 1px solid var(--border-color);
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid var(--border-color);
+    background-color: #f8fafc;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.table tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+/* 상태 배지 스타일 */
+.badge {
+    display: inline-block;
+    padding: 0.25em 0.4em;
+    font-size: 75%;
+    font-weight: 600;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 50px;
+}
+
+.bg-success {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.bg-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.bg-warning {
+    background-color: var(--warning-color);
+    color: white;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 1200px) {
+    .col-xl-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+
+    .col-xl-8, .col-xl-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 992px) {
+    .col-lg-7, .col-lg-5 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .d-flex {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .d-flex .btn {
+        margin-top: 1rem;
+    }
+
+    .chart-area, .chart-pie {
+        height: 15rem;
+    }
+}
+
+/* 차트 스타일 */
+canvas {
+    max-width: 100%;
+}

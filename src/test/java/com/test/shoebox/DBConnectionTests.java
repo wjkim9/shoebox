@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.test.shoebox.dto.BrandDTO;
+import com.test.shoebox.dto.CategoriesDTO;
 import com.test.shoebox.dto.EventPostDTO;
 import com.test.shoebox.dto.ProductDTO;
 import com.test.shoebox.dto.ProductImageDTO;
@@ -109,5 +111,25 @@ public class DBConnectionTests {
 			
 		
 		System.out.println(dtoList);
+	}
+	
+	@Test
+	public void getBrandOnFilterTests() {
+		
+		List<BrandDTO> dtoList = mainService.getBrandOnFilter();
+		
+		assertEquals(8, dtoList.size());
+		System.out.println(dtoList);
+		
+	}
+	
+	@Test
+	public void getCategoriesOnFilterTests() {
+		
+		List<CategoriesDTO> dtoList = mainService.getCategoriesOnFilter();
+		
+		assertEquals(7, dtoList.size());
+		System.out.println(dtoList);
+		
 	}
 }

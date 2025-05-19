@@ -34,9 +34,10 @@ header {
 }
 
 .logo img {
-	width: 150px;
+	width: 170px;
 	align-content: center;
 	position: relative;
+	top:2px;
 	right: 500px;
 }
 
@@ -483,6 +484,7 @@ table.cart-table tr:last-child td {
 	font-weight: 600;
 	font-size: 1.05em;
 	margin-bottom: 2px;
+	text-decoration: none;
 }
 
 .cart-prod-desc {
