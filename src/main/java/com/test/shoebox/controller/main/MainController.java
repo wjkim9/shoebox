@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.test.shoebox.dto.BrandDTO;
 import com.test.shoebox.dto.CategoriesDTO;
@@ -21,6 +22,7 @@ import com.test.shoebox.entity.Product;
 import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.entity.ProductPost;
 import com.test.shoebox.repository.BrandRepository;
+import com.test.shoebox.repository.CustomDetailRepository;
 import com.test.shoebox.repository.MainBannerRepository;
 import com.test.shoebox.service.main.ListProductService;
 import com.test.shoebox.service.main.MainService;
@@ -156,11 +158,6 @@ public class MainController {
 	public String category(Model model) {
 
 		return "main/category";
-	}
-	@GetMapping("/detailpage")
-	public String detailpage(Model model) {
-
-		return "main/detailpage";
 	}
 
 }

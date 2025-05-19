@@ -1,13 +1,19 @@
 package com.test.shoebox.controller.main;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.entity.ProductPost;
+import com.test.shoebox.entity.ProductPostImage;
 import com.test.shoebox.repository.CustomDetailRepository;
+import com.test.shoebox.repository.ProductImageRepository;
+import com.test.shoebox.repository.ProductPostImageRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,19 +23,32 @@ import lombok.RequiredArgsConstructor;
 public class DetailController {
 	
 	private final CustomDetailRepository customDetailRepository;
+	private final ProductImageRepository productImageRepository;
+	private final ProductPostImageRepository productPostImageRepository;
 	
-	@GetMapping("/detail")
-	public String detail(@RequestParam("productpostId") Long productPostId, Model model) {
+	
+	@GetMapping("/detailpage")
+	public String detailpage(@RequestParam("productPostId") String productPostId, Model model) {
+
+		ProductPost productPost = customDetailRepository.findById(productPostId);
+		List<ProductImage> productImageList = productImageRepository.findByProductOrderBySortOrderAsc(productPost.getProduct());
+		List<ProductPostImage> productPostImageList = productPostImageRepository.findByProductPost(productPost);
 		
-		ProductPost pp = customDetailRepository.findById(productPostId);
+		for (ProductImage pi : productImageList) {
+			System.out.println(pi.getFileName());
+		}
 		
-		System.out.println(pp.getProductPostId());
-		System.out.println(pp.getProduct());
-		System.out.println(pp.getProduct().getCategories());
-		System.out.println(pp.getProduct().getProductGroup());
-		System.out.println(pp.getProduct().getBrand());
+		for (ProductPostImage ppi : productPostImageList) {
+			System.out.println(ppi.getFileName());
+		}
 		
-		return "main/main";
+		System.out.println(productPost.getProductPostId());
+		System.out.println(productPost.getProduct().getProductName());
+		System.out.println(productPost.getProduct().getCategories().getCategoriesName());
+		System.out.println(productPost.getProduct().getProductGroup().getProductGroupName());
+		System.out.println(productPost.getProduct().getBrand().getBrandName());
+
+		return "main/detailpage";
 	}
 	
 }

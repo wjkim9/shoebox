@@ -20,7 +20,7 @@ public class CustomDetailRepository {
 
 	private final JPAQueryFactory jpaQueryFactory;
 	
-	public ProductPost findById(Long productPostId) {
+	public ProductPost findById(String productPostId) {
 	    
 		return jpaQueryFactory
 	            .selectFrom(productPost)
@@ -28,7 +28,7 @@ public class CustomDetailRepository {
 	            .join(product.categories, categories).fetchJoin()
 	            .join(product.productGroup, productGroup).fetchJoin()
 	            .join(product.brand, brand).fetchJoin()
-	            .where(productPost.productPostId.eq(productPostId))
+	            .where(productPost.productPostId.eq(Long.parseLong(productPostId)))
 	            .fetchOne();
 	}
 	
