@@ -44,7 +44,8 @@ public class OrdersService {
     }
 
     public List<OrdersListDTO> getOrderPageItems() {
-        List<Orders> ordersList = ordersRepository.findAll();
+        List<Orders> ordersList = ordersRepository.findAllByOrderByOrdersDateDesc();
+
 
         return ordersList.stream().map(order -> {
             List<ProductStockOrder> stockOrders = productStockOrderRepository.findByOrders(order);
