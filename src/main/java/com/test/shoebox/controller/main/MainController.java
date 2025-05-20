@@ -22,12 +22,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.test.shoebox.dto.BrandDTO;
 import com.test.shoebox.dto.CategoriesDTO;
 import com.test.shoebox.entity.Brand;
+import com.test.shoebox.entity.Categories;
 import com.test.shoebox.entity.EventPost;
 import com.test.shoebox.entity.MainBanner;
 import com.test.shoebox.entity.Product;
 import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.entity.ProductPost;
 import com.test.shoebox.repository.BrandRepository;
+import com.test.shoebox.repository.CategoriesRepository;
 import com.test.shoebox.repository.CustomDetailRepository;
 import com.test.shoebox.repository.MainBannerRepository;
 import com.test.shoebox.service.main.ListProductService;
@@ -45,6 +47,8 @@ public class MainController {
 	private final ListProductService listProductService;
 	
 	private final BrandRepository brandRepository;
+	
+	private final CategoriesRepository categoriesRepository;
 	
 	private final MainService mainService;
 	
@@ -130,7 +134,7 @@ public class MainController {
 	public String listProduct(Model model, 
 		@PageableDefault(page = 0, size = 20) Pageable pageable,
 		@RequestParam(value = "order", required = false, defaultValue = "orderNewDesc") String order,
-		@RequestParam(value = "targetCustomerType", required = false) String targetCustomerType,
+		@RequestParam(value = "targetCustomerType", required = false, defaultValue = "men") String targetCustomerType,
 		@RequestParam(value = "categoriesId", required = false) Long categoriesId, 
 		@RequestParam(value = "brandId", required = false) Long brandId, 
 		@RequestParam(value = "startPrice", required = false) Integer startPrice, 
@@ -150,6 +154,7 @@ public class MainController {
 		
 		PageRequest pageRequest = null;
 		
+		//파라미터에 따라 pageRequest 생성
 		if(order.equals("orderBestDesc")) {
 			//손봐야함
 			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "quantity"));
@@ -188,12 +193,16 @@ public class MainController {
 			System.out.println("sort Direction: " + item.getDirection());
 		});
 		
-		
 		//필터로 보여줄 항목
 		//브랜드
 		List<BrandDTO> brandOnFilterList = mainService.getBrandOnFilter();
 		//카테고리
 		List<CategoriesDTO> categoriesOnFilterList = mainService.getCategoriesOnFilter();
+		
+		//상품페이지 경로
+		Optional<Categories> categories = categoriesRepository.findCategoriesNameByCategoriesId(categoriesId);
+		
+		
 		
 		
 		//상품목록
@@ -203,8 +212,8 @@ public class MainController {
 		
 		for(int i=0; i<productImageList.getTotalPages(); i++) {
 			sb.append("""
-					<a href="/main/listProduct?page=%d&size=20&sort=%s,desc">%d</a>
-					""".formatted(i, order, i+1));
+					<a href="/main/listProduct?page=%d&size=20&sort=%s">%d</a>
+					""".formatted(i, order, i+1 ));
 		}
 		
 		System.out.println("sb: " + sb);
@@ -212,12 +221,20 @@ public class MainController {
 		//상품경로
 		model.addAttribute("targetCustomerType", targetCustomerType);
 		
+		
 		//필터 출력 항목
 		model.addAttribute("brandOnFilterList", brandOnFilterList);
 		model.addAttribute("categoriesOnFilterList", categoriesOnFilterList);
 		
 		//상품 정보
 		model.addAttribute("productImageList", productImageList);
+		
+		if(categories.isPresent()) {
+			model.addAttribute("categories", categories.get().toDTO());
+		} else {
+			model.addAttribute("categories", Categories.builder().categoriesName("ALL").build());
+		}
+		
 		
 		//페이지네이션
 		model.addAttribute("sb", sb);

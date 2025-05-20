@@ -24,6 +24,7 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.test.shoebox.entity.Brand;
+import com.test.shoebox.entity.Product;
 import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.entity.ProductPost;
 import com.test.shoebox.entity.ProductStockOrder;

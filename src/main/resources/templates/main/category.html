@@ -15,13 +15,16 @@
 	<div class="container">
 		<!-- 좌측 카테고리/필터 -->
 		<aside class="side-filter">
-			<h2>WOMEN</h2>
+			<h2 th:text="${#strings.toUpperCase(targetCustomerType)}">WOMEN</h2>
 			<ul class="category-list">
-				<li class="selected">ALL</li>
+				<li class="selected" data-categoriesId="all">ALL</li>
+				<li th:each="item : ${categoriesOnFilterList}" th:text="${item.categoriesName}" th:attr="data-categoriesId=${item.categoriesId}">운동화</li>
+				<!-- 
 				<li>운동화</li>
 				<li>슬리퍼/샌들</li>
 				<li>쪼리</li>
 				<li>부츠</li>
+				 -->
 			</ul>
 			<div class="section-title">필터</div>
 			<hr>
@@ -35,12 +38,15 @@
 					</span>
 				</button>
 				<div class="filter-content">
-					<select>
-						<option>전체</option>
+					<select id="filterCategory">
+						<option value="0">전체</option>
+						<option th:each="item : ${categoriesOnFilterList}" th:text="${item.categoriesName}" th:value="${item.categoriesId}">운동화</option>
+						<!-- 
 						<option>운동화</option>
 						<option>슬리퍼/샌들</option>
 						<option>쪼리</option>
 						<option>부츠</option>
+						 -->
 					</select>
 				</div>
 			</div>
@@ -54,12 +60,15 @@
 					</span>
 				</button>
 				<div class="filter-content">
-					<select>
-						<option>전체</option>
+					<select id="filterBrand">
+						<option value="0">전체</option>
+						<option th:each="item : ${brandOnFilterList}" th:text="${item.brandName}" th:value="${item.brandId}">NIKE</option>
+						<!-- 
 						<option>NIKE</option>
 						<option>ADIDAS</option>
 						<option>CROCS</option>
 						<option>DISCOVERY</option>
+						 -->
 					</select>
 				</div>
 			</div>
@@ -75,9 +84,9 @@
 				<div class="filter-content">
 					<div class="filter-price">
 						<form id="price-filter-form">
-							<input type="number" class="price-input" name="min_price" min="0"
+							<input type="number" id="startPrice" class="price-input" name="min_price" min="0"
 								value="0" placeholder="0" /> <span class="price-separator">~</span>
-							<input type="number" class="price-input" name="max_price" min="0"
+							<input type="number" id="endPrice" class="price-input" name="max_price" min="0"
 								value="0" placeholder="0" />
 							<!-- <button type="submit" class="price-apply-btn">적용</button> -->
 						</form>
@@ -92,17 +101,17 @@
 		</aside>
 		<!-- 우측 상품 리스트 -->
 		<main class="main-area">
-			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(targetCustomerType)} + ' > 런닝화'"></div>
+			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(targetCustomerType)} + ' > ' + ${categories.categoriesName}"></div>
 			<div class="topbar">
 				<div class="category-title">런닝화</div>
 				<div class="sort-dropdown">
-					<select class="sort-select">
-						<option>베스트상품순</option>
-						<option>신상품순</option>
-						<option>할인율 높은순</option>
-						<option>상품평순</option>
-						<option>낮은가격순</option>
-						<option>높은가격순</option>
+					<select id="orderSelect" class="sort-select">
+						<option value="orderBestDesc">베스트상품순</option>
+						<option value="orderNewDesc">신상품순</option>
+						<option value="orderDiscountDesc">할인율 높은순</option>
+						<option value="orderReviewDesc">상품평순</option>
+						<option value="orderPriceAsc">낮은가격순</option>
+						<option value="orderPriceDesc">높은가격순</option>
 					</select>
 				</div>
 			</div>
@@ -226,7 +235,7 @@
 	</div>
 	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
 </body>
-<script>
+<script th:inline="javascript">
 	// 아코디언 필터 토글 (여러 필터 동시 열림 가능)
 	document.querySelectorAll('.filter-header').forEach(function(header) {
 		header.addEventListener('click', function() {
@@ -242,5 +251,92 @@
 			}
 		});
 	});
+	
+	//좌측 메뉴 클릭 이벤트
+	document.querySelectorAll('.side-filter .category-list li').forEach(category => {
+		category.addEventListener('click', (target) =>{
+			
+			if(target.target.getAttribute('data-categoriesid') == 'all') {
+				location.href = '/main/listProduct?targetCustomerType=' + [[${targetCustomerType}]];
+			} else {
+				location.href = '/main/listProduct?categoriesId=' + target.target.getAttribute('data-categoriesid') + '&targetCustomerType=' + [[${targetCustomerType}]];
+			}
+			
+			
+		});
+		
+	});
+	
+	
+	//필터 검색 버튼 이벤트
+	document.querySelectorAll('.filter-btns .search').forEach(btn => {
+		btn.addEventListener('click', (target) =>{
+			
+			let filterCategory = document.getElementById('filterCategory');
+			let filterBrand = document.getElementById('filterBrand');
+			let startPrice = document.getElementById('startPrice');
+			let endPrice = document.getElementById('endPrice');
+			
+			let queryStringBuilder = '/main/listProduct?';
+			let existPrevVar = false; 
+			
+			
+			if(filterCategory.value != '0') {
+				queryStringBuilder += 'categoriesId=' + filterCategory.value;
+				existPrevVar = true;
+			}
+			
+			if(filterBrand.value != '0') {
+				if(existPrevVar) {
+					queryStringBuilder += '&brandId=' + filterBrand.value;
+				} else {
+					queryStringBuilder += 'brandId=' + filterBrand.value;
+				}
+				existPrevVar = true;
+			}
+			
+			if(startPrice != null) {
+				if(existPrevVar) {
+					queryStringBuilder += '&startPrice=' + startPrice.value;
+				} else {
+					queryStringBuilder += 'startPrice=' + startPrice.value;
+				}
+				existPrevVar = true;
+			}
+			
+			if(endPrice != null) {
+				if(existPrevVar) {
+					queryStringBuilder += '&endPrice=' + endPrice.value;
+				} else {
+					queryStringBuilder += 'endPrice=' + endPrice.value;
+				}
+				existPrevVar = true;
+			}
+			
+			location.href = queryStringBuilder;
+			
+			
+			
+		});
+		
+	});
+	
+	//정렬방법 셀렉트박스 이벤트
+	let orderSelect = document.getElementById('orderSelect');
+	const param = new URLSearchParams(window.location.search);
+	if(param.get('order') != null) {
+		orderSelect.value = param.get('order');
+	}
+	
+	orderSelect.addEventListener('change', (target) => {
+		//alert(target.target.value);
+		
+		param.set('order', target.target.value);
+		
+		//console.log(`${window.location.pathname}?${param.toString()}`);
+		
+		location.href = `${window.location.pathname}?${param.toString()}`;
+	});
+	
 </script>
 </html>
