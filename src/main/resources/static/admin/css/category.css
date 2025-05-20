@@ -41,3 +41,16 @@ body {
     padding-bottom: 12px;
     border-bottom: 1px solid var(--border-color);
 }
+
+.category_btn{
+	width: 150px;
+	height: 35px;
+	font-size : 15px;
+	font-weight: 600;
+	color : #fff;
+	border: 1px solid #fff;
+	background-color: #2e52d0;
+	cursor: pointer;
+	border-radius: 5px;
+	
+}

@@ -78,9 +78,8 @@
 								value="0" placeholder="0" /> <span class="price-separator">~</span>
 							<input type="number" class="price-input" name="max_price" min="0"
 								value="0" placeholder="0" />
-							<!-- <button type="submit" class="price-apply-btn">적용</button> -->
 						</form>
-						<!-- <button class="price-apply-btn">적용</button> -->
+
 					</div>
 				</div>
 			</div>
@@ -117,8 +116,7 @@
 							<p class="price" style="color: #ba0a0a">109,000원</p>
 						</div>
 					</div>
-				</a>
-                    <a href="/main/detailpage" class="new-item-link">
+				</a> <a href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
 						<img src="/common/images/adidas/CLOUDFOAM WALK LOUNGER (3).jpg"
 							alt="아디다스">
@@ -128,8 +126,7 @@
 							<p class="price" style="color: #ba0a0a">109,000원</p>
 						</div>
 					</div>
-				</a>
-                    <a href="/main/detailpage" class="new-item-link">
+				</a> <a href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
 						<img src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
 						<div class="item-info">
@@ -138,8 +135,7 @@
 							<p class="price" style="color: #ba0a0a">109,000원</p>
 						</div>
 					</div>
-				</a>
-				    <a href="/main/detailpage" class="new-item-link">
+				</a> <a href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
 						<img src="/common/images/adidas/SAMBA OG W (5).jpg" alt="아디다스">
 						<div class="item-info">
@@ -148,8 +144,7 @@
 							<p class="price" style="color: #ba0a0a">109,000원</p>
 						</div>
 					</div>
-				</a>
-				    <a href="/main/detailpage" class="new-item-link">
+				</a> <a href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
 						<img src="/common/images/adidas/SAMBAE W (2).jpg" alt="아디다스">
 						<div class="item-info">
@@ -158,8 +153,7 @@
 							<p class="price" style="color: #ba0a0a">109,000원</p>
 						</div>
 					</div>
-				</a>
-				    <a href="/main/detailpage" class="new-item-link">
+				</a> <a href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
 						<img src="/common/images/nike/BIG NIKE LOW (1).jpg" alt="나이키">
 						<div class="item-info">
@@ -168,8 +162,7 @@
 							<p class="price" style="color: #ba0a0a">109,000원</p>
 						</div>
 					</div>
-				</a>
-				    <a href="/main/detailpage" class="new-item-link">
+				</a> <a href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
 						<img src="/common/images/nike/COURT SHOT (3).jpg" alt="나이키">
 						<div class="item-info">
@@ -178,8 +171,7 @@
 							<p class="price" style="color: #ba0a0a">109,000원</p>
 						</div>
 					</div>
-				</a>
-				    <a href="/main/detailpage" class="new-item-link">
+				</a> <a href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
 						<img src="/common/images/nike/NIKE AIR MAX EXCEE 365 (3).jpg"
 							alt="나이키">
@@ -189,8 +181,7 @@
 							<p class="price" style="color: #ba0a0a">109,000원</p>
 						</div>
 					</div>
-				</a>
-				    <a href="/main/detailpage" class="new-item-link">
+				</a> <a href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
 						<img src="/common/images/nike/NIKE AIR MAX NUAXIS (2).jpg"
 							alt="나이키">
@@ -231,5 +222,14 @@
 			}
 		});
 	});
+	
+	const form = document.getElementById('price-filter-form');
+	form.addEventListener('submit', function(e) {
+	  e.preventDefault();
+	  const minPrice = Number(form.min_price.value) * 10000;
+	  const maxPrice = Number(form.max_price.value) * 10000;
+	  // minPrice, maxPrice를 원 단위로 활용
+	});
+
 </script>
 </html>
