@@ -25,19 +25,16 @@
                 <h3>주문 검색</h3>
             </div>
             <div class="panel-body">
-                <form id="searchForm" th:action="@{/admin/orders}" method="get">
+                <form id="searchForm" th:action="@{/admin/orders/list-search}" method="get">
                     <div class="form-row">
                         <div class="form-column">
                             <div class="form-group">
                                 <label for="orderDateStart">주문 기간</label>
                                 <div class="date-range-picker">
-                                    <input type="date" class="form-input" id="orderDateStart" name="orderDateStart"
-                                           th:value="${#dates.format(param.orderDateStart, 'yyyy-MM-dd')}"
-                                           placeholder="시작일">
-                                    <span class="date-separator">~</span>
-                                    <input type="date" class="form-input" id="orderDateEnd" name="orderDateEnd"
-                                           th:value="${#dates.format(param.orderDateEnd, 'yyyy-MM-dd')}"
-                                           placeholder="종료일">
+                                    <input type="date" id="orderDateStart" name="orderDateStart" class="form-input"
+                                           th:value="${param.orderDateStart}" placeholder="시작일">
+                                    <input type="date" id="orderDateEnd" name="orderDateEnd" class="form-input"
+                                           th:value="${param.orderDateEnd}" placeholder="종료일">
                                 </div>
                             </div>
                         </div>
@@ -46,15 +43,20 @@
                                 <label for="orderStatus">주문 상태</label>
                                 <select class="form-select" id="orderStatus" name="orderStatus">
                                     <option value="">전체</option>
-                                    <option value="PAYMENT_PENDING" th:selected="${param.orderStatus == 'PAYMENT_PENDING'}">결제 대기</option>
-                                    <option value="PAYMENT_COMPLETE" th:selected="${param.orderStatus == 'PAYMENT_COMPLETE'}">결제 완료</option>
-                                    <option value="PREPARING" th:selected="${param.orderStatus == 'PREPARING'}">상품 준비중</option>
-                                    <option value="SHIPPING" th:selected="${param.orderStatus == 'SHIPPING'}">배송중</option>
-                                    <option value="DELIVERED" th:selected="${param.orderStatus == 'DELIVERED'}">배송 완료</option>
-                                    <option value="CANCELED" th:selected="${param.orderStatus == 'CANCELED'}">주문 취소</option>
-                                    <option value="RETURNED" th:selected="${param.orderStatus == 'RETURNED'}">반품</option>
-                                    <option value="EXCHANGED" th:selected="${param.orderStatus == 'EXCHANGED'}">교환</option>
+                                    <option value="1" th:selected="${param.orderStatus == '1'}">결제 확인중</option>
+                                    <option value="2" th:selected="${param.orderStatus == '2'}">결제 확인완료</option>
+                                    <option value="3" th:selected="${param.orderStatus == '3'}">배송준비중</option>
+                                    <option value="4" th:selected="${param.orderStatus == '4'}">취소 대기중</option>
+                                    <option value="5" th:selected="${param.orderStatus == '5'}">취소 확정</option>
+                                    <option value="6" th:selected="${param.orderStatus == '6'}">배송중</option>
+                                    <option value="7" th:selected="${param.orderStatus == '7'}">배송완료</option>
+                                    <option value="8" th:selected="${param.orderStatus == '8'}">구매확정완료</option>
+                                    <option value="9" th:selected="${param.orderStatus == '9'}">반송중</option>
+                                    <option value="10" th:selected="${param.orderStatus == '10'}">반송완료</option>
+                                    <option value="11" th:selected="${param.orderStatus == '11'}">환불처리중</option>
+                                    <option value="12" th:selected="${param.orderStatus == '12'}">환불완료</option>
                                 </select>
+
                             </div>
                         </div>
                     </div>
@@ -95,7 +97,8 @@
         <div class="panel">
             <div class="panel-header">
                 <h3>주문 목록</h3>
-                <span class="order-count" th:text="'총 ' + ${orders.size()} + '건'">총 0건</span>
+                <span class="order-count"
+                      th:text="${orders != null ? '총 ' + orders.size() + '건' : '총 0건'}">총 0건</span>
             </div>
             <div class="table-responsive">
                 <table class="order-table">

@@ -28,7 +28,7 @@
                 <h3>환불 요청 검색</h3>
             </div>
             <div class="panel-body">
-                <form id="searchForm" th:action="@{/admin/orders/cancel2}" method="get">
+                <form id="searchForm" th:action="@{/admin/orders/cancel-search}" method="get">
                     <div class="form-row">
                         <div class="form-column">
                             <div class="form-group">
@@ -105,12 +105,6 @@
                 <table class="order-table">
                     <thead>
                     <tr>
-                        <th>
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="selectAllRefunds"/>
-                                <span class="checkmark"></span>
-                            </label>
-                        </th>
                         <th>요청번호</th>
                         <th>요청일시</th>
                         <th>주문자</th>
@@ -125,12 +119,6 @@
                         <td colspan="8" class="no-data">환불 요청 내역이 없습니다.</td>
                     </tr>
                     <tr th:each="refund : ${refunds}">
-                        <td>
-                            <label class="checkbox-label">
-                                <input type="checkbox" class="order-checkbox" th:value="${refund.id}"/>
-                                <span class="checkmark"></span>
-                            </label>
-                        </td>
                         <td th:text="${refund.orderNumber}">RFD-0001</td>
                         <td th:text="${refund.requestDateStr}">2025-05-16 16:00</td>
                         <td class="customer-info">

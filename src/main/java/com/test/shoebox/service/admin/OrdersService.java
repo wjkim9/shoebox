@@ -8,6 +8,7 @@ import com.test.shoebox.repository.ProductStockOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,9 +72,6 @@ public class OrdersService {
 
                     .ordersStatus(order.getOrdersStatus())
                     .statusName(getStatusName(order.getOrdersStatus()))
-
-                    .trackingCompany(delivery != null ? delivery.getCurrentDeliveryStep() : "미등록")
-                    .trackingNumber(delivery != null ? delivery.getCurrentDeliveryStep() : null)
                     .build();
         }).collect(Collectors.toList());
     }
@@ -158,17 +156,111 @@ public class OrdersService {
                 .sum();
 
 
+        IssuedCoupon issuedCoupon = order.getIssuedCoupon();
+        Coupon coupon = issuedCoupon != null ? issuedCoupon.getCoupon() : null;
+        int discountRate = (coupon != null && coupon.getDiscountRate() != null)
+                ? coupon.getDiscountRate().intValue()
+                : 0;
+
+        int discountAmount = (totalOrderPrice * discountRate) / 100;
+
+
         return OrderDetailDTO.builder()
                 .orders(ordersDTO)
                 .member(memberDTO)
                 .orderItems(itemDTOs)
                 .deliveryProgressList(progressList)
                 .totalOrderPrice(totalOrderPrice)
+                .discountAmount(discountAmount)
                 .build();
     }
 
+//검색하기
+    public List<OrdersListDTO> searchOrders(LocalDate orderDateStart, LocalDate orderDateEnd,
+                                            String orderStatus, String searchType, String searchKeyword) {
+        List<Orders> ordersList = ordersRepository.findAll(); // 일단 전체 불러오고, 추후 동적 쿼리로 개선 가능
+
+        // 필터 조건 적용
+        return ordersList.stream()
+                .filter(order -> {
+                    if (orderDateStart != null && orderDateEnd != null) {
+                        if (order.getOrdersDate().toLocalDate().isBefore(orderDateStart) ||
+                                order.getOrdersDate().toLocalDate().isAfter(orderDateEnd)) {
+                            return false;
+                        }
+                    }
+
+                    if (orderStatus != null && !orderStatus.isEmpty()) {
+                        int statusCode = convertStatus(orderStatus);
+                        if (order.getOrdersStatus() != statusCode) return false;
+                    }
 
 
+                    if (searchType != null && searchKeyword != null && !searchKeyword.isBlank()) {
+                        boolean match = switch (searchType) {
+                            case "orderNumber" -> String.valueOf(order.getOrdersId()).contains(searchKeyword);
+                            case "customerName" -> order.getReceiverName().contains(searchKeyword);
+                            case "customerPhone" -> order.getReceiverContact().contains(searchKeyword);
+                            case "productName" -> {
+                                List<ProductStockOrder> stockOrders = productStockOrderRepository.findByOrders(order);
+                                yield stockOrders.stream()
+                                        .map(pso -> pso.getProductStock().getProduct().getProductName())
+                                        .anyMatch(name -> name.contains(searchKeyword));
+                            }
+                            default -> true;
+                        };
+                        return match;
+                    }
+
+                    return true;
+                })
+                .map(order -> {
+                    List<ProductStockOrder> stockOrders = productStockOrderRepository.findByOrders(order);
+                    ProductStockOrder mainStockOrder = stockOrders.get(0);
+                    ProductStock productStock = mainStockOrder.getProductStock();
+                    Product product = productStock.getProduct();
+
+                    DeliveryProgress delivery = deliveryProgressRepository.findByOrders(order);
+
+                    return OrdersListDTO.builder()
+                            .ordersId(order.getOrdersId())
+                            .ordersDate(order.getOrdersDate())
+                            .receiverName(order.getReceiverName())
+                            .receiverContact(order.getReceiverContact())
+
+                            .mainProductName(product.getProductName())
+                            .mainProductSize(productStock.getShoeSize())
+                            .productCount(stockOrders.size())
+
+                            .paymentAmount(order.getPaymentAmount())
+                            .shippingFee(order.getShippingFee())
+                            .paymentMethod(order.getPaymentMethod())
+
+                            .ordersStatus(order.getOrdersStatus())
+                            .statusName(getStatusName(order.getOrdersStatus()))
+
+                            .trackingCompany(delivery != null ? delivery.getCurrentDeliveryStep() : "미등록")
+                            .trackingNumber(delivery != null ? delivery.getCurrentDeliveryStep() : null)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    // 상태 키(PAYMENT_COMPLETE 등)를 숫자 코드(2 등)로 변환
+    private int convertStatus(String statusKey) {
+        return switch (statusKey) {
+            case "PAYMENT_PENDING" -> 1;
+            case "PAYMENT_COMPLETE" -> 2;
+            case "PREPARING" -> 3;
+            case "SHIPPING" -> 6;
+            case "DELIVERED" -> 7;
+            case "CANCELED" -> 5;
+            case "RETURNED" -> 9;
+            case "EXCHANGED" -> 10;
+            default -> -1;
+        };
+    }
 
 
 

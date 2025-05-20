@@ -27,7 +27,7 @@
         <h3>취소 요청 검색</h3>
       </div>
       <div class="panel-body">
-        <form id="searchForm" th:action="@{/admin/orders/cancel}" method="get">
+        <form id="searchForm" th:action="@{/admin/orders/cancel-search}" method="get">
           <div class="form-row">
             <div class="form-column">
               <div class="form-group">
@@ -107,12 +107,6 @@
         <table class="order-table">
           <thead>
           <tr>
-            <th>
-              <label class="checkbox-label">
-                <input type="checkbox" id="selectAllOrders"/>
-                <span class="checkmark"></span>
-              </label>
-            </th>
             <th>요청번호</th>
             <th>요청일시</th>
             <th>주문자</th>
@@ -127,12 +121,6 @@
             <td colspan="8" class="no-data">취소 요청 내역이 없습니다.</td>
           </tr>
           <tr th:each="cancel : ${cancellations}">
-            <td>
-              <label class="checkbox-label">
-                <input type="checkbox" class="order-checkbox" th:value="${cancel.id}"/>
-                <span class="checkmark"></span>
-              </label>
-            </td>
             <td th:text="${cancel.orderNumber}">EXC-0001</td>
             <td th:text="${cancel.orderDateStr}">2025-05-16 15:00</td>
             <td class="customer-info">
@@ -153,9 +141,9 @@
                    th:text="${cancel.paymentMethod}">카드결제</div>
             </td>
             <td>
-                            <span class="status-badge"
-                                  th:classappend="${'status-' + #strings.toLowerCase(cancel.status)}"
-                                  th:text="${cancel.statusName}">취소 요청</span>
+              <span class="status-badge"
+                    th:classappend="${'status-' + #strings.toLowerCase(cancel.status)}"
+                    th:text="${cancel.statusName}">취소 요청</span>
             </td>
             <td class="action-buttons">
               <a th:href="@{'/admin/orders/cancel/' + ${cancel.id}}"

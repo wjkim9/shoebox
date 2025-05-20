@@ -5,13 +5,12 @@ import com.test.shoebox.dto.OrdersDTO;
 import com.test.shoebox.dto.OrdersListDTO;
 import com.test.shoebox.service.admin.OrdersService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -37,6 +36,36 @@ public class AdminOrderController {
         if ("XMLHttpRequest".equals(requestedWith)) {
             return "admin/orders/list :: content";
         }
+        return "admin/orders/list";
+    }
+
+    @GetMapping("/list-search")
+    public String searchOrders(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate orderDateStart,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate orderDateEnd,
+            @RequestParam(required = false) String orderStatus,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String searchKeyword,
+            Model model,
+            @RequestHeader(value = "X-Requested-With", required = false) String requestedWith
+    ) {
+        List<OrdersListDTO> orders = ordersService.searchOrders(orderDateStart, orderDateEnd, orderStatus, searchType, searchKeyword);
+        model.addAttribute("orders", orders);
+
+        // 검색 파라미터도 유지해야 함
+        Map<String, Object> paramMap = new HashMap<>();
+        if (orderDateStart != null) paramMap.put("orderDateStart", orderDateStart);
+        if (orderDateEnd != null) paramMap.put("orderDateEnd", orderDateEnd);
+        if (orderStatus != null) paramMap.put("orderStatus", orderStatus);
+        if (searchType != null) paramMap.put("searchType", searchType);
+        if (searchKeyword != null) paramMap.put("searchKeyword", searchKeyword);
+
+        model.addAttribute("param", paramMap);
+
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            return "admin/orders/list :: content";
+        }
+
         return "admin/orders/list";
     }
 
