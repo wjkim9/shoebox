@@ -152,11 +152,18 @@ public class OrdersService {
         }
 
 
+
+        int totalOrderPrice = itemDTOs.stream()
+                .mapToInt(item -> item.getQuantity() * item.getOrderPrice())
+                .sum();
+
+
         return OrderDetailDTO.builder()
                 .orders(ordersDTO)
                 .member(memberDTO)
                 .orderItems(itemDTOs)
                 .deliveryProgressList(progressList)
+                .totalOrderPrice(totalOrderPrice)
                 .build();
     }
 

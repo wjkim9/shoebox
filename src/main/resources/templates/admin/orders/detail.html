@@ -173,8 +173,8 @@
                             </div>
                         </td>
                         <td class="product-quantity" th:text="${item.quantity}">1</td>
-                        <td class="product-price" th:text="${#numbers.formatInteger(item.price, 0, 'COMMA') + '원'}">89,000원</td>
-                        <td class="product-subtotal" th:text="${#numbers.formatInteger(item.price * item.quantity, 0, 'COMMA') + '원'}">89,000원</td>
+                        <td class="product-price" th:text="${#numbers.formatInteger(order.orders.paymentAmount, 0, 'COMMA') + '원'}">89,000원</td>
+                        <td class="product-subtotal" th:text="${#numbers.formatInteger(item.orderPrice, 0, 'COMMA') + '원'}">89,000원</td>
                     </tr>
                     </tbody>
                 </table>
@@ -190,11 +190,11 @@
                 <div class="payment-summary">
                     <div class="payment-row">
                         <div class="payment-label">상품 금액</div>
-                        <div class="payment-value" th:text="${#numbers.formatInteger(order.orderItems.orderPrice, 0, 'COMMA') + '원'}">89,000원</div>
+                        <div class="payment-value" th:text="${#numbers.formatInteger(order.totalOrderPrice, 0, 'COMMA') + '원'}">89,000원</div>
                     </div>
                     <div class="payment-row">
                         <div class="payment-label">배송비</div>
-                        <div class="payment-value" th:text="${#numbers.formatInteger(order.shippingFee, 0, 'COMMA') + '원'}">3,000원</div>
+                        <div class="payment-value" th:text="${#numbers.formatInteger(order.orders.shippingFee, 0, 'COMMA') + '원'}">3,000원</div>
                     </div>
                     <div class="payment-row" th:if="${order.orderItems.orderPrice > 0}">
                         <div class="payment-label">할인 금액</div>
