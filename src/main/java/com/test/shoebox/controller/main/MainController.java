@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -116,10 +117,18 @@ public class MainController {
 		return "main/main";
 	}
 //	http://localhost:8090/main/listProduct?targetCustomerType=asdf&categoriesId=1&brandId=1&startPrice=18000&endPrice=30000
+	//정렬 방법
+	//베스트상품순: orderBestDesc
+	//신상품순: orderNewDesc
+	//할인율 높은순: orderDiscountDesc
+	//상품평순: orderReviewDesc
+	//낮은가격순: orderPriceAsc
+	//높은가격순: orderPriceDesc
+	
 	@GetMapping(value = "listProduct")
 	public String listProduct(Model model, 
 		@PageableDefault(page = 0, size = 20) Pageable pageable,
-		@RequestParam(value = "order", required = false, defaultValue = "postDate") String order,
+		@RequestParam(value = "order", required = false, defaultValue = "orderNewDesc") String order,
 		@RequestParam(value = "targetCustomerType", required = false) String targetCustomerType,
 		@RequestParam(value = "categoriesId", required = false) Long categoriesId, 
 		@RequestParam(value = "brandId", required = false) Long brandId, 
@@ -135,8 +144,48 @@ public class MainController {
 		System.out.println("startPrice: " + startPrice);
 		System.out.println("endPrice: " + endPrice);
 		
+		System.out.println("pageable Sort:" + pageable.getSort());
+		System.out.println("pageable PageNumber:" + pageable.getPageNumber());
 		
-		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(order));
+		PageRequest pageRequest = null;
+		
+		if(order.equals("orderBestDesc")) {
+			//손봐야함
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "quantity"));
+			
+		} else if(order.equals("orderNewDesc")) {
+			
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "postDate"));
+			
+		} else if(order.equals("orderDiscountDesc")) {
+			
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "discountRate"));
+			
+		} else if(order.equals("orderReviewDesc")) {
+			//손봐야함, count
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "reviewCount"));
+			
+		} else if(order.equals("orderPriceAsc")) {
+			
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.ASC, "productPrice"));
+			
+		} else if(order.equals("orderPriceDesc")) {
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "productPrice"));
+		} else {
+			
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "postDate"));
+		}
+		
+		
+		
+		
+		System.out.println("pageRequest Sort:" + pageRequest.getSort());
+		
+		
+		pageRequest.getSort().forEach(item -> {
+			System.out.println("sort Property: " + item.getProperty());
+			System.out.println("sort Direction: " + item.getDirection());
+		});
 		
 		
 		//필터로 보여줄 항목
