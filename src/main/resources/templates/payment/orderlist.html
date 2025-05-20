@@ -7,6 +7,29 @@
 <link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
 <link rel="stylesheet" th:href="@{/member/css/shoebox_2.css}">
 <style>
+	/* 크롬, 사파리, 엣지, 오페라 */
+	input[type=number]::-webkit-inner-spin-button,
+	input[type=number]::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* 파이어폭스 */
+	input[type=number] {
+		-moz-appearance: textfield;
+	}
+
+	#use-point {
+		margin-right: 10px;
+		width: 100px;
+		height: 30px;
+		border: 1px solid #ccc;
+		border-radius: 3px;
+		text-align: right;
+		font-size: 14px;
+		font-weight: 700;
+		color: #444;
+	}
 </style>
 </head>
 <body>
@@ -21,6 +44,8 @@
 		<div style="font-size: 1.5em; font-weight: 700;">주문서작성/결제</div>
 		<!-- 2. 주문리스트 -->
 		<div style="font-size: 1.15em ; position: relative; top: 35px; font-weight: 700;">주문
+
+
 			리스트</div>
 		<button class="order-edit-btn" onclick="window.location.href='/mypage/cart'">주문정보수정</button>
 		<div class="product-list">
@@ -30,8 +55,8 @@
 				<div style="width: 60px; text-align: center;">수량</div>
 				<div style="width: 110px; text-align: right;">상품금액</div>
 				<div style="width: 80px; text-align: center;">배송비</div>
-
 			</div>
+			<!-- 3. 구매 상품 가격 및 정보 리스트 -->
 			<div class="product-row">
 				<img class="product-img"
 					src="https://codingapple1.github.io/shop/shoes1.jpg" alt="나이키">
@@ -54,15 +79,26 @@
 				<div class="product-price">69,000원</div>
 				<div class="product-ship">무료배송</div>
 			</div>
+			<!-- 3. 1 적립금 사용 -->
+			<div class="product-row">
+				<div class="product-info">
+					<div class="product-name">보유 적립금 사용</div>
+				</div>
+				<div>
+					<label for="use-allpoint-check">모든 포인트 사용</label> <input type="checkbox" id="use-allpoint-check">
+					<label for="use-point">사용 포인트</label><input type="number" id="use-point" value="0"> <label for="use-point">point</label>
+				</div>
+
+			</div>
 			<!-- 4. 결제 정보 센터 정렬 -->
 			<div class="summary-row">
-				<span class="summary-item"> 주문금액 <b>198,000원</b>
+				<span class="summary-item"> 주문금액 <b id="total-product-price">198,000원</b>
 				</span> <img src="/member/images/substract.png" class="summary-icon"
-					style="position: relative; top: 2px;" alt="substract"> <span
-					class="summary-item"> 총 할인금액 <b>52,000원</b>
+					style="position: relative; top: 2px;" alt="substract"> <span>
+					class="summary-item"> 총 할인금액 <b id="discount">52,000원</b>
 				</span> <img src="/member/images/equal.png" class="summary-icon" alt="equal"
 					style="position: relative; top: 2px;"> <span
-					class="summary-item total"> 결제예정금액 <b class="total">146,000원</b>
+					class="summary-item total"> 결제예정금액 <b id="total" class="total">146,000원</b>
 				</span>
 			</div>
 
@@ -72,15 +108,15 @@
 					<div class="section-divider"></div>
 					<div class="form-row">
 						<label for="name" class="required-label">이름</label> <input
-							type="text" id="name" placeholder="이름을 입력하세요." required>
+							type="text" id="buyerName" placeholder="이름을 입력하세요." required>
 					</div>
 					<div class="form-row">
-						<label for="phone" class="required-label">휴대폰번호</label> <input
-							type="tel" id="phone" placeholder="전화번호를 입력하세요." required>
+						<label for="buyerPhone" class="required-label">휴대폰번호</label> <input
+							type="tel" id="buyerPhone" placeholder="전화번호를 입력하세요." required>
 					</div>
 					<div class="form-row">
-						<label for="email" class="required-label">이메일</label> <input
-							type="text" id="email" placeholder="이메일 주소를 입력하세요." required>
+						<label for="buyerEmail" class="required-label">이메일</label> <input
+							type="text" id="buyerEmail" placeholder="이메일 주소를 입력하세요." required>
 					</div>
 					<div class="form-title" style="margin-top: 24px;">배송 정보</div>
 					<div class="section-divider"></div>
@@ -96,11 +132,11 @@
 					</div>
 					<div class="form-row">
 						<label for="name" class="required-label">이름</label> <input
-							type="text" id="name" placeholder="이름을 입력하세요.">
+							type="text" id="receiverName" placeholder="이름을 입력하세요.">
 					</div>
 					<div class="form-row">
 						<label for="phone" class="required-label">휴대폰번호</label> <input
-							type="tel" id="phone" placeholder="전화번호를 입력하세요.">
+							type="tel" id="receicverPhone" placeholder="전화번호를 입력하세요.">
 					</div>
 					<div class="form-row">
 						<label for="zipcode" class="required-label">주소</label>
@@ -216,6 +252,22 @@
     });
 });
 
+	// 장바구니 금액 총합
+	function updateTotalPrice() {
+		const priceElements = document.querySelectorAll(".product-price");
+		let total = 0;
+
+		priceElements.forEach(el => {
+		const price = Number(el.innerText.replace(/,/g, ''));
+		total += price;
+		});
+
+		document.getElementById("total").innerText = total.toLocaleString();
+	}
+
+		// 페이지 로드시 실행
+		updateTotalPrice();
+
 
 
 	// 결제 구현
@@ -229,11 +281,11 @@
 		pg: "html5_inicis.INIpayTest",  // 이니시스 테스트 모드
 		pay_method: "card",
 		merchant_uid: merchantUid,
-		name: "테스트 상품",
-		amount: 500,
-		buyer_email: "test@test.com",
-		buyer_name: "테스트",
-		buyer_tel: "010-1234-5678"
+		name: "ShoeBox",
+		amount: document.getElementsByClassName('total')[0].innerText.replace(/,/g, ''),
+		buyer_email: document.getElementById('buyerEmail').value,
+		buyer_name: document.getElementById('buyerName').value,
+		buyer_tel: document.getElementById('buyerPhone').value
 	}, function (rsp) {
 		if (rsp.success) {
 			// 결제 성공 시 백엔드 검증 요청
@@ -248,7 +300,7 @@
 					alert('결제 검증에 실패하였습니다.');
 					// 결제 실패 시 장바구니로 돌아가기
 					window.location.href='/payment/orderlist';
-					
+
 				}
 			})
 			.catch(error => {

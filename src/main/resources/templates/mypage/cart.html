@@ -23,10 +23,6 @@
 		<!-- 타이틀 -->
 		<div class="cart-title">장바구니</div>
 
-		<!-- 배송 탭 -->
-		<div class="cart-tab-row">
-			<span class="cart-tab active">일반배송</span>
-		</div>
 
 		<!-- 장바구니 테이블 -->
 		<div class="cart-table-wrap">
@@ -41,79 +37,60 @@
 					<col style="width: 120px;">
 				</colgroup>
 				<thead>
-					  <tr>
-					    <th><input type="checkbox" id="cart-check-all" class="cart-chk"></th>
-					    <th>상품정보</th>
-					    <th>상품명</th>
-					    <th>수량</th>
-					    <th>적립</th>
-					    <th>상품금액</th>
-					    <th></th>
-					  </tr>
-					</thead>
-					<tbody>
-					  <tr>
-					    <td><input type="checkbox" class="cart-chk cart-chk-item"></td>
-						<td><img class="cart-img"
-							src="https://codingapple1.github.io/shop/shoes1.jpg" alt="나이키"></td>
-						<td class="cart-prod-info">
-							<div class="cart-prod-name">나이키 NIKE MOTIVA</div>
-							<div class="cart-prod-desc">260 / 1개</div>
-						</td>
-						<td>
-							<div class="cart-qty-wrap">
-								<button class="cart-qty-btn minus">-</button>
-								<input type="number" class="cart-qty-input" value="1" min="1" max="99">
-								<button class="cart-qty-btn plus">+</button>
-							</div>
-							<button class="cart-qty-change-btn">변경</button>
-						</td>
-						<td class="cart-point">350P</td>
-						<td>
-							<div class="cart-price">77,000원</div>
-							<button class="cart-coupon-btn">쿠폰적용</button>
-						</td>
-						<td>
-							<div class="cart-row-actions">
-								<button class="cart-buy-btn">바로구매</button>
-								<button class="cart-delete-btn">
-								<img src="/member/images/delete.png" class="delete-icon" style="width: 18px; position: relative; top: 2px;">
-								삭제</button>
-							</div>
-						</td>
-					</tr>
 					<tr>
-						<th><input type="checkbox" class="cart-chk cart-chk-item"></th>
-						<td><img class="cart-img"
-							src="https://codingapple1.github.io/shop/shoes2.jpg" alt="아디다스"></td>
-						<td class="cart-prod-info">
-							<div class="cart-prod-name">아디다스 VL COURT BASE</div>
-							<div class="cart-prod-desc">250 / 1개</div>
-						</td>
-						<td>
-							<div class="cart-qty-wrap">
-								<button class="cart-qty-btn minus">-</button>
-								<input type="number" class="cart-qty-input" value="1" min="1" max="99">
-								<button class="cart-qty-btn plus">+</button>
-							</div>
-							<button class="cart-qty-change-btn">변경</button>
-						</td>
-						<td class="cart-point">350P</td>
-						<td>
-							<div class="cart-price">69,000원</div>
-							<button class="cart-coupon-btn">쿠폰적용</button>
-						</td>
-						<td>
-							<div class="cart-row-actions">
-								<button class="cart-buy-btn">바로구매</button>
-								<button class="cart-delete-btn">
-                                <img src="/member/images/delete.png" class="delete-icon" style="width: 18px; position: relative; top: 2px;
-                                ">
-                                삭제</button>
-								
-							</div>
-						</td>
+						<th><input type="checkbox" id="cart-check-all" class="cart-chk"></th>
+						<th>상품정보</th>
+						<th>상품명</th>
+						<th>수량</th>
+						<th>적립</th>
+						<th>상품금액</th>
+						<th></th>
 					</tr>
+				</thead>
+				<tbody>
+				<tr class="cart-item" th:each="item : ${cartItems}">
+					<td><input type="checkbox" class="cart-chk cart-chk-item"></td>
+					<td>
+						<!-- 이미지가 있는 경우 -->
+						<img class="cart-img"
+							 th:if="${not #lists.isEmpty(item.productStock.product.productImages)}"
+							 th:src="@{'/common/images/' + ${item.productStock.product.productImages[0].fileName}}"
+							 alt="product-image">
+						<!-- 이미지가 없는 경우 -->
+						<img class="cart-img"
+							 th:unless="${not #lists.isEmpty(item.productStock.product.productImages)}"
+							 src="/common/images/default.png"
+							 alt="default-image">
+					</td>
+
+
+					<td class="cart-prod-info">
+						<div class="cart-prod-name" th:text="${item.productStock.product.productName}"></div>
+						<div class="cart-prod-desc" th:text="${item.productStock.shoeSize}"></div>
+					</td>
+					<td>
+						<div class="cart-qty-wrap">
+							<button class="cart-qty-btn minus">-</button>
+							<input type="number" class="cart-qty-input" th:value="${item.quantity}" min="1" max="99">
+							<button class="cart-qty-btn plus">+</button>
+						</div>
+						<button class="cart-qty-change-btn">변경</button>
+					</td>
+					<td class="cart-point">0P</td>
+					<td>
+						<div class="cart-price" th:text="${#numbers.formatInteger(item.quantity * item.productStock.product.productPrice, 3, 'COMMA') + '원'}"></div>
+						<button class="cart-coupon-btn">쿠폰적용</button>
+					</td>
+					<td>
+						<div class="cart-row-actions">
+							<button class="cart-buy-btn">바로구매</button>
+							<button class="cart-delete-btn" th:data-cart-item-id="${item.cartItemId}">
+								<img src="/member/images/delete.png" class="delete-icon" style="width: 18px; position: relative; top: 2px;">
+								삭제
+							</button>
+						</div>
+					</td>
+				</tr>
 				</tbody>
 				<tfoot>
 					<!-- 필요시 합계, 안내문구 등 추가 -->
