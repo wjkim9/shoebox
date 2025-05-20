@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.test.shoebox.mapper.ProductPostMapper">
+	
+	<select id="time" resultType="String">
+		select sysdate from dual
+	</select>
+	
+	<select id="detailtest" resultType="Map">
+		select pi.file_name as fileName , pp.productpost_id as productpostId from Product p
+			join ProductPost pp on pp.product_id = p.product_id
+				join ProductImage pi on pi.product_id = p.product_id
+					where p.productgroup_id = 1
+						and pi.sort_order = 1
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+

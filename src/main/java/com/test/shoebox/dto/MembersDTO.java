@@ -40,6 +40,8 @@ public class MembersDTO {
     private Integer point;
 
     private Integer isDeleted;
+    
+    private String role;
 
     
     public Members toEntity() {

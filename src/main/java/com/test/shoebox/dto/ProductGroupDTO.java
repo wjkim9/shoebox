@@ -16,10 +16,12 @@ import lombok.Setter;
 @Builder
 public class ProductGroupDTO {
 	private Long productGroupId;
+	private String productGroupName;
 
     public ProductGroup toEntity() {
         return ProductGroup.builder()
                 .productGroupId(this.productGroupId)
+                .productGroupName(this.productGroupName)
                 .build();
     }
 }

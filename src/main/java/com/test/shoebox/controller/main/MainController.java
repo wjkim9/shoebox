@@ -26,7 +26,9 @@ import com.test.shoebox.entity.EventPost;
 import com.test.shoebox.entity.MainBanner;
 import com.test.shoebox.entity.Product;
 import com.test.shoebox.entity.ProductImage;
+import com.test.shoebox.entity.ProductPost;
 import com.test.shoebox.repository.BrandRepository;
+import com.test.shoebox.repository.CustomDetailRepository;
 import com.test.shoebox.repository.MainBannerRepository;
 import com.test.shoebox.service.main.ListProductService;
 import com.test.shoebox.service.main.MainService;
@@ -102,7 +104,6 @@ public class MainController {
 				rcmdPrdtList.add(itemList);
 			}
 		}
-		
 		
 		model.addAttribute("banner", banner);
 		
@@ -249,15 +250,10 @@ public class MainController {
 
 		return "main/register";
 	}
-//	@GetMapping("/category")
-//	public String category(Model model) {
-//
-//		return "main/category";
-//	}
-	@GetMapping("/detailpage")
-	public String detailpage(Model model) {
+	@GetMapping("/category")
+	public String category(Model model) {
 
-		return "main/detailpage";
+		return "main/category";
 	}
 
 }
