@@ -29,6 +29,7 @@ import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.entity.ProductPost;
 import com.test.shoebox.entity.ProductStockOrder;
 import com.test.shoebox.entity.QProduct;
+import com.test.shoebox.entity.QProductPost;
 import com.test.shoebox.entity.QProductStock;
 import com.test.shoebox.entity.QProductStockOrder;
 
@@ -41,6 +42,8 @@ import static com.test.shoebox.entity.QBrand.brand;
 import static com.test.shoebox.entity.QProductStock.productStock;
 import static com.test.shoebox.entity.QProductStockOrder.productStockOrder;
 import static com.test.shoebox.entity.QOrderReview.orderReview;
+import static com.test.shoebox.entity.QProductStock.productStock;
+import static com.test.shoebox.entity.QProductStockOrder.productStockOrder;
 
 
 
@@ -72,7 +75,9 @@ public class CustomRepository {
 								.orderBy(productPost.viewCount.desc())
 								.fetch();
 	}
-
+	
+	
+	
 	public Page<ProductImage> findProductPage(PageRequest pageRequest, String targetCustomerType,
 			Long categoriesId, Long brandId, Integer startPrice, Integer endPrice) {
 		
@@ -105,7 +110,7 @@ public class CustomRepository {
 			builder.and(product.productPrice.loe(endPrice));
 		}
 		
-		//동적 정렬
+		
 		
 		List<String> sortPropertyList = new ArrayList<>(); 
 		pageRequest.getSort().forEach(item -> {
@@ -194,8 +199,84 @@ public class CustomRepository {
 		
 		return orders.toArray(new OrderSpecifier[0]);
 	}
-	
-	
+
+	public Page<Tuple> findProductImageByBest(PageRequest pageRequest, String targetCustomerType, Long categoriesId,
+			Long brandId, Integer startPrice, Integer endPrice) {
+		
+		BooleanBuilder builder = new BooleanBuilder();
+		
+		//첫번째 이미지만
+		builder.and(productImage.sortOrder.eq(1));
+		
+		if(targetCustomerType != null) {
+			if(targetCustomerType.equals("men") || targetCustomerType.equals("women")) {
+				builder.and((product.targetCustomerType.eq("unisex").or(product.targetCustomerType.eq(targetCustomerType))));
+			} else {
+				builder.and(product.targetCustomerType.eq(targetCustomerType));
+			}
+		}
+		
+		if(categoriesId != null) {
+			builder.and(categories.categoriesId.eq(categoriesId));
+		}
+		
+		if(brandId != null) {
+			builder.and(brand.brandId.eq(brandId));
+		}
+		
+		if(startPrice != null) {
+			builder.and(product.productPrice.goe(startPrice));
+		}
+		
+		if(startPrice != null) {
+			builder.and(product.productPrice.loe(endPrice));
+		}
+		
+		QProductPost productPost1 =  QProductPost.productPost;
+		
+		List<Tuple> content = jpaQueryFactory.select(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId, productStockOrder.quantity.sum())
+												.from(productImage)
+												.innerJoin(productImage.product, product)
+												.innerJoin(product.brand, brand)
+												.innerJoin(product.productPost, productPost)
+												.leftJoin(product.productStock, productStock)
+												.innerJoin(productStock.productStockOrder, productStockOrder)
+												.where(productPost.postDate.eq(JPAExpressions.select(productPost1.postDate.max())
+																							.from(productPost1)
+																							.where(productPost.productPostId.eq(productPost1.productPostId))
+													
+													).and(builder)
+														
+												)
+												.offset(pageRequest.getOffset())
+												.limit(pageRequest.getPageSize())
+												.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId)
+												.orderBy(productStockOrder.quantity.sum().desc())
+												.fetch();
+												
+		Long count = jpaQueryFactory.select(productImage.count())
+									.from(productImage)
+									.innerJoin(productImage.product, product)
+									.innerJoin(product.brand, brand)
+									.innerJoin(product.productPost, productPost)
+									.leftJoin(product.productStock, productStock)
+									.innerJoin(productStock.productStockOrder, productStockOrder)
+									.where(productPost.postDate.eq(JPAExpressions.select(productPost1.postDate.max())
+																				.from(productPost1)
+																				.where(productPost.productPostId.eq(productPost1.productPostId))
+										
+										).and(builder)
+											
+									)
+									.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId)
+									.orderBy(productStockOrder.quantity.sum().desc())
+									.fetchOne();
+				
+
+		
+		
+		return new PageImpl<>(content, pageRequest, count);
+	}
 	
 	
 }

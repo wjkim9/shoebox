@@ -5,13 +5,18 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.querydsl.core.Tuple;
 import com.test.shoebox.controller.main.LoginController;
+import com.test.shoebox.dto.BestProductImage;
+import com.test.shoebox.dto.ProductListDTO;
 import com.test.shoebox.entity.Brand;
 import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.entity.ProductPost;
@@ -57,8 +62,47 @@ public class ListProductService {
 	public Page<ProductImage> getProductList(PageRequest pageRequest, String targetCustomerType, Long categoriesId,
 			Long brandId, Integer startPrice, Integer endPrice) {
 		
-		//Page<ProductImage> page = CustomRepository.findProductPage(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
-		Page<ProductImage> page = customRepository.findProductPage(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
+		String orderProperty = "";
+		
+		for(Sort.Order order : pageRequest.getSort().toList()) {
+			orderProperty = order.getProperty();
+		}
+		
+		
+		
+		
+		if(orderProperty.equals("quantity")) {
+			Page<Tuple> tuple = customRepository.findProductImageByBest(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
+			
+			List<ProductListDTO> dtoList = new ArrayList<>();
+			
+			for(Tuple item : tuple.getContent()) {
+				ProductListDTO dto = new ProductListDTO();
+				
+				dto.setProductId(item.get(0, Long.class));
+				dto.setFileName(item.get(1, String.class));
+				dto.setBrandName(item.get(2,String.class));
+				dto.setProductName(item.get(3, String.class));
+				dto.setProductPrice(item.get(4, Integer.class));
+				dto.setProductPostId(item.get(5, Long.class));
+				dto.setSalesQuantity(item.get(6, Integer.class));
+				
+				dtoList.add(dto);
+				
+				123
+			}
+			
+			
+			
+		} else {
+			Page<ProductImage> page = customRepository.findProductPage(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
+			
+			
+		}
+		
+		
+		
+		
 		
 		
 		return page;

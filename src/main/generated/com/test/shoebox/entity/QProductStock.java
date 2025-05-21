@@ -26,6 +26,8 @@ public class QProductStock extends EntityPathBase<ProductStock> {
 
     public final NumberPath<Long> productStockId = createNumber("productStockId", Long.class);
 
+    public final ListPath<ProductStockOrder, QProductStockOrder> productStockOrder = this.<ProductStockOrder, QProductStockOrder>createList("productStockOrder", ProductStockOrder.class, QProductStockOrder.class, PathInits.DIRECT2);
+
     public final StringPath shoeSize = createString("shoeSize");
 
     public final NumberPath<Integer> stockQuantity = createNumber("stockQuantity", Integer.class);

@@ -3,6 +3,7 @@ package com.test.shoebox.controller.main;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -203,18 +204,65 @@ public class MainController {
 		Optional<Categories> categories = categoriesRepository.findCategoriesNameByCategoriesId(categoriesId);
 		
 		
+		StringBuilder sb = new StringBuilder();
+		StringBuilder sbForSort = new StringBuilder();
+		
+		StringBuilder sbForQueryString = new StringBuilder();
+		
+		
+		pageRequest.getSort().forEach(item -> sbForSort.append(item.getProperty() + "," + item.getDirection()));
+		
+		sbForQueryString.append("""
+				<a href="/main/listProduct?page=%d&size=20&sort=%s
+				""");
+		if(order != null) {
+			sbForQueryString.append("&order=%s".formatted(order));
+		}
+		
+		if(targetCustomerType != null) {
+			sbForQueryString.append("&targetCustomerType=%s".formatted(targetCustomerType));
+		}
+		
+		if(categoriesId != null) {
+			sbForQueryString.append("&categoriesId=%d".formatted(categoriesId));
+		}
+		
+		if(brandId != null) {
+			sbForQueryString.append("&brandId=%d".formatted(brandId));
+		}
+		
+		if(startPrice != null) {
+			sbForQueryString.append("&startPrice=%d".formatted(startPrice));
+		}
+		
+		if(endPrice != null) {
+			sbForQueryString.append("&endPrice=%d".formatted(endPrice));
+		}
+		sbForQueryString.append("\">%d</a>");
+		
+		
+		System.out.println("sbForSort: " + sbForSort.toString());
+		
+		
 		
 		
 		//상품목록
-		Page<ProductImage> productImageList = listProductService.getProductList(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
 		
-		StringBuilder sb = new StringBuilder();
+		Page<ProductImage> productImageList = null;
 		
-		for(int i=0; i<productImageList.getTotalPages(); i++) {
-			sb.append("""
-					<a href="/main/listProduct?page=%d&size=20&sort=%s">%d</a>
-					""".formatted(i, order, i+1 ));
+		if(order.equals("orderBestDesc")) {
+			
+		} else {
+			
+			productImageList = listProductService.getProductList(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
+			
+			for(int i=0; i<productImageList.getTotalPages(); i++) {
+				sb.append(sbForQueryString.toString().formatted(i, sbForSort, i+1));
+				
+			}
 		}
+		
+		
 		
 		System.out.println("sb: " + sb);
 		
