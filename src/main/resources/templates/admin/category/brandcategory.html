@@ -4,6 +4,7 @@
 	layout:decorate="~{admin/admin_layout}">
 <head>
 </head>
+
 <body>
 
 	<!-- 실제로 삽입되는 부분 -->
@@ -12,46 +13,86 @@
 		<link rel="stylesheet" th:href="@{/admin/css/category.css}" />
 		<div class="admin-container" style="margin-top: var(--header-height);">
 			<div class="page-header">
-				<h2>카테고리 관리</h2>
-				<button class="category_btn" name="category_btn">카테고리 추가</button>
+				<h2>브랜드 카테고리 관리</h2>
+				<button class="category_addbtn" name="category_addbtn" type="button">카테고리
+					추가</button>
 			</div>
 		</div>
-		 <ul class="brand-category-list">
-        <li>
-            <span class="brand-name">나이키</span>
-            <button type="button">수정</button>
-            <button type="button">삭제</button>
-        </li>
-        <li>
-            <span class="brand-name">아디다스</span>
-            <button type="button">수정</button>
-            <button type="button">삭제</button>
-        </li>
-        <li>
-            <span class="brand-name">뉴발란스</span>
-            <button type="button">수정</button>
-            <button type="button">삭제</button>
-        </li>
-        <li>
-            <span class="brand-name">컨버스</span>
-            <button type="button">수정</button>
-            <button type="button">삭제</button>
-        </li>
-        <!-- 필요에 따라 브랜드 추가 -->
-    </ul>
-			
-			
-			
-			
-		<div class="admin-container" style="margin-top: var(--header-height);">	
-		<div class="page-header">
-                <h2>신발 종류 카테고리 관리</h2>
-                <button class="category_btn" name="puccategory_btn">신발 카테고리 추가</button>
-            </div>
+		<div class="brand-list-wrapper">
+			<ul class="brand-category-list">
+				<li><span class="brand-name">NIKE</span>
+					<button type="button" class="addcartgory">수정</button>
+					<button type="button">삭제</button></li>
+				<li><span class="brand-name">ADIDAS</span>
+					<button type="button" class="addcartgory">수정</button>
+					<button type="button">삭제</button></li>
+				<li><span class="brand-name">NEW BALANCE</span>
+					<button type="button" class="addcartgory">수정</button>
+					<button type="button">삭제</button></li>
+				<li><span class="brand-name">VANS</span>
+					<button type="button" class="addcartgory">수정</button>
+					<button type="button">삭제</button></li>
+			</ul>
 		</div>
-
+		
 		<!-- 페이지 전용 JS -->
 		<script th:src="@{/admin/js/page-specific.js}"></script>
+		<script>
+			// 모달 열기
+			function openEditModal(name, category, imgFile) {
+				document.getElementById('brandName').value = name;
+				document.getElementById('brandCategory').value = category;
+				// 이미지 미리보기
+				if (imgFile) {
+					document.getElementById('brandImgPreview').src = imgFile;
+					document.getElementById('brandImgPreview').style.display = 'block';
+				} else {
+					document.getElementById('brandImgPreview').style.display = 'none';
+				}
+				document.getElementById('brandImage').value = '';
+				document.getElementById('editModalBg').classList.add('active');
+			}
+			// 모달 닫기
+			function closeEditModal() {
+				document.getElementById('editModalBg').classList
+						.remove('active');
+			}
+			// 이미지 미리보기
+			document
+					.getElementById('brandImage')
+					.addEventListener(
+							'change',
+							function(e) {
+								const file = e.target.files[0];
+								if (file) {
+									const reader = new FileReader();
+									reader.onload = function(ev) {
+										document
+												.getElementById('brandImgPreview').src = ev.target.result;
+										document
+												.getElementById('brandImgPreview').style.display = 'block';
+									}
+									reader.readAsDataURL(file);
+								}
+							});
+			// 폼 제출(저장) 예시
+			document.getElementById('editBrandForm').onsubmit = function(e) {
+				e.preventDefault();
+				alert('저장 기능을 구현하세요!');
+				closeEditModal();
+			}
+			// ESC로 모달 닫기
+			document.addEventListener('keydown', function(e) {
+				if (e.key === "Escape")
+					closeEditModal();
+			});
+			// 모달 바깥 클릭 시 닫기
+			document.getElementById('editModalBg').addEventListener('click',
+					function(e) {
+						if (e.target === this)
+							closeEditModal();
+					});
+		</script>
 	</section>
 
 </body>
