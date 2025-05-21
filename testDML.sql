@@ -385,3 +385,16 @@ INSERT INTO CartItem VALUES (
                             );
 
 commit;
+
+select * from coupon;
+select * from members;
+select * from ISSUEDCOUPON;
+select * from product;
+select * from PRODUCTSTOCK;
+select * from CARTITEM;
+
+
+
+
+
+

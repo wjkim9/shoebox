@@ -5,6 +5,87 @@
 <title>장바구니</title>
 <link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
 <style>
+	.modal {
+		display: none;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5);
+		z-index: 1000;
+	}
+
+	.modal-content {
+		position: relative;
+		background-color: white;
+		width: 500px;
+		margin: 100px auto;
+		padding: 30px;
+		border-radius: 8px;
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+	}
+
+	.modal-content h2 {
+		margin: 0 0 20px 0;
+		font-size: 1.5em;
+		color: #333;
+	}
+
+	.coupon-item {
+		padding: 15px;
+		border: 1px solid #eee;
+		margin: 10px 0;
+		border-radius: 4px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		transition: all 0.2s ease;
+	}
+
+	.coupon-item:hover {
+		background-color: #f8f8f8;
+		border-color: #ddd;
+	}
+
+	.coupon-item.selected {
+		background-color: #e8f4ff;
+		border-color: #0078ff;
+	}
+
+	.coupon-item input[type="radio"] {
+		margin: 0;
+	}
+
+	.coupon-item span {
+		font-size: 0.95em;
+		color: #333;
+	}
+
+
+	.modal-footer button {
+		padding: 8px 16px;
+		margin-left: 10px;
+	}
+
+	#closeCouponModal, #applyCouponBtn {
+		padding: 8px 20px;
+		background-color: #333;
+		color: white;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 0.95em;
+		transition: background-color 0.2s;
+		font-weight: bold;
+		align-content: center;
+	}
+
+	#closeCouponModal:hover, #applyCouponBtn:hover  {
+		background-color: #555;
+	}
+
 </style>
 </head>
 <body>
@@ -38,18 +119,20 @@
 				</colgroup>
 				<thead>
 					<tr>
-						<th><input type="checkbox" id="cart-check-all" class="cart-chk"></th>
+						<th><input type="checkbox" id="cart-check-all" class="cart-chk" checked></th>
 						<th>상품정보</th>
 						<th>상품명</th>
 						<th>수량</th>
 						<th>적립</th>
 						<th>상품금액</th>
-						<th></th>
+						<th>비고</th>
 					</tr>
 				</thead>
 				<tbody>
+				<!-- 카트 제품 불러오기 -->
 				<tr class="cart-item" th:each="item : ${cartItems}">
-					<td><input type="checkbox" class="cart-chk cart-chk-item"></td>
+					<!--카트 제품 이미지-->
+					<td><input type="checkbox" class="cart-chk cart-chk-item" checked></td>
 					<td>
 						<!-- 이미지가 있는 경우 -->
 						<img class="cart-img"
@@ -62,24 +145,26 @@
 							 src="/common/images/default.png"
 							 alt="default-image">
 					</td>
-
-
+					<!-- 제품 정보 -->
 					<td class="cart-prod-info">
 						<div class="cart-prod-name" th:text="${item.productStock.product.productName}"></div>
 						<div class="cart-prod-desc" th:text="${item.productStock.shoeSize}"></div>
 					</td>
+					<!-- 제품 수량 -->
 					<td>
 						<div class="cart-qty-wrap">
 							<button class="cart-qty-btn minus">-</button>
 							<input type="number" class="cart-qty-input" th:value="${item.quantity}" min="1" max="99">
 							<button class="cart-qty-btn plus">+</button>
 						</div>
-						<button class="cart-qty-change-btn">변경</button>
 					</td>
+					<!-- 상품 당 적립 포인트 -->
 					<td class="cart-point">0P</td>
 					<td>
-						<div class="cart-price" th:text="${#numbers.formatInteger(item.quantity * item.productStock.product.productPrice, 3, 'COMMA') + '원'}"></div>
-						<button class="cart-coupon-btn">쿠폰적용</button>
+						<div class="cart-price" th:text="${#numbers.formatInteger(item.quantity * item.productStock.product.productPrice, 3, 'COMMA') + '원'}"
+         th:data-price="${item.quantity * item.productStock.product.productPrice}"></div>
+    <button class="cart-coupon-btn" 
+            th:data-product-discount-rate="${item.productStock.product.discountRate}">쿠폰적용</button>
 					</td>
 					<td>
 						<div class="cart-row-actions">
@@ -110,24 +195,24 @@
 			<div class="cart-summary-row">
 				<div class="cart-summary-item">
 					<span class="cart-summary-label">주문금액</span>
-					<span class="cart-summary-value">198,000원</span>
+					<span class="cart-summary-value" id="totalAmount">0원</span>
 				</div>
 				<img src="/member/images/substract.png" class="cart-summary-icon"
 					alt="substract">
 				<div class="cart-summary-item">
 					<span class="cart-summary-label">총 할인금액</span>
-					<span class="cart-summary-value">52,000원</span>
+					<span class="cart-summary-value" id="totalDiscountAmount">0원</span>
 				</div>
 				<img src="/member/images/equal.png" class="cart-summary-icon" alt="equal">
 				<div class="cart-summary-item total">
 					<span class="cart-summary-label">결제예정금액</span>
-					<span class="cart-summary-value">146,000원</span>
+					<span class="cart-summary-value" id="finalAmount">0원</span>
 				</div>
 			</div>
 			<div class="cart-summary-detail-row">
 				<div class="cart-summary-detail-col">
 					<span class="cart-summary-detail-label">상품금액</span>
-					<span class="cart-summary-detail-value">198,000원</span>
+					<span class="cart-summary-detail-value" id="productAmount">0원</span>
 				</div>
 				<div class="cart-summary-detail-col">
 					<span class="cart-summary-detail-label">추가 배송비</span>
@@ -135,15 +220,15 @@
 				</div>
 				<div class="cart-summary-detail-col">
 					<span class="cart-summary-detail-label">총 할인금액</span> 
-					<span class="cart-summary-detail-value">52,000원</span>
+					<span class="cart-summary-detail-value" id="detailDiscountAmount">0원</span>
 				</div>
 				<div class="cart-summary-detail-col">
 					<span class="cart-summary-detail-label">예상 적립금</span>
-                <span class="cart-summary-detail-value">700P</span>
+					<span class="cart-summary-detail-value" id="pointAmount">0P</span>
 				</div>
 				<div class="cart-summary-detail-col">
 					<span class="cart-summary-detail-label">결제예정금액</span>
-					<span class="cart-summary-detail-value" style="color: #ba0a0a;">146,000원</span>
+					<span class="cart-summary-detail-value" id="detailFinalAmount" style="color: #ba0a0a;">0원</span>
 				</div>
 			</div>
 		</div>
@@ -170,53 +255,297 @@
 			- 주문 전 상품정보와 배송정보를 반드시 확인하세요.<br>
 		</div>
 	</div>
+
+	<!-- 쿠폰 모달 -->
+	<div id="couponModal" class="modal" style="display: none;">
+		<div class="modal-content">
+			<h2>사용 가능한 쿠폰</h2>
+			<div id="couponList"></div>
+			<button id="applyCouponBtn">적용</button>
+			<button id="closeCouponModal">닫기</button>
+		</div>
+	</div>
+
+
+
 	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
 </body>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-  const checkAll = document.getElementById('cart-check-all');
-  const items = document.querySelectorAll('.cart-chk-item');
+	document.addEventListener('DOMContentLoaded', function () {
+		// 체크박스 관련 코드
+		const checkAll = document.getElementById('cart-check-all');
+		const items = document.querySelectorAll('.cart-chk-item');
 
-  // 상단 체크박스 클릭 시 하위 모두 체크/해제
-  checkAll.addEventListener('change', function() {
-    items.forEach(function(chk) {
-      chk.checked = checkAll.checked;
+		// 상단 체크박스 클릭 시 하위 모두 체크/해제
+		checkAll.addEventListener('change', function () {
+			items.forEach(function (chk) {
+				chk.checked = checkAll.checked;
+			});
+		});
+
+		// 하위 체크박스 상태에 따라 상단 체크박스도 자동 변경
+		items.forEach(function (chk) {
+			chk.addEventListener('change', function () {
+				checkAll.checked = Array.from(items).every(function (item) {
+					return item.checked;
+				});
+			});
+		});
+
+    // 수량 조절 버튼 이벤트
+    document.querySelectorAll('.cart-qty-wrap').forEach(function(wrap) {
+        const minusBtn = wrap.querySelector('.cart-qty-btn.minus');
+        const plusBtn = wrap.querySelector('.cart-qty-btn.plus');
+        const input = wrap.querySelector('.cart-qty-input');
+
+        minusBtn.addEventListener('click', function() {
+            let value = parseInt(input.value, 10);
+            if (value > parseInt(input.min, 10)) {
+                input.value = value - 1;
+            }
+        });
+
+        plusBtn.addEventListener('click', function() {
+            let value = parseInt(input.value, 10);
+            if (input.max === "" || value < parseInt(input.max, 10)) {
+                input.value = value + 1;
+            }
+        });
     });
-  });
 
-  // 하위 체크박스 상태에 따라 상단 체크박스도 자동 변경
-  items.forEach(function(chk) {
-    chk.addEventListener('change', function() {
-      // 모두 체크되어 있으면 상단도 체크, 아니면 해제
-      checkAll.checked = Array.from(items).every(function(item) {return item.checked;});
+    // 쿠폰 버튼 클릭 이벤트
+    document.querySelectorAll('.cart-coupon-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('쿠폰 버튼 클릭됨');
+            
+            // 해당 상품의 정보
+            const cartItem = this.closest('.cart-item');
+            const priceElement = cartItem.querySelector('.cart-price');
+            const itemPrice = parseInt(priceElement.getAttribute('data-price') || priceElement.textContent.replace(/[^0-9]/g, ''));
+            
+            console.log('상품 가격:', itemPrice);
+            
+            // 쿠폰 목록 가져오기
+            fetch('/mypage/api/coupons')
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            throw new Error('로그인이 필요합니다.');
+                        }
+                        throw new Error('쿠폰 정보를 불러오는데 실패했습니다.');
+                    }
+                    return response.json();
+                })
+                .then(coupons => {
+                    console.log('받은 쿠폰 데이터:', coupons);
+                    const couponList = document.getElementById('couponList');
+                    if (!couponList) {
+                        console.error('couponList element not found');
+                        return;
+                    }
+                    
+                    if (coupons.length === 0) {
+                        couponList.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">사용 가능한 쿠폰이 없습니다.</div>';
+                    } else {
+                        couponList.innerHTML = coupons.map(coupon => `
+                            <div class="coupon-item" data-coupon-id="${coupon.issuedCouponId}">
+                                <input type="radio" name="coupon" value="${coupon.issuedCouponId}">
+                                <span>${coupon.coupon.couponName}</span>
+                                <span>${coupon.coupon.discountRate}% 할인</span>
+                                <span>~${new Date(coupon.expireDatetime).toLocaleDateString()} 까지</span>
+                            </div>
+                        `).join('');
+                    }
+
+                    // 모달 표시
+                    const modal = document.getElementById('couponModal');
+                    if (modal) {
+                        modal.style.display = 'block';
+                    }
+
+                    // 쿠폰 선택 이벤트
+                    document.querySelectorAll('.coupon-item').forEach(item => {
+                        item.addEventListener('click', function() {
+                            const radio = this.querySelector('input[type="radio"]');
+                            radio.checked = true;
+                            this.classList.add('selected');
+                            
+                            // 다른 쿠폰들의 선택 상태 제거
+                            document.querySelectorAll('.coupon-item').forEach(otherItem => {
+                                if (otherItem !== this) {
+                                    otherItem.classList.remove('selected');
+                                }
+                            });
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('쿠폰 데이터를 가져오는 중 오류 발생:', error);
+                    alert(error.message || '쿠폰 정보를 불러오는데 실패했습니다.');
+                });
+        });
     });
-  });
-});
 
-document.addEventListener('DOMContentLoaded', function() {
-	  // 모든 수량 조절 영역에 대해 이벤트 바인딩
-	  document.querySelectorAll('.cart-qty-wrap').forEach(function(wrap) {
-	    const minusBtn = wrap.querySelector('.cart-qty-btn.minus');
-	    const plusBtn = wrap.querySelector('.cart-qty-btn.plus');
-	    const input = wrap.querySelector('.cart-qty-input');
+    // 모달 닫기 버튼 이벤트
+    document.getElementById('closeCouponModal').addEventListener('click', function() {
+        const modal = document.getElementById('couponModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    });
 
-	    // - 버튼 클릭
-	    minusBtn.addEventListener('click', function() {
-	      let value = parseInt(input.value, 10);
-	      if (value > parseInt(input.min, 10)) {
-	        input.value = value - 1;
-	      }
-	    });
-
-	    // + 버튼 클릭
-	    plusBtn.addEventListener('click', function() {
-	      let value = parseInt(input.value, 10);
-	      if (input.max === "" || value < parseInt(input.max, 10)) {
-	        input.value = value + 1;
-	      }
-	    });
-	  });
+    // 모달 외부 클릭 시 닫기
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('couponModal');
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+		});
 	});
+
+	// 주문 금액 계산 및 업데이트
+	document.addEventListener('DOMContentLoaded', function() {
+		// 체크박스와 수량 변경 관련 요소들 선택
+		const checkAll = document.getElementById('cart-check-all');
+		const itemCheckboxes = document.querySelectorAll('.cart-chk-item');
+		const quantityInputs = document.querySelectorAll('.cart-qty-input');
+		const quantityButtons = document.querySelectorAll('.cart-qty-btn');
+
+		// 주문 금액 계산 및 업데이트 함수
+		function updateTotalAmount() {
+			let totalAmount = 0;
+			let discountAmount = 0;
+
+			// 모든 상품 항목 순회
+			document.querySelectorAll('.cart-item').forEach(function(item) {
+				// 체크박스가 체크되어 있는지 확인
+				const isChecked = item.querySelector('.cart-chk-item').checked;
+
+				if (isChecked) {
+					// 상품 수량 가져오기
+					const quantity = parseInt(item.querySelector('.cart-qty-input').value);
+
+					// 상품 가격 가져오기
+					// 가격 텍스트에서 숫자만 추출 (콤마 및 '원' 제거)
+					const priceText = item.querySelector('.cart-price').textContent;
+					const price = parseInt(priceText.replace(/,/g, '').replace('원', ''));
+
+					// 상품 할인율 가져오기
+					const couponDiscountRate = item.querySelector('.cart-coupon-btn');
+					const productDiscountRate = parseFloat(couponDiscountRate.getAttribute('data-product-discount-rate') || 0);
+
+					// 할인 금액 계산
+					const discountAmount = Math.round(price * (productDiscountRate / 100));
+
+
+					// 합계에 추가
+					totalAmount += quantity * price;
+					totalDiscountAmount += discountAmount;
+
+					// 할인율 계산
+				}
+			});
+
+
+
+			// 계산된 합계를 화면에 표시
+			// 세 자리마다 콤마(,) 추가하여 포맷팅
+			document.querySelector('.cart-summary-value').textContent =
+					totalAmount.toLocaleString() + '원';
+
+			// 결제예정금액 업데이트 (할인 적용)
+			updateFinalAmount(totalAmount, totalDiscountAmount);
+		}
+
+		// 결제예정금액 업데이트 함수
+		function updateFinalAmount(totalAmount, totalDiscountAmount) {
+
+			const finalAmount = totalAmount - totalDiscountAmount;
+
+			// 결제예정금액 업데이트
+			document.querySelector('.cart-summary-item.total .cart-summary-value').textContent =
+					finalAmount.toLocaleString() + '원';
+
+			// 할인 금액 업데이트
+			document.querySelector('.cart-summary-item:nth-child(3) .cart-summary-value').textContent =
+					totalDiscountAmount.toLocaleString() + '원';
+
+			// 기타 금액 정보도 업데이트
+			document.querySelectorAll('.cart-summary-detail-col').forEach(function(col) {
+				const label = col.querySelector('.cart-summary-detail-label').textContent;
+
+				if (label.includes('상품금액')) {
+					col.querySelector('.cart-summary-detail-value').textContent =
+							totalAmount.toLocaleString() + '원';
+				}
+				else if (label.includes('총 할인금액')) {
+					col.querySelector('.cart-summary-detail-value').textContent =
+							totalDiscountAmount.toLocaleString() + '원';
+				}
+				else if (label.includes('결제예정금액')) {
+					col.querySelector('.cart-summary-detail-value').textContent =
+							finalAmount.toLocaleString() + '원';
+				}
+			});
+		}
+
+		// 이벤트 리스너 등록
+
+		// 모든 상품 체크박스 이벤트
+		checkAll.addEventListener('change', function() {
+			// 모든 상품 체크박스 상태 변경
+			itemCheckboxes.forEach(function(checkbox) {
+				checkbox.checked = checkAll.checked;
+			});
+
+			// 금액 업데이트
+			updateTotalAmount();
+		});
+
+
+
+
+
+		// 개별 상품 체크박스 이벤트
+		itemCheckboxes.forEach(function(checkbox) {
+			checkbox.addEventListener('change', function() {
+				// 모든 체크박스가 체크되었는지 확인
+				const allChecked = Array.from(itemCheckboxes).every(function(cb) {
+					return cb.checked;
+				});
+
+				// 전체 선택 체크박스 상태 업데이트
+				checkAll.checked = allChecked;
+
+				// 금액 업데이트
+				updateTotalAmount();
+			});
+		});
+
+		// 수량 변경 버튼 이벤트
+		quantityButtons.forEach(function(button) {
+			button.addEventListener('click', function() {
+				// 클릭 후 약간의 지연을 두고 계산 (수량이 변경된 후 계산하기 위해)
+				setTimeout(updateTotalAmount, 10);
+			});
+		});
+
+		// 수량 입력 필드 이벤트
+		quantityInputs.forEach(function(input) {
+			input.addEventListener('change', updateTotalAmount);
+		});
+
+		// 초기 로딩 시 금액 계산
+		updateTotalAmount();
+	});
+
+
+
+
+
+
+
 
 </script>
 

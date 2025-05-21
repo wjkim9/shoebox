@@ -51,4 +51,7 @@ public class CartItem {
                 .membersId(this.members.getMembersId())
                 .build();
     }
+
+
+
 }
