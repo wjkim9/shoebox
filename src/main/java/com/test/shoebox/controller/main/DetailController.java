@@ -1,5 +1,6 @@
 package com.test.shoebox.controller.main;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.test.shoebox.dto.DetailMap;
+import com.test.shoebox.dto.MYOrderReviewMapDTO;
+import com.test.shoebox.dto.MYProductPostQnaMapDTO;
 import com.test.shoebox.dto.ProductImageDTO;
 import com.test.shoebox.dto.ProductPostImageDTO;
 import com.test.shoebox.dto.ProductPostQnaDTO;
@@ -24,13 +27,17 @@ import com.test.shoebox.repository.ProductImageRepository;
 import com.test.shoebox.repository.ProductPostImageRepository;
 import com.test.shoebox.repository.ProductPostQnaRepository;
 import com.test.shoebox.repository.ProductStockRepository;
-
+import com.test.shoebox.service.main.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 
 @Controller
 @RequestMapping("/main")
 @RequiredArgsConstructor
 public class DetailController {
+
+    private final OAuth2SuccessHandler OAuth2SuccessHandler;
+
+    private final LoginController loginController;
 
 	private final CustomDetailRepository customDetailRepository;
 	private final ProductImageRepository productImageRepository;
@@ -54,7 +61,7 @@ public class DetailController {
 		//상품사진(선택한 상품)
 		List<ProductImage> productImageList = productImageRepository.findByProductOrderBySortOrderAsc(productPost.getProduct());
 
-		List<ProductImageDTO> productImageDTOList = null;
+		List<ProductImageDTO> productImageDTOList = new ArrayList<>();
 
 		for (ProductImage pi : productImageList) {
 			System.out.println(pi.getFileName());
@@ -67,7 +74,7 @@ public class DetailController {
 		//상품게시글사진
 		List<ProductPostImage> productPostImageList = productPostImageRepository.findByProductPost(productPost);
 		
-		List<ProductPostImageDTO> productPostImageDTOList = null;
+		List<ProductPostImageDTO> productPostImageDTOList = new ArrayList<>();
 
 		for (ProductPostImage ppi : productPostImageList) {
 			System.out.println(ppi.getFileName());
@@ -77,44 +84,59 @@ public class DetailController {
 			productPostImageDTOList.add(dto);
 		}
 		
-		//상품게시글Q&A
-		List<ProductPostQna> productPostQnaList = productPostQnaRepository.findByProductPost(productPost);
-		
-		List<ProductPostQnaDTO> productPostQnaDTOList = null;
-
-		for (ProductPostQna ppq : productPostQnaList) {
-			System.out.println(ppq.getTitle());
-			
-			ProductPostQnaDTO dto = ppq.toDTO();
-			
-			productPostQnaDTOList.add(dto);
-		}
-		
 		//상품재고 리스트 가져오기
 		List<ProductStock> productStockList = productStockRepository.findByProduct(productPost.getProduct());
 		
-		List<ProductStockDTO> productStockDTOList = null;
+		List<ProductStockDTO> productStockDTOList = new ArrayList<>();
 		
 		for (ProductStock ps : productStockList) {
+
 			System.out.println("사이즈: " + ps.getShoeSize() + " _ 수량 " + ps.getStockQuantity());
-			
+
 			ProductStockDTO dto = ps.toDTO();
-			
+
 			productStockDTOList.add(dto);
+		}
+
+		//상품게시글Q&A
+		List<MYProductPostQnaMapDTO> mYProductPostQnaMapDTOList = productPostMapper.getProductPostQna(productPostId);
+		
+		for (MYProductPostQnaMapDTO dto : mYProductPostQnaMapDTOList) {
+			System.out.println(dto.getTitle());
 		}
 		
 		//상품그룹 자식(상품사진, 상품게시글)리스트 가져오기
 		List<DetailMap> productGroupMapList = productPostMapper.detailtest(productPostId);
-		
+
 		//상품게시글에 해당하는 상품id 얻어오기
 		String productId = productPost.getProduct().getProductId() + "";
 		
-		//List<> orderReviewList = productPostMapper.getgetOrderReview(productId);
+		//상품 자식(상품재고, 상품재고_주문, 주문후기, 주문후기사진, 주문, 회원) 리스트 가져오기
+		List<MYOrderReviewMapDTO> mYOrderReviewMapDTOList = productPostMapper.getOrderReview(productId);
 		
-		
+		for (MYOrderReviewMapDTO dto : mYOrderReviewMapDTOList) {
+			System.out.println(dto.getContent());
+		}
 
 
 		return "main/detailpage";
 	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
