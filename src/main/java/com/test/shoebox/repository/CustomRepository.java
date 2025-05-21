@@ -7,6 +7,7 @@ import static com.test.shoebox.entity.QProductPost.productPost;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -118,37 +119,6 @@ public class CustomRepository {
 		});
 		
 		String sortProperty = sortPropertyList.get(0).toString();
-		
-//		if(sortProperty.equals("quantity")) {
-//			
-//			QProduct product1 = QProduct.product;
-//			//QProductStock productStock1 = QProductStock.productStock;
-//			//QProductStockOrder productStockOrder1 = QProductStockOrder.productStockOrder;
-//			
-//			JPQLQuery<Integer> subQuery = JPAExpressions.select(productStockOrder.quantity.sum())
-//							.from(productStockOrder)
-//							.leftJoin(productStockOrder.productStock, productStock)
-//							.leftJoin(productStock.product, product1)
-//							.where(product1.productId.eq(product.productId))
-//							.groupBy(product1.productId)
-//							;
-//			
-//			List<ProductImage> content = jpaQueryFactory
-//											.select(productImage)
-//											.from(productImage)
-//											.innerJoin(productImage.product, product)
-//											.innerJoin(product.productPost, productPost)
-//											.innerJoin(product.brand, brand)
-//											.where(builder)
-//											.orderBy()
-//											.offset(pageRequest.getOffset())
-//											.limit(pageRequest.getPageSize())
-//											.fetch();
-//			
-//		}
-		
-		
-		
 				
 		
 		List<ProductImage> content = jpaQueryFactory
@@ -171,6 +141,9 @@ public class CustomRepository {
 									.where(builder)
 									.fetchOne();
 		
+		if(Optional.ofNullable(count).isEmpty()) {
+			count = 0L;
+		}
 		
 		return new PageImpl<>(content, pageRequest, count);
 	
@@ -240,7 +213,7 @@ public class CustomRepository {
 												.innerJoin(product.brand, brand)
 												.innerJoin(product.productPost, productPost)
 												.leftJoin(product.productStock, productStock)
-												.innerJoin(productStock.productStockOrder, productStockOrder)
+												.leftJoin(productStock.productStockOrder, productStockOrder)
 												.where(productPost.postDate.eq(JPAExpressions.select(productPost1.postDate.max())
 																							.from(productPost1)
 																							.where(productPost.productPostId.eq(productPost1.productPostId))
@@ -254,13 +227,13 @@ public class CustomRepository {
 												.orderBy(productStockOrder.quantity.sum().desc())
 												.fetch();
 												
-		Long count = jpaQueryFactory.select(productImage.count())
+		Long count = jpaQueryFactory.selectDistinct(productImage.count())
 									.from(productImage)
 									.innerJoin(productImage.product, product)
 									.innerJoin(product.brand, brand)
 									.innerJoin(product.productPost, productPost)
 									.leftJoin(product.productStock, productStock)
-									.innerJoin(productStock.productStockOrder, productStockOrder)
+									.leftJoin(productStock.productStockOrder, productStockOrder)
 									.where(productPost.postDate.eq(JPAExpressions.select(productPost1.postDate.max())
 																				.from(productPost1)
 																				.where(productPost.productPostId.eq(productPost1.productPostId))
@@ -268,11 +241,12 @@ public class CustomRepository {
 										).and(builder)
 											
 									)
-									.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId)
-									.orderBy(productStockOrder.quantity.sum().desc())
 									.fetchOne();
-				
-
+		
+		if(Optional.ofNullable(count).isEmpty()) {
+			count = 0L;
+		}
+		
 		
 		
 		return new PageImpl<>(content, pageRequest, count);

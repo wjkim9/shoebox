@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.test.shoebox.dto.BrandDTO;
 import com.test.shoebox.dto.CategoriesDTO;
+import com.test.shoebox.dto.ProductListDTO;
 import com.test.shoebox.entity.Brand;
 import com.test.shoebox.entity.Categories;
 import com.test.shoebox.entity.EventPost;
@@ -122,7 +123,6 @@ public class MainController {
 		
 		return "main/main";
 	}
-//	http://localhost:8090/main/listProduct?targetCustomerType=asdf&categoriesId=1&brandId=1&startPrice=18000&endPrice=30000
 	//정렬 방법
 	//베스트상품순: orderBestDesc
 	//신상품순: orderNewDesc
@@ -134,30 +134,21 @@ public class MainController {
 	@GetMapping(value = "listProduct")
 	public String listProduct(Model model, 
 		@PageableDefault(page = 0, size = 20) Pageable pageable,
-		@RequestParam(value = "order", required = false, defaultValue = "orderNewDesc") String order,
-		@RequestParam(value = "targetCustomerType", required = false, defaultValue = "men") String targetCustomerType,
+		@RequestParam(value = "order", required = false, defaultValue = "orderBestDesc") String order,
+		@RequestParam(value = "targetCustomerType", required = false) String targetCustomerType,
 		@RequestParam(value = "categoriesId", required = false) Long categoriesId, 
 		@RequestParam(value = "brandId", required = false) Long brandId, 
 		@RequestParam(value = "startPrice", required = false) Integer startPrice, 
 		@RequestParam(value = "endPrice", required = false) Integer endPrice
 	) {
 		
-		System.out.println("==============================");
-		System.out.println("order: " + order);
-		System.out.println("targetCustomerType: " + targetCustomerType);
-		System.out.println("categoriesId: " + categoriesId);
-		System.out.println("brandId: " + brandId);
-		System.out.println("startPrice: " + startPrice);
-		System.out.println("endPrice: " + endPrice);
 		
-		System.out.println("pageable Sort:" + pageable.getSort());
-		System.out.println("pageable PageNumber:" + pageable.getPageNumber());
 		
 		PageRequest pageRequest = null;
 		
 		//파라미터에 따라 pageRequest 생성
 		if(order.equals("orderBestDesc")) {
-			//손봐야함
+			
 			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "quantity"));
 			
 		} else if(order.equals("orderNewDesc")) {
@@ -185,14 +176,6 @@ public class MainController {
 		
 		
 		
-		
-		System.out.println("pageRequest Sort:" + pageRequest.getSort());
-		
-		
-		pageRequest.getSort().forEach(item -> {
-			System.out.println("sort Property: " + item.getProperty());
-			System.out.println("sort Direction: " + item.getDirection());
-		});
 		
 		//필터로 보여줄 항목
 		//브랜드
@@ -247,24 +230,18 @@ public class MainController {
 		
 		
 		//상품목록
+		Page<ProductListDTO> productList = listProductService.getProductList(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
 		
-		Page<ProductImage> productImageList = null;
-		
-		if(order.equals("orderBestDesc")) {
-			
-		} else {
-			
-			productImageList = listProductService.getProductList(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
-			
-			for(int i=0; i<productImageList.getTotalPages(); i++) {
-				sb.append(sbForQueryString.toString().formatted(i, sbForSort, i+1));
-				
-			}
+		for(int i=0; i<productList.getTotalPages(); i++) {
+			sb.append(sbForQueryString.toString().formatted(i, sbForSort, i+1));
 		}
 		
-		
-		
+		System.out.println("TotalPages: " + productList.getTotalPages());
+		System.out.println("Size: " + productList.getSize());
+		System.out.println("Size: " + productList.getSize());
+		System.out.println("Offset: " + pageRequest.getOffset());
 		System.out.println("sb: " + sb);
+		
 		
 		//상품경로
 		model.addAttribute("targetCustomerType", targetCustomerType);
@@ -275,7 +252,7 @@ public class MainController {
 		model.addAttribute("categoriesOnFilterList", categoriesOnFilterList);
 		
 		//상품 정보
-		model.addAttribute("productImageList", productImageList);
+		model.addAttribute("productList", productList);
 		
 		if(categories.isPresent()) {
 			model.addAttribute("categories", categories.get().toDTO());

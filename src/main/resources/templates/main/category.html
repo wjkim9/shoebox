@@ -103,7 +103,7 @@
 		<main class="main-area">
 			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(targetCustomerType)} + ' > ' + ${categories.categoriesName}"></div>
 			<div class="topbar">
-				<div class="category-title">런닝화</div>
+				<div class="category-title" th:text="${categories.categoriesName}">런닝화</div>
 				<div class="sort-dropdown">
 					<select id="orderSelect" class="sort-select">
 						<option value="orderBestDesc">베스트상품순</option>
@@ -116,13 +116,13 @@
 				</div>
 			</div>
 			<div class="product-grid">
-				<a th:each="image : ${productImageList.getContent()}" th:href="'/main/detailpage/productPostId=' + ${image.product.productPost.get(0).productPostId}" href="/main/detailpage" class="new-item-link">
+				<a th:each="product : ${productList}" th:href="'/main/detailpage/productPostId=' + ${product.productPostId}" href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
-						<img th:src="'/common/images/product/' + ${image.fileName}" th:alt="${image.product.productName}" src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
+						<img th:src="'/common/images/product/' + ${product.fileName}" th:alt="${product.productName}" src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
 						<div class="item-info">
-							<h3 th:text="${image.product.brand.brandName}" class="item-info-brand" style="color: #222">아디다스</h3>
-							<p th:text="${image.product.productName}" class="item-info-name">GRADAS</p>
-							<p th:text="${#numbers.formatInteger(image.product.productPrice, '0', 'COMMA')} + '원'" class="price" style="color: #ba0a0a">109,000원</p>
+							<h3 th:text="${product.brandName}" class="item-info-brand" style="color: #222">아디다스</h3>
+							<p th:text="${product.productName}" class="item-info-name">GRADAS</p>
+							<p th:text="${#numbers.formatInteger(product.productPrice, '0', 'COMMA')} + '원'" class="price" style="color: #ba0a0a">109,000원</p>
 						</div>
 					</div>
 				</a>
@@ -334,7 +334,7 @@
 		param.set('order', target.target.value);
 		
 		//console.log(`${window.location.pathname}?${param.toString()}`);
-		
+		//alert(`${window.location.pathname}?${param.toString()}`);
 		location.href = `${window.location.pathname}?${param.toString()}`;
 	});
 	
