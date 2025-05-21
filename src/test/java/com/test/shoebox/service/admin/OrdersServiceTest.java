@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest
 @Transactional //테스트후 자동 롤백
 public class OrdersServiceTest {
@@ -31,8 +33,23 @@ public class OrdersServiceTest {
         Orders 변경된주문 = ordersRepository.findById(order.getOrdersId()).get();
 
         // 4. 검증
-        Assertions.assertEquals(6, 변경된주문.getOrdersStatus());
+        assertEquals(6, 변경된주문.getOrdersStatus());
         Assertions.assertNotEquals(원래상태, 변경된주문.getOrdersStatus());
     }
+
+    @Test
+    void 주문상태변경_성공() {
+        // given
+        Long orderId = 1L;
+        int newStatus = 5;
+
+        // when
+        ordersService.updateStatus(orderId, newStatus);
+
+        // then
+        Orders updated = ordersRepository.findById(orderId).get();
+        assertEquals(newStatus, updated.getOrdersStatus());
+    }
+
 }
 
