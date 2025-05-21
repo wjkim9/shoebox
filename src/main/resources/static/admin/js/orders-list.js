@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
     resetBtn.addEventListener('click', function () {
         const form = document.getElementById('searchForm');
         if (form) {
-            form.reset();
+            form.querySelectorAll('input, select').forEach(el => el.value = '');
             form.submit();
         }
     });

@@ -6,6 +6,7 @@ import com.test.shoebox.dto.OrdersListDTO;
 import com.test.shoebox.service.admin.OrdersService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -88,6 +89,13 @@ public class AdminOrderController {
         return "admin/orders/detail";  // resources/templates/admin/orders/detail.html
     }
 
+
+    @PostMapping("/{id}/cancel")
+    @ResponseBody
+    public ResponseEntity<?> cancelOrder(@PathVariable("id") Long orderId) {
+        ordersService.updateStatus(orderId, 5); // 상태 5 = '취소 확정'
+        return ResponseEntity.ok().build();
+    }
 
 
 

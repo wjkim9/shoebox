@@ -163,14 +163,17 @@ document.addEventListener('DOMContentLoaded', function() {
     if (cancelForm) {
         cancelForm.addEventListener('submit', function(event) {
             event.preventDefault();
+
             const id = cancelOrderIdInput.value;
             const reason = document.getElementById('cancelReason').value;
             const detail = document.getElementById('cancelDetail').value;
+
             if (!reason) {
                 alert('취소 사유를 선택해주세요.');
                 return;
             }
-            fetch('/admin/api/orders/' + id + '/cancel', {
+
+            fetch('/admin/orders/' + id + '/cancel', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -178,7 +181,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: JSON.stringify({ cancelReason: reason, cancelDetail: detail })
             })
-                .then(res => { if (!res.ok) throw new Error('서버 오류'); return res.json(); })
+                .then(res => {
+                    if (!res.ok) throw new Error('서버 오류');
+                    return;
+                })
                 .then(() => {
                     alert('주문이 취소되었습니다.');
                     cancelOrderModal.style.display = 'none';
@@ -190,6 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         });
     }
+
 
     // 10. 주문 상태 업데이트 함수
     function updateOrderStatus(id, status) {

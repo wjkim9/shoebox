@@ -266,7 +266,6 @@ public class OrdersService {
 
 
 
-    //test용
     public void updateStatus(Long orderId, int newStatus) {
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문이 존재하지 않습니다: id=" + orderId));
