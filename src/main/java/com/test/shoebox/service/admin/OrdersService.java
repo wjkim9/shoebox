@@ -181,9 +181,14 @@ public class OrdersService {
                                             String orderStatus, String searchType, String searchKeyword) {
         List<Orders> ordersList = ordersRepository.findAll(); // 일단 전체 불러오고, 추후 동적 쿼리로 개선 가능
 
+
+
+
         // 필터 조건 적용
         return ordersList.stream()
                 .filter(order -> {
+                    System.out.println("order.getOrdersStatus() = " + order.getOrdersStatus());
+
                     if (orderDateStart != null && orderDateEnd != null) {
                         if (order.getOrdersDate().toLocalDate().isBefore(orderDateStart) ||
                                 order.getOrdersDate().toLocalDate().isAfter(orderDateEnd)) {
@@ -210,7 +215,7 @@ public class OrdersService {
                             }
                             default -> true;
                         };
-                        return match;
+                        if (!match) return false;
                     }
 
                     return true;
@@ -248,20 +253,15 @@ public class OrdersService {
     }
 
 
-    // 상태 키(PAYMENT_COMPLETE 등)를 숫자 코드(2 등)로 변환
-    private int convertStatus(String statusKey) {
-        return switch (statusKey) {
-            case "PAYMENT_PENDING" -> 1;
-            case "PAYMENT_COMPLETE" -> 2;
-            case "PREPARING" -> 3;
-            case "SHIPPING" -> 6;
-            case "DELIVERED" -> 7;
-            case "CANCELED" -> 5;
-            case "RETURNED" -> 9;
-            case "EXCHANGED" -> 10;
-            default -> -1;
-        };
+    // 숫자 문자열을 그대로 int로 변환
+    private int convertStatus(String orderStatus) {
+        try {
+            return Integer.parseInt(orderStatus);
+        } catch (NumberFormatException e) {
+            return -1; // 또는 예외 처리
+        }
     }
+
 
 
 

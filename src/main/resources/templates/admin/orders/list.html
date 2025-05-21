@@ -32,9 +32,9 @@
                                 <label for="orderDateStart">주문 기간</label>
                                 <div class="date-range-picker">
                                     <input type="date" id="orderDateStart" name="orderDateStart" class="form-input"
-                                           th:value="${param.orderDateStart}" placeholder="시작일">
+                                           th:value="${orderDateStart}" placeholder="시작일">
                                     <input type="date" id="orderDateEnd" name="orderDateEnd" class="form-input"
-                                           th:value="${param.orderDateEnd}" placeholder="종료일">
+                                           th:value="${orderDateEnd}" placeholder="종료일">
                                 </div>
                             </div>
                         </div>
@@ -43,18 +43,18 @@
                                 <label for="orderStatus">주문 상태</label>
                                 <select class="form-select" id="orderStatus" name="orderStatus">
                                     <option value="">전체</option>
-                                    <option value="1" th:selected="${param.orderStatus == '1'}">결제 확인중</option>
-                                    <option value="2" th:selected="${param.orderStatus == '2'}">결제 확인완료</option>
-                                    <option value="3" th:selected="${param.orderStatus == '3'}">배송준비중</option>
-                                    <option value="4" th:selected="${param.orderStatus == '4'}">취소 대기중</option>
-                                    <option value="5" th:selected="${param.orderStatus == '5'}">취소 확정</option>
-                                    <option value="6" th:selected="${param.orderStatus == '6'}">배송중</option>
-                                    <option value="7" th:selected="${param.orderStatus == '7'}">배송완료</option>
-                                    <option value="8" th:selected="${param.orderStatus == '8'}">구매확정완료</option>
-                                    <option value="9" th:selected="${param.orderStatus == '9'}">반송중</option>
-                                    <option value="10" th:selected="${param.orderStatus == '10'}">반송완료</option>
-                                    <option value="11" th:selected="${param.orderStatus == '11'}">환불처리중</option>
-                                    <option value="12" th:selected="${param.orderStatus == '12'}">환불완료</option>
+                                    <option value="1" th:selected="${orderStatus == '1'}">결제 확인중</option>
+                                    <option value="2" th:selected="${orderStatus == '2'}">결제 확인완료</option>
+                                    <option value="3" th:selected="${orderStatus == '3'}">배송준비중</option>
+                                    <option value="4" th:selected="${orderStatus == '4'}">취소 대기중</option>
+                                    <option value="5" th:selected="${orderStatus == '5'}">취소 확정</option>
+                                    <option value="6" th:selected="${orderStatus == '6'}">배송중</option>
+                                    <option value="7" th:selected="${orderStatus == '7'}">배송완료</option>
+                                    <option value="8" th:selected="${orderStatus == '8'}">구매확정완료</option>
+                                    <option value="9" th:selected="${orderStatus == '9'}">반송중</option>
+                                    <option value="10" th:selected="${orderStatus == '10'}">반송완료</option>
+                                    <option value="11" th:selected="${orderStatus == '11'}">환불처리중</option>
+                                    <option value="12" th:selected="${orderStatus == '12'}">환불완료</option>
                                 </select>
 
                             </div>
@@ -66,10 +66,10 @@
                             <div class="form-group">
                                 <label for="searchType">검색어 유형</label>
                                 <select class="form-select" id="searchType" name="searchType">
-                                    <option value="orderNumber" th:selected="${param.searchType == 'orderNumber'}">주문번호</option>
-                                    <option value="customerName" th:selected="${param.searchType == 'customerName'}">주문자명</option>
-                                    <option value="customerPhone" th:selected="${param.searchType == 'customerPhone'}">연락처</option>
-                                    <option value="productName" th:selected="${param.searchType == 'productName'}">상품명</option>
+                                    <option value="orderNumber" th:selected="${searchType == 'orderNumber'}">주문번호</option>
+                                    <option value="customerName" th:selected="${searchType == 'customerName'}">주문자명</option>
+                                    <option value="customerPhone" th:selected="${searchType == 'customerPhone'}">연락처</option>
+                                    <option value="productName" th:selected="${searchType == 'productName'}">상품명</option>
                                 </select>
                             </div>
                         </div>
@@ -77,7 +77,7 @@
                             <div class="form-group">
                                 <label for="searchKeyword">검색어</label>
                                 <input type="text" class="form-input" id="searchKeyword" name="searchKeyword"
-                                       th:value="${param.searchKeyword}" placeholder="검색어 입력">
+                                       th:value="${searchKeyword}" placeholder="검색어 입력">
                             </div>
                         </div>
                     </div>
