@@ -1,9 +1,10 @@
 package com.test.shoebox.repository;
 
+import com.test.shoebox.entity.MemberGrade;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.test.shoebox.entity.MemberGrade;
+import java.util.Optional;
 
-public interface MemberGradeRepository extends JpaRepository<MemberGrade, Long>{
-
+public interface MemberGradeRepository extends JpaRepository<MemberGrade, Long> {
+    Optional<MemberGrade> findByMembers_MembersId(Long membersId);
 }
