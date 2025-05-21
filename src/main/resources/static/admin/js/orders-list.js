@@ -1,16 +1,20 @@
 /**
  * 주문 관리 페이지 JavaScript
  */
+console.log("orders-list.js 로딩됨");
+
 document.addEventListener('DOMContentLoaded', function() {
     // 검색 폼 초기화 버튼
     const resetBtn = document.getElementById('resetBtn');
 
-    if (resetBtn) {
-        resetBtn.addEventListener('click', function () {
-            // 파라미터 없이 새로고침하면 param.xxx가 null이라 th:value도 비워짐
-            window.location.href = '/admin/orders/list';
-        });
-    }
+    resetBtn.addEventListener('click', function () {
+        const form = document.getElementById('searchForm');
+        if (form) {
+            form.reset();
+            form.submit();
+        }
+    });
+
 
 
     // 전체 선택 체크박스
