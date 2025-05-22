@@ -42,7 +42,17 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public Map<String, Object> calculateOrderAmounts(List<Long> cartItemIds, String appliedCoupons, int usePoint, boolean useAllPoint) {
         List<CartItem> selectedItems = cartItemRepository.findAllById(cartItemIds);
-        
+
+        // 디버깅 로그 추가
+        for (CartItem item : selectedItems) {
+            log.info("CartItem ID: {}, Quantity: {}, Price: {}, Total: {}",
+                    item.getCartItemId(),
+                    item.getQuantity(),
+                    item.getProductStock().getProduct().getProductPrice(),
+                    item.getProductStock().getProduct().getProductPrice() * item.getQuantity());
+        }
+
+
         // 총 주문 금액 계산
         int totalAmount = selectedItems.stream()
             .mapToInt(item -> item.getProductStock().getProduct().getProductPrice() * item.getQuantity())
