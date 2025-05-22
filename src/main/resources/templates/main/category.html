@@ -155,7 +155,7 @@
 				</div>
 			</div>
 			<div class="product-grid">
-				<a th:each="product : ${productList}" th:href="'/main/detailpage/productPostId=' + ${product.productPostId}" href="/main/detailpage" class="new-item-link">
+				<a th:each="product : ${productList}" th:href="'/main/detailpage?productPostId=' + ${product.productPostId}" href="/main/detailpage" class="new-item-link">
 					<div class="new-item">
 						<img th:src="'/common/images/product/' + ${product.fileName}" th:alt="${product.productName}" src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
 						<div class="item-info">
