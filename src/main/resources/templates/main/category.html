@@ -18,7 +18,7 @@
 			
 			<h2 th:text="${#strings.toUpperCase(menu)}">WOMEN</h2>
 			
-			<ul class="category-list">
+			<ul class="category-list" th:if="${search == 0}">
 				
 				<th:block th:if="${menu == 'brand'}">
 				<li class="selected" data-brandId="all">ALL</li>
@@ -116,6 +116,8 @@
 		</aside>
 		<!-- 우측 상품 리스트 -->
 		<main class="main-area">
+			<th:block th:unless="${search == 1}">
+			
 			<th:block th:if="${menu == 'brand'}">
 			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(menu)} + ' > ' + ${brand.brandName}"></div>
 			</th:block>
@@ -123,12 +125,22 @@
 			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(menu)} + ' > ' + ${categories.categoriesName}"></div>
 			</th:block>
 			
+			</th:block>
 			<div class="topbar">
+				
+				<th:block th:if="${search == 1}">
+				<div class="category-title" th:text="${searchWord} + ': 검색 결과'">Nike</div>
+				</th:block>
+				
+				<th:block th:unless= "${search == 1}">
+				
 				<th:block th:if="${menu == 'brand'}">
 				<div class="category-title" th:text="${brand.brandName}">Nike</div>
 				</th:block>
 				<th:block th:unless="${menu == 'brand'}">
 				<div class="category-title" th:text="${categories.categoriesName}">런닝화</div>
+				</th:block>
+				
 				</th:block>
 				
 				<div class="sort-dropdown">

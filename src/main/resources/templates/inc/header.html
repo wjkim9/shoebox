@@ -274,8 +274,8 @@
 	</div>
 	<div class="user-menu">
         <div class="search">
-		  <input type="text" placeholder=" 찾는 신발을 검색해보세요."> 
-		  <button type="submit">
+		  <input type="text" id="searchText" placeholder=" 찾는 신발을 검색해보세요."> 
+		  <button type="submit" onclick="location.href='/main/listProduct?search=1&searchWord=' + document.getElementById('searchText').value;">
 		  <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAABgklEQVR4nO2VsUoDQRCGvyieggZB+xAUrK61tFSwiJ1CKn2BiFqopWAjgk18gJTBJmDjA9hYaBtII3qktNE0xqAoK3MwnOa82zsPwfywHBw78+3O7j8LA33VBFACKsAusA64/KIKQA14Bt6/GS2gDOTShC4Dj32AwXEBTKYBLQFvktR868AiMA2MAnPAFtBW8EvASVrejiR7ApZC5o4DDQU/SQKuqZ2GQX2NyG5NzAswawPNA11JYsobVa46mkMb8IoqmznTOLqSuGsb8KYCT8WMPZW4BxvwvgKPxYw9kjjj+djaUGBjmTiqS9y9DdhVYOPTqHKkxCbuDEu1JEFbfBpF22rBq7bgskrSEJ+GaUH18iYwbAvOAeeBVuj2Ke+OgvaAeRIqr7qR38WMT6vAsVwk/0x96Ku0zD2gmATuSKLeDy9TU3ZaVf/uksKR3mva4I3ssiuWMbd3DRj6nAUHgQWlAo/6qt0G4B4wQwYqDOD897J7WYE13MsS6quYlaf/tj4AFKGdRHqPb3wAAAAASUVORK5CYII=" alt="search--v1">
 		  </button>
 		 </div>

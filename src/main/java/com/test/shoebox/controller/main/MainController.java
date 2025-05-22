@@ -275,6 +275,10 @@ public class MainController {
 		//상품 정보
 		model.addAttribute("productList", productList);
 		
+		//검색 유무
+		model.addAttribute("search", search);
+		model.addAttribute("searchWord", searchWord);
+		
 		if(categories.isPresent()) {
 			model.addAttribute("categories", categories.get().toDTO());
 		} else {
