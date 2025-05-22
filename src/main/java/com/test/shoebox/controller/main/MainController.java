@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MainController {
 	
 	@GetMapping("/")
-	public String index(Model model) {
-		
+	public String index() {
+
+
 		return "main/index";
 	}
 	
