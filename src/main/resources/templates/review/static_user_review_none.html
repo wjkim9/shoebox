@@ -1,0 +1,194 @@
+<meta charset="UTF-8">
+<html lang="ko">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+<style>
+
+    /* 유저리뷰 리스트 */
+    .user_review_list{
+        width: 1000px;
+        margin-top: 5px;
+        border-top: 1px solid #4d4d4d;
+    }
+    
+    /* 유저리뷰 없음 */
+    .user_review_no_comment{
+        padding: 50px;
+        text-align: center;
+        color: #4d4d4d;
+    }
+    /* 유저리뷰 */
+    .user_review{
+        padding: 20px;
+        border-bottom: 1px solid #a1a1a1;
+        
+    }
+    /* 유저리뷰 별점, 제품정보 */
+    .user_review_list_header{
+        display: flex;
+        align-items: center;
+    }
+    /* 유저리뷰 별점 */
+    .user_review_list_star_rating_icon{
+        color: darkorange;
+    }
+    /* 유저리뷰 제품정보 */
+    .user_review_list_order_details{
+        margin-left: 15px;
+        color: #4d4d4d;
+        font-size: 14px;
+    }
+    /* 구역나눔 */
+    .divline{
+        font-size: 13px;
+        position: relative;
+        top: -1px;
+    }
+    
+    /* 수정, 삭제 버튼 */
+    .user_my{
+        margin-left: auto;
+    }
+    .user_my_btn {
+	    width: 50px;
+	    padding: 2px 0;
+	    background: #222;
+	    color: #fff;
+	    font-weight: bold;
+	    border: none;
+	    border-radius: 8px;
+	    cursor: pointer;
+	    margin-left: 2px
+    }
+    .user_my_btn:hover {
+        background: #444;
+    }
+    
+    /* 유저리뷰 내용 */
+    .user_review_list_content{
+        margin-top: 20px;
+    }
+    /* 유저리뷰 확장버튼 */
+    .user_review_list_content_zoom_review_btn{
+        display: flex;
+        align-items: center;
+        color: #4d4d4d;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: 0%;
+    }
+    /* 관리자 답변 등록확인 영역지정 */
+    .user_review_list_content_zoom_mcomment_box{
+        width: 850px;
+    }
+    /* 관리자 답변 등록 확인 아이콘 @@@디스플레이논@@@ <-- 관리자 코멘트 등록시 보여짐 */
+    .user_review_list_content_zoom_mcomment_icon{
+        margin-left: 720px;
+        font-size: 14px;
+        /* display: none; */
+    }
+    .user_review_list_content_zoom_mcomment_icon i{
+        color: crimson;
+    }
+
+    /* 리뷰사진 박스 */
+    .user_review_list_product_img{
+        display: flex;
+        align-items: center;
+    }
+    /* 리뷰사진 요소 */
+    .user_review_list_product_img_item{
+        width: 100px;
+        height: 100px;
+        margin-right: 10px;
+    }
+    /* 리뷰사진 요소 확장 <-- 확장시 보여짐 */
+    .user_review_list_product_img_item{
+        width: 300px;
+        height: 300px;
+        margin-right: 10px;
+    }
+    /* 리뷰하단 등록정보 */
+    .user_review_list_footer{
+        margin-top: 10px;
+        color: #4d4d4d;
+        font-size: 14px;
+    }
+
+    
+    /* 관리자 답변 박스 @@@디스플레이논@@@ <-- 관리자 코멘트 등록, 확장시 보여짐 */
+    .user_review_list_content_mcomment{
+        display: flex;
+        width: auto;
+        background: #eeeeee;
+        margin-top: 10px;
+        /* display: none; */
+    }
+    /* 관리자답변 아이콘 박스, L */
+    .user_review_list_content_mcomment_icon{
+        display: flex;
+        justify-content: center;
+    }
+    /* 관리자 답변 아이콘 */
+    .user_review_list_content_mcomment_icon i{
+        margin-top: 14px;
+        margin-left: 10px;
+        width: 50px;
+        height: 50px;
+        font-size: 40px;
+        color: crimson;
+        /* border: 1px solid red; */
+    }
+    /* 관리자 답변 레이아웃 R */
+    .user_review_list_content_mcomment_r{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    /* 관리자 답변 내용 */
+    .user_review_list_content_mcomment_content{
+        padding: 10px;
+    }
+    /* 관리자답변 등록정보 */
+    .user_review_list_content_mcomment_footer{
+        padding-left: 10px;
+        padding-bottom: 10px;
+        color: #4d4d4d;
+        font-size: 14px;
+    }
+
+    /* 확장 상태에서만 적용될 클래스 */
+    .user_review.expanded .user_review_list_product_img_item {
+        width: 300px;
+        height: 300px;
+        margin-right: 10px;
+    }
+    .user_review.expanded .user_review_list_content_mcomment {
+        /* display: flex !important; */
+    }
+    
+    
+    
+    
+</style>
+
+<body>
+	<div class="user_review_list">
+	    <!-- 유저 리뷰 -->
+		<div class="user_review">
+		    <div class="user_review_no_comment">
+                등록된 리뷰가 없습니다.
+            </div>
+        </div>
+	</div>
+</body>
+	
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+
+
+
+
+</script>
+</html>
+            
