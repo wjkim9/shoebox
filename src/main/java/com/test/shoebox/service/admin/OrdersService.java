@@ -179,9 +179,7 @@ public class OrdersService {
 //검색하기
     public List<OrdersListDTO> searchOrders(LocalDate orderDateStart, LocalDate orderDateEnd,
                                             String orderStatus, String searchType, String searchKeyword) {
-        List<Orders> ordersList = ordersRepository.findAll(); // 일단 전체 불러오고, 추후 동적 쿼리로 개선 가능
-
-
+        List<Orders> ordersList = ordersRepository.findAll(); // 일단 전체 불러오기
 
 
         // 필터 조건 적용

@@ -17,49 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-    // 전체 선택 체크박스
-    const selectAllOrders = document.getElementById('selectAllOrders');
-    if (selectAllOrders) {
-        selectAllOrders.addEventListener('change', function() {
-            const checkboxes = document.querySelectorAll('.order-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = selectAllOrders.checked;
-            });
-            updateBatchButtons();
-        });
-    }
-
-    // 개별 체크박스 이벤트
-    const orderCheckboxes = document.querySelectorAll('.order-checkbox');
-    orderCheckboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            updateSelectAllCheckbox();
-            updateBatchButtons();
-        });
-    });
-
-    function updateSelectAllCheckbox() {
-        const checkboxes = document.querySelectorAll('.order-checkbox');
-        const checkedBoxes = document.querySelectorAll('.order-checkbox:checked');
-        if (selectAllOrders) {
-            selectAllOrders.checked = checkboxes.length > 0 && checkboxes.length === checkedBoxes.length;
-        }
-    }
-
-    function updateBatchButtons() {
-        const checkedBoxes = document.querySelectorAll('.order-checkbox:checked');
-        const batchStatusBtn = document.getElementById('batchStatusBtn');
-        const batchPrintBtn = document.getElementById('batchPrintBtn');
-
-        if (batchStatusBtn) {
-            batchStatusBtn.disabled = checkedBoxes.length === 0;
-        }
-
-        if (batchPrintBtn) {
-            batchPrintBtn.disabled = checkedBoxes.length === 0;
-        }
-    }
-
     // 송장 등록 모달
     const trackingBtns = document.querySelectorAll('.tracking-btn');
     const trackingModal = document.getElementById('trackingModal');
