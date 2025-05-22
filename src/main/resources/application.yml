@@ -1,10 +1,11 @@
 spring:
   application:
     name: shoebox
-# DB 설정
+
+  # DB 설정
   datasource:
     driver-class-name: oracle.jdbc.OracleDriver
-    url: jdbc:oracle:thin:@localhost:1521/xe
+    url: jdbc:oracle:thin:@localhost:1522/xe
     username: shoebox
     password: java1234
 

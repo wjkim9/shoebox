@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>비밀번호 찾기 방식 선택</title>
+    <link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
+  <style>
+
+
+  </style>
+</head>
+<body id="findidbody">
+    <th:block th:replace="~{inc/header.html :: header}"></th:block>
+    
+  <div class="find-id-wrap">
+    <div class="find-id-title">비밀번호 찾기 방식을<br>선택해 주세요.</div>
+    <div class="find-id-btns">
+      <button class="google-btn">
+        <img src="/member/images/google.png" class="google-icon" alt="google">
+        구글 계정으로 찾기
+      </button>
+      <button class="naver-btn">
+        <img src="/member/images/naver_logo.png" class="naver-icon" alt="naver">
+        네이버 계정으로 찾기
+      </button>
+      <button class="black-btn">본인인증</button>
+    </div>
+    <div class="or-divider">또는</div>
+    <div class="find-id-link-row">
+      <a href="/main/register" class="find-id-link">회원가입</a>
+      <a href="/main/findid" class="find-id-link">아이디 찾기</a>
+    </div>
+  </div>
+  <br><br><br><br><br><br>
+  
+  <th:block th:replace="~{inc/footer.html :: footer}"></th:block>
+</body>
+</html>
