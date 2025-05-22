@@ -434,6 +434,59 @@ user_review_list_paging     - 페이지네이션 구현
     }
 
     
+    
+    
+    
+    
+    
+    
+    
+    
+    .user_review_filter_star_wrap {
+    position: relative;
+    display: inline-block;
+}
+
+
+
+.user_review_star_dropdown {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: -66px;
+    min-width: 120px;
+    background: #fff;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px #0002;
+    z-index: 100;
+    padding: 6px 0;
+}
+
+.user_review_star_dropdown.active {
+    display: block;
+}
+
+.user_review_star_option {
+    padding: 6px 16px;
+    font-size: 15px;
+    color: #333;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+}
+.user_review_star_option:hover {
+    background: #f0f0f0;
+}
+.user_review_star_icon {
+    color: gold;
+    font-size: 16px;
+}
+    
+    
 </style>
 
 <body>
@@ -490,7 +543,47 @@ user_review_list_paging     - 페이지네이션 구현
             <div></div>
             <div class="user_review_filter_review_btn">
                 <button class="user_review_filter_all">&nbsp;전체보기&nbsp;</button>
-                <button class="user_review_filter_star">&nbsp;별점보기&nbsp;<i class="fa-solid fa-sort-down"></i>&nbsp;</button>
+                
+<div class="user_review_filter_star_wrap">
+    <button class="user_review_filter_star">&nbsp;별점보기&nbsp;<i class="fa-solid fa-sort-down"></i>&nbsp;</button>
+    <div class="user_review_star_dropdown">
+        <div class="user_review_star_option" data-star="5">
+            <span>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+            </span>
+        </div>
+        <div class="user_review_star_option" data-star="4">
+            <span>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+            </span>
+        </div>
+        <div class="user_review_star_option" data-star="3">
+            <span>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+            </span>
+        </div>
+        <div class="user_review_star_option" data-star="2">
+            <span>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+            </span>
+        </div>
+        <div class="user_review_star_option" data-star="1">
+            <span>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+            </span>
+        </div>
+    </div>
+</div>
             </div>
         </div>
 
@@ -745,6 +838,32 @@ user_review_list_paging     - 페이지네이션 구현
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
+
+$('.user_review_filter_star').on('click', function(e) {
+    e.stopPropagation();
+    $('.user_review_star_dropdown').toggleClass('active');
+});
+
+// 바깥 클릭 시 닫기
+$(document).on('click', function() {
+    $('.user_review_star_dropdown').removeClass('active');
+});
+
+// 옵션 클릭 시 동작(필터링 등)
+$('.user_review_star_option').on('click', function(e) {
+    var star = $(this).data('star');
+    alert(star + "점 별점 선택됨! (필터링 기능 구현 가능)");
+    $('.user_review_star_dropdown').removeClass('active');
+});
+
+
+
+
+
+
+
+
+
 
 //사진리뷰 유무 확인, 커서 포인터
 $('.user_review').each(function() {
