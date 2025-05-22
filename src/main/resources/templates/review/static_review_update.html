@@ -69,6 +69,7 @@
 .review_write_stars {
     display: inline-flex;
     gap: 4px;
+    color: darkorange;
 }
 .review_write_star {
     font-size: 30px;
@@ -169,7 +170,7 @@
 }
 </style>
 
-<title>슈박스 리뷰 등록</title>
+<title>슈박스 리뷰 수정</title>
 
 <body>
 
@@ -196,7 +197,8 @@
         <!-- 리뷰 내용 -->
         <div class="review_write_content_wrap">
             <label class="review_write_content_label" for="review_write_content_input">리뷰 내용</label>
-            <textarea class="review_write_content_input" id="review_write_content_input" placeholder="리뷰 내용을 입력하세요"></textarea>
+            <textarea class="review_write_content_input" id="review_write_content_input" placeholder="리뷰 내용을 입력하세요">
+넘 좋아하는 신발인데 봄신상 컬러 나왔길래 바로 겟 했어욤ㅎㅎ이쁩니당</textarea>
         </div>
         <!-- 사진 첨부 -->
         <div class="review_write_photos_wrap">
@@ -211,7 +213,7 @@
             </div>
         </div>
         <!-- 등록 버튼 -->
-        <button class="review_write_submit_btn">리뷰 등록</button>
+        <button class="review_write_submit_btn">리뷰 수정</button>
     </div>
     
 </body>
@@ -220,7 +222,13 @@
 <script>
 
 // ㅁㅁㅁ 별점 식별자 ㅁㅁㅁ
-let selectedStar = 0;
+let selectedStar = 5; // 5점으로 시작
+
+// 페이지 로드 시 5개 별에 selected 클래스 적용
+$('.review_write_star').each(function() {
+    const starVal = parseInt($(this).attr('data-value'));
+    $(this).toggleClass('selected', starVal <= selectedStar);
+});
 
 // 마우스 올릴 때
 $('.review_write_star').on('mouseenter', function() {
@@ -245,14 +253,24 @@ $('.review_write_star').on('click', function() {
     });
 });
 
+const initialImageUrls = [
+    "/review/images/ex/191324026720200210223017177.jpg",
+    "/review/images/ex/96262_1746942415972.jpeg",
+    "/review/images/ex/80787_1746844943833.jpeg"
+];
 
-// 사진 업로드 (최대 3장)
-let photoFiles = [];
+let photoFiles = [...initialImageUrls];
+
 function renderPhotos() {
     const $photos = $('#review_write_photos');
     $photos.find('.review_write_photo_box:not(.add-photo)').remove();
     photoFiles.forEach((file, idx) => {
-        const url = URL.createObjectURL(file);
+        let url;
+        if (typeof file === "string") {
+            url = file;
+        } else {
+            url = URL.createObjectURL(file);
+        }
         const photoBox = $(`
             <div class="review_write_photo_box">
                 <img src="${url}" class="review_write_photo_img" alt="첨부사진">
@@ -263,13 +281,13 @@ function renderPhotos() {
         `);
         photoBox.insertBefore($photos.find('.add-photo'));
     });
-    // add-photo 숨김 처리
     if(photoFiles.length >= 3) {
         $photos.find('.add-photo').hide();
     } else {
         $photos.find('.add-photo').show();
     }
 }
+
 $('#review_write_photos').on('change', 'input[type="file"]', function(e) {
     let files = Array.from(e.target.files);
     if(photoFiles.length + files.length > 3) {
@@ -277,12 +295,16 @@ $('#review_write_photos').on('change', 'input[type="file"]', function(e) {
     }
     photoFiles = photoFiles.concat(files);
     renderPhotos();
-    // 파일 input 초기화
     $(this).val('');
 });
+
 $('#review_write_photos').on('click', '.review_write_photo_remove', function(e) {
     const idx = $(this).data('idx');
     photoFiles.splice(idx, 1);
+    renderPhotos();
+});
+
+$(function() {
     renderPhotos();
 });
 
@@ -301,7 +323,7 @@ $('.review_write_submit_btn').on('click', function() {
     }
     // photoFiles: 첨부된 이미지 파일 배열
     // TODO: 백엔드 연동(ajax/formData 등) 구현 필요
-    alert('리뷰가 등록되었습니다.\n(실제 등록은 백엔드에서 구현)');
+    alert('리뷰가 등록되었습니다.');
 });
 </script>
 </html>

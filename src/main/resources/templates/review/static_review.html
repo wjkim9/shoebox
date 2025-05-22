@@ -42,9 +42,9 @@ user_review_list_paging     - 페이지네이션 구현
     .review_header_img{
     border: solid 1px blue;
     } */
-    .review_header_img_item{
-        /* border: solid 1px black; */
-    }
+    /* .review_header_img_item{
+        border: solid 1px black;
+    } */
 /*     .user_review_list_product_img{
         border: solid 1px red;
     }
@@ -214,6 +214,11 @@ user_review_list_paging     - 페이지네이션 구현
         margin-top: 5px;
         border-top: 1px solid #4d4d4d;
     }
+
+
+    /* 개인별 유저리뷰 스타일 시작  */
+
+
     /* 유저리뷰 없음 */
     .user_review_no_comment{
         padding: 50px;
@@ -224,6 +229,7 @@ user_review_list_paging     - 페이지네이션 구현
     .user_review{
         padding: 20px;
         border-bottom: 1px solid #a1a1a1;
+        
     }
     /* 유저리뷰 별점, 제품정보 */
     .user_review_list_header{
@@ -350,6 +356,13 @@ user_review_list_paging     - 페이지네이션 구현
     }
     
 
+
+    /* ////개인별 유저리뷰 스타일 끝//// */
+
+
+
+
+    
 
     /* 페이징 */
     .review_pagination-list {
@@ -732,6 +745,14 @@ user_review_list_paging     - 페이지네이션 구현
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
+
+//사진리뷰 유무 확인, 커서 포인터
+$('.user_review').each(function() {
+	  if ($(this).find('.user_review_list_content_zoom_review_btn').length > 0) {
+	    $(this).css('cursor', 'pointer');
+	  }
+	});
+
 $(function() {
     // user_review 클릭 시 확장/축소 토글
     $('.user_review').on('click', function(e) {

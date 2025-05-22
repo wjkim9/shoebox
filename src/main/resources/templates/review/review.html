@@ -621,6 +621,14 @@ user_review_list_paging     - 페이지네이션 구현
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
+
+//사진리뷰 유무 확인, 커서 포인터
+$('.user_review').each(function() {
+      if ($(this).find('.user_review_list_content_zoom_review_btn').length > 0) {
+        $(this).css('cursor', 'pointer');
+      }
+    });
+
 $(function() {
     // user_review 클릭 시 확장/축소 토글
     $('.user_review').on('click', function(e) {
