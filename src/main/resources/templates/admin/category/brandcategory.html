@@ -17,11 +17,11 @@
     <div class="brand-list-wrapper">
         <ul class="brand-category-list">
             <li th:each="cat : ${categories}">
-                <img th:src="${cat.picName != null} ? @{/admin/images/{img}(img=${cat.picName})} : 'https://via.placeholder.com/100x50?text=Logo'"
-                     th:alt="${cat.categoriesName}">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <img th:src="${cat.picName != null} ? @{/admin/images/{img}(img=${cat.picName})} : 'https://via.placeholder.com/100x50?text=Logo'">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <span class="brand-name" th:text="${cat.categoriesName}"></span>
                 <button type="button" class="edit-btn" th:attr="data-id=${cat.categoriesId}">수정</button>
+                
                 <button type="button" class="delete-btn" th:attr="data-id=${cat.categoriesId}">삭제</button>
             </li>
         </ul>
@@ -30,8 +30,8 @@
     <!-- 모달 배경 -->
     <div id="editModalBg" class="modal-bg">
         <div class="modal-content">
-            <form id="editBrandForm">
-                <label>브랜드명 <input type="text" id="brandName" name="brandName"></label>
+            <form id="editBrandForm" method="post">
+                <label>브랜드명 <input type="text" id="brandName" name="categoriesName"></label>
                 <label>카테고리
                     <select id="brandCategory" name="brandCategory">
                         <option value="">대분류</option>
@@ -43,6 +43,7 @@
                     </select>
                 </label>
                 <label>브랜드 로고 <input type="file" id="brandImage" name="brandImage"></label>
+                <input type="hidden" id="picName" name="picName">
                 <img id="brandImgPreview" style="display: none; max-width: 100px;">
                 <div class="form-buttons">
                     <button type="submit">저장</button>

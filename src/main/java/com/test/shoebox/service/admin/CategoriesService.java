@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.test.shoebox.entity.Categories;
 import com.test.shoebox.repository.CategoriesRepository;
@@ -17,12 +18,13 @@ public class CategoriesService {
     @Autowired
     public CategoriesService(CategoriesRepository categoriesRepository) {
         this.categoriesRepository = categoriesRepository;
-    }	
+    }
 
     public List<Categories> findAll() {
         return categoriesRepository.findAll();
     }
 
+    @Transactional
     public Categories save(Categories category) {
         return categoriesRepository.save(category);
     }
@@ -35,4 +37,3 @@ public class CategoriesService {
         return categoriesRepository.findById(id);
     }
 }
-
