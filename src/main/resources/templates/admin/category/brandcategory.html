@@ -1,99 +1,56 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	layout:decorate="~{admin/admin_layout}">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
 <head>
+    <link rel="stylesheet" th:href="@{/admin/css/category.css}" />
+    <script th:src="@{/admin/js/category.js}"></script>
 </head>
-
 <body>
+<section layout:fragment="content" th:fragment="content">
+    <div class="admin-container" style="margin-top: var(--header-height);">
+        <div class="page-header">
+            <h2>브랜드 카테고리 관리</h2>
+            <button class="category_addbtn" name="category_addbtn" type="button">카테고리 추가</button>
+        </div>
+    </div>
+    <div class="brand-list-wrapper">
+        <ul class="brand-category-list">
+            <li th:each="cat : ${categories}">
+                <img th:src="${cat.picName != null} ? @{/admin/images/{img}(img=${cat.picName})} : 'https://via.placeholder.com/100x50?text=Logo'"
+                     th:alt="${cat.categoriesName}">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="brand-name" th:text="${cat.categoriesName}"></span>
+                <button type="button" class="edit-btn" th:attr="data-id=${cat.categoriesId}">수정</button>
+                <button type="button" class="delete-btn" th:attr="data-id=${cat.categoriesId}">삭제</button>
+            </li>
+        </ul>
+    </div>
 
-	<!-- 실제로 삽입되는 부분 -->
-	<section layout:fragment="content" th:fragment="content">
-		<!-- 페이지 전용 CSS -->
-		<link rel="stylesheet" th:href="@{/admin/css/category.css}" />
-		<div class="admin-container" style="margin-top: var(--header-height);">
-			<div class="page-header">
-				<h2>브랜드 카테고리 관리</h2>
-				<button class="category_addbtn" name="category_addbtn" type="button">카테고리
-					추가</button>
-			</div>
-		</div>
-		<div class="brand-list-wrapper">
-			<ul class="brand-category-list">
-				<li><span class="brand-name">NIKE</span>
-					<button type="button" class="addcartgory">수정</button>
-					<button type="button">삭제</button></li>
-				<li><span class="brand-name">ADIDAS</span>
-					<button type="button" class="addcartgory">수정</button>
-					<button type="button">삭제</button></li>
-				<li><span class="brand-name">NEW BALANCE</span>
-					<button type="button" class="addcartgory">수정</button>
-					<button type="button">삭제</button></li>
-				<li><span class="brand-name">VANS</span>
-					<button type="button" class="addcartgory">수정</button>
-					<button type="button">삭제</button></li>
-			</ul>
-		</div>
-		
-		<!-- 페이지 전용 JS -->
-		<script th:src="@{/admin/js/page-specific.js}"></script>
-		<script>
-			// 모달 열기
-			function openEditModal(name, category, imgFile) {
-				document.getElementById('brandName').value = name;
-				document.getElementById('brandCategory').value = category;
-				// 이미지 미리보기
-				if (imgFile) {
-					document.getElementById('brandImgPreview').src = imgFile;
-					document.getElementById('brandImgPreview').style.display = 'block';
-				} else {
-					document.getElementById('brandImgPreview').style.display = 'none';
-				}
-				document.getElementById('brandImage').value = '';
-				document.getElementById('editModalBg').classList.add('active');
-			}
-			// 모달 닫기
-			function closeEditModal() {
-				document.getElementById('editModalBg').classList
-						.remove('active');
-			}
-			// 이미지 미리보기
-			document
-					.getElementById('brandImage')
-					.addEventListener(
-							'change',
-							function(e) {
-								const file = e.target.files[0];
-								if (file) {
-									const reader = new FileReader();
-									reader.onload = function(ev) {
-										document
-												.getElementById('brandImgPreview').src = ev.target.result;
-										document
-												.getElementById('brandImgPreview').style.display = 'block';
-									}
-									reader.readAsDataURL(file);
-								}
-							});
-			// 폼 제출(저장) 예시
-			document.getElementById('editBrandForm').onsubmit = function(e) {
-				e.preventDefault();
-				alert('저장 기능을 구현하세요!');
-				closeEditModal();
-			}
-			// ESC로 모달 닫기
-			document.addEventListener('keydown', function(e) {
-				if (e.key === "Escape")
-					closeEditModal();
-			});
-			// 모달 바깥 클릭 시 닫기
-			document.getElementById('editModalBg').addEventListener('click',
-					function(e) {
-						if (e.target === this)
-							closeEditModal();
-					});
-		</script>
-	</section>
-
+    <!-- 모달 배경 -->
+    <div id="editModalBg" class="modal-bg">
+        <div class="modal-content">
+            <form id="editBrandForm">
+                <label>브랜드명 <input type="text" id="brandName" name="brandName"></label>
+                <label>카테고리
+                    <select id="brandCategory" name="brandCategory">
+                        <option value="">대분류</option>
+                        <option value="스니커즈">스니커즈</option>
+                        <option value="운동화">운동화</option>
+                        <option value="구두">구두</option>
+                        <option value="로퍼">로퍼</option>
+                        <option value="기타">기타</option>
+                    </select>
+                </label>
+                <label>브랜드 로고 <input type="file" id="brandImage" name="brandImage"></label>
+                <img id="brandImgPreview" style="display: none; max-width: 100px;">
+                <div class="form-buttons">
+                    <button type="submit">저장</button>
+                    <button type="button" onclick="closeEditModal()">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
 </body>
 </html>

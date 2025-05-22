@@ -1,94 +1,56 @@
 package com.test.shoebox.controller.admin;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
+import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.test.shoebox.entity.Categories;
+import com.test.shoebox.service.admin.CategoriesService;
 
 @Controller
 @RequestMapping("/admin/category")
 public class AdminCategoryController {
 
+	@Autowired
+	private CategoriesService categoriesService;
+
 	@GetMapping("/brandcategory")
-    public String brandcategory(Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-        // 테스트용 더미 데이터
-        List<Map<String, Object>> dummyOrders = new ArrayList<>();
+	public String brandcategory(Model model,
+			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+		// 1. DB에서 카테고리 목록 가져오기
+		List<Categories> categories = categoriesService.findAll();
 
-        for (int i = 1; i <= 5; i++) {
-            Map<String, Object> order = new HashMap<>();
-            order.put("id", i);
-            order.put("orderNumber", "20240516-" + i);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            order.put("orderDateStr", LocalDateTime.now().minusHours(i).format(formatter));
+		// 2. 모델에 담기
+		model.addAttribute("categories", categories);
 
-            order.put("customerName", "회원" + i);
-            order.put("customerPhone", "010-0000-000" + i);
-            order.put("mainProductName", "나이키 운동화");
-            order.put("productCount", 1);
-            order.put("mainProductSize", "260");
-            order.put("totalAmount", 89000);
-            order.put("paymentMethod", "카드결제");
-            order.put("status", "PAYMENT_COMPLETE");
-            order.put("statusName", "결제완료");
-            order.put("trackingCompany", "CJ대한통운");
-            order.put("trackingNumber", "1234567890" + i);
-            order.put("trackingLink", "https://www.example.com/track/" + i);
-
-
-            dummyOrders.add(order);
-        }
-
-        model.addAttribute("category", dummyOrders);
-
-        if ("XMLHttpRequest".equals(requestedWith)) {
-            return "admin/category/brandcategory :: content";
-        }
-        return "admin/category/brandcategory";
-    }
+		// 3. Thymeleaf 템플릿 반환
+		if ("XMLHttpRequest".equals(requestedWith)) {
+			return "admin/category/brandcategory :: content";
+		}
+		return "admin/category/brandcategory";
+	}
 	
-	@GetMapping("/producecategory")
-    public String producecategory(Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-        // 테스트용 더미 데이터
-        List<Map<String, Object>> dummyOrders = new ArrayList<>();
-
-        for (int i = 1; i <= 5; i++) {
-            Map<String, Object> order = new HashMap<>();
-            order.put("id", i);
-            order.put("orderNumber", "20240516-" + i);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            order.put("orderDateStr", LocalDateTime.now().minusHours(i).format(formatter));
-
-            order.put("customerName", "회원" + i);
-            order.put("customerPhone", "010-0000-000" + i);
-            order.put("mainProductName", "나이키 운동화");
-            order.put("productCount", 1);
-            order.put("mainProductSize", "260");
-            order.put("totalAmount", 89000);
-            order.put("paymentMethod", "카드결제");
-            order.put("status", "PAYMENT_COMPLETE");
-            order.put("statusName", "결제완료");
-            order.put("trackingCompany", "CJ대한통운");
-            order.put("trackingNumber", "1234567890" + i);
-            order.put("trackingLink", "https://www.example.com/track/" + i);
-
-
-            dummyOrders.add(order);
-        }
-
-        model.addAttribute("category", dummyOrders);
-
-        if ("XMLHttpRequest".equals(requestedWith)) {
-            return "admin/category/producecategory :: content";
-        }
-        return "admin/category/producecategory";
-    }
+	@PostMapping("/upload")
+	@ResponseBody
+	public String uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+	    String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+	    Path savePath = Paths.get("업로드_경로", fileName);
+	    Files.copy(file.getInputStream(), savePath);
+	    return fileName; // 이 값을 picName으로 저장
+	}
 
 }
