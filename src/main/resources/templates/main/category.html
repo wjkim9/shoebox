@@ -371,6 +371,32 @@
 				existPrevVar = true;
 			}
 			
+			if([[${menu}]] != null) {
+				if(existPrevVar) {
+					queryStringBuilder += '&menu=' + [[${menu}]];
+				} else {
+					queryStringBuilder += 'menu=' + [[${menu}]];
+				}
+				existPrevVar = true;
+			}
+			
+			if([[${targetCustomerType}]] != null) {
+				if(existPrevVar) {
+					queryStringBuilder += '&targetCustomerType=' + [[${targetCustomerType}]];
+				} else {
+					queryStringBuilder += 'targetCustomerType=' + [[${targetCustomerType}]];
+				}
+				existPrevVar = true;
+			}
+			
+			
+			if(existPrevVar) {
+				queryStringBuilder += '&filter=1';
+			} else {
+				queryStringBuilder += 'filter=1';
+			}
+			
+			
 			location.href = queryStringBuilder;
 			
 			
@@ -395,6 +421,31 @@
 		//alert(`${window.location.pathname}?${param.toString()}`);
 		location.href = `${window.location.pathname}?${param.toString()}`;
 	});
+	
+	
+	//필터 정보 상태 유지
+	window.addEventListener('load', function() {
+		if([[${filter}]] == 1) {
+			
+			if([[${categoriesId}]] != null) {
+				filterCategory.value = [[${categoriesId}]];				
+			}
+			if([[${brandId}]] != null) {
+				filterBrand.value = [[${brandId}]];				
+			}
+			
+			if([[${startPrice}]] != null) {
+				startPrice.value = [[${startPrice}]];				
+			}
+			
+			if([[${endPrice}]] != null) {
+				endPrice.value = [[${endPrice}]];				
+			}
+
+		}
+	});
+	
+	
 	
 </script>
 </html>

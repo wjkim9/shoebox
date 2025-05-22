@@ -142,7 +142,8 @@ public class MainController {
 		@RequestParam(value = "endPrice", required = false) Integer endPrice,
 		@RequestParam(value = "search", required = false, defaultValue = "0") Integer search,
 		@RequestParam(value = "searchWord", required = false) String searchWord,
-		@RequestParam(value = "menu", required = false) String menu
+		@RequestParam(value = "menu", required = false) String menu,
+		@RequestParam(value = "filter", required = false) Integer filter
 		
 	) {
 		
@@ -271,6 +272,13 @@ public class MainController {
 		//필터 출력 항목
 		model.addAttribute("brandOnFilterList", brandOnFilterList);
 		model.addAttribute("categoriesOnFilterList", categoriesOnFilterList);
+		
+		//필터 상태 유지 항목
+		model.addAttribute("filter", filter);
+		model.addAttribute("categoriesId", categoriesId);
+		model.addAttribute("brandId", brandId);
+		model.addAttribute("startPrice", startPrice);
+		model.addAttribute("endPrice", endPrice);
 		
 		//상품 정보
 		model.addAttribute("productList", productList);

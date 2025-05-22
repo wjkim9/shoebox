@@ -212,37 +212,38 @@ public class CustomRepository {
 		
 		
 		QProductPost productPost1 =  QProductPost.productPost;
+		QProductPost productPost2 =  new QProductPost("productPost2");
 		
-		List<Tuple> content = jpaQueryFactory.select(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId, productStockOrder.quantity.coalesce(0).sum())
+		List<Tuple> content = jpaQueryFactory.select(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost1.productPostId, productStockOrder.quantity.coalesce(0).sum())
 												.from(productImage)
 												.innerJoin(productImage.product, product)
 												.innerJoin(product.brand, brand)
-												.innerJoin(product.productPost, productPost)
+												.innerJoin(product.productPost, productPost1)
 												.leftJoin(product.productStock, productStock)
 												.leftJoin(productStock.productStockOrder, productStockOrder)
-												.where(productPost.postDate.eq(JPAExpressions.select(productPost1.postDate.max())
-																							.from(productPost1)
-																							.where(productPost.productPostId.eq(productPost1.productPostId))
+												.where(productPost1.postDate.eq(JPAExpressions.select(productPost2.postDate.max())
+																							.from(productPost2)
+																							.where(productPost2.productPostId.eq(productPost1.productPostId))
 													
 													).and(builder)
 														
 												)
 												.offset(pageRequest.getOffset())
 												.limit(pageRequest.getPageSize())
-												.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId)
+												.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost1.productPostId)
 												.orderBy(productStockOrder.quantity.coalesce(0).sum().desc())
 												.fetch();
 		
-		List<Tuple> allContent = jpaQueryFactory.select(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId, productStockOrder.quantity.coalesce(0).sum())
+		List<Tuple> allContent = jpaQueryFactory.select(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost1.productPostId, productStockOrder.quantity.coalesce(0).sum())
 												.from(productImage)
 												.innerJoin(productImage.product, product)
 												.innerJoin(product.brand, brand)
-												.innerJoin(product.productPost, productPost)
+												.innerJoin(product.productPost, productPost1)
 												.leftJoin(product.productStock, productStock)
 												.leftJoin(productStock.productStockOrder, productStockOrder)
-												.where(productPost.postDate.eq(JPAExpressions.select(productPost1.postDate.max())
-																							.from(productPost1)
-																							.where(productPost.productPostId.eq(productPost1.productPostId))
+												.where(productPost1.postDate.eq(JPAExpressions.select(productPost2.postDate.max())
+																							.from(productPost2)
+																							.where(productPost2.productPostId.eq(productPost1.productPostId))
 													
 													).and(builder)
 														
@@ -302,45 +303,46 @@ public class CustomRepository {
 		}
 		
 		QProductPost productPost1 =  QProductPost.productPost;
+		QProductPost productPost2 =  new QProductPost("productPost2");
 		
 		
-		List<Tuple> content = jpaQueryFactory.select(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId, orderReview.orderReviewId.count())
+		List<Tuple> content = jpaQueryFactory.select(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost1.productPostId, orderReview.orderReviewId.count())
 												.from(productImage)
 												.innerJoin(productImage.product, product)
 												.innerJoin(product.brand, brand)
-												.innerJoin(product.productPost, productPost)
+												.innerJoin(product.productPost, productPost1)
 												.leftJoin(product.productStock, productStock)
 												.leftJoin(productStock.productStockOrder, productStockOrder)
 												.leftJoin(productStockOrder.orderReview, orderReview)
-												.where(productPost.postDate.eq(JPAExpressions.select(productPost1.postDate.max())
-																							.from(productPost1)
-																							.where(productPost.productPostId.eq(productPost1.productPostId))
+												.where(productPost1.postDate.eq(JPAExpressions.select(productPost2.postDate.max())
+																							.from(productPost2)
+																							.where(productPost2.productPostId.eq(productPost1.productPostId))
 													
 													).and(builder)
 														
 												)
 												.offset(pageRequest.getOffset())
 												.limit(pageRequest.getPageSize())
-												.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId)
+												.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost1.productPostId)
 												.orderBy(orderReview.orderReviewId.count().desc())
 												.fetch();
 		
-		List<Tuple> allContent = jpaQueryFactory.select(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId, orderReview.orderReviewId.count())
+		List<Tuple> allContent = jpaQueryFactory.select(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost1.productPostId, orderReview.orderReviewId.count())
 												.from(productImage)
 												.innerJoin(productImage.product, product)
 												.innerJoin(product.brand, brand)
-												.innerJoin(product.productPost, productPost)
+												.innerJoin(product.productPost, productPost1)
 												.leftJoin(product.productStock, productStock)
 												.leftJoin(productStock.productStockOrder, productStockOrder)
 												.leftJoin(productStockOrder.orderReview, orderReview)
-												.where(productPost.postDate.eq(JPAExpressions.select(productPost1.postDate.max())
-																							.from(productPost1)
-																							.where(productPost.productPostId.eq(productPost1.productPostId))
+												.where(productPost1.postDate.eq(JPAExpressions.select(productPost2.postDate.max())
+																							.from(productPost2)
+																							.where(productPost2.productPostId.eq(productPost1.productPostId))
 													
 													).and(builder)
 														
 												)
-												.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId)
+												.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost1.productPostId)
 												.fetch();
 		
 												
