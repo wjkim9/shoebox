@@ -1,5 +1,6 @@
 package com.test.shoebox.controller.admin;
 
+import com.test.shoebox.dto.MemberDetailDTO;
 import com.test.shoebox.dto.MemberWithGradeDTO;
 import com.test.shoebox.service.admin.MembersService;
 import lombok.RequiredArgsConstructor;
@@ -60,4 +61,16 @@ public class AdminMemberController {
         membersService.updateMember(memberDto);
         return "redirect:/admin/member/member-list";
     }
+    
+    /**
+     * 회원 상세 정보 조회
+     */
+    @GetMapping("/{id}")
+    public String memberDetail(@PathVariable("id") Long memberId, Model model) {
+        MemberDetailDTO memberDetail = membersService.getMemberDetail(memberId);
+        model.addAttribute("memberDetail", memberDetail);
+        return "admin/member/member-detail";
+    }
+
+
 }

@@ -54,4 +54,13 @@ public interface MembersRepository extends JpaRepository<Members, Long> {
             WHERE m.membersId = :membersId
         """)
     Optional<MemberWithGradeDTO> findMemberWithGradeById(@Param("membersId") Long membersId);
+    
+//    @Query(value = "SELECT m.members_id, m.account_name, m.name, m.nickname, m.email, m.contact, " +
+//    	       "m.foot_size, m.point, g.grade_name, m.is_deleted, m.join_datetime " +
+//    	       "FROM members m " +
+//    	       "LEFT JOIN member_grade g ON m.members_id = g.members_id " +
+//    	       "WHERE m.members_id = :membersId", 
+//    	       nativeQuery = true)
+//    	Object[] findMemberWithGradeById(@Param("membersId") Long membersId);
+
 }
