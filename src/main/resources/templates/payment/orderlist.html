@@ -57,48 +57,42 @@
 				<div style="width: 80px; text-align: center;">배송비</div>
 			</div>
 			<!-- 3. 구매 상품 가격 및 정보 리스트 -->
-			<div class="product-row">
+			<div class="product-row" th:each="item : ${selectedItems}">
 				<img class="product-img"
-					src="https://codingapple1.github.io/shop/shoes1.jpg" alt="나이키">
-				<div class="product-info">
-					<div class="product-name">나이키 NIKE MOTIVA</div>
-					<div class="product-desc">260/1개</div>
-				</div>
-				<div class="product-qty">1개</div>
-				<div class="product-price">77,000원</div>
-				<div class="product-ship">무료배송</div>
-			</div>
-			<div class="product-row">
+					th:if="${not #lists.isEmpty(item.productStock.product.productImages)}"
+					th:src="@{'/common/images/' + ${item.productStock.product.productImages[0].fileName}}"
+					alt="product-image">
 				<img class="product-img"
-					src="https://codingapple1.github.io/shop/shoes2.jpg" alt="아디다스">
+					th:unless="${not #lists.isEmpty(item.productStock.product.productImages)}"
+					src="/common/images/default.png"
+					alt="default-image">
 				<div class="product-info">
-					<div class="product-name">아디다스 VL COURT BASE</div>
-					<div class="product-desc">250/1개</div>
+					<div class="product-name" th:text="${item.productStock.product.productName}"></div>
+					<div class="product-desc" th:text="${item.productStock.shoeSize + '/' + item.quantity + '개'}"></div>
 				</div>
-				<div class="product-qty">1개</div>
-				<div class="product-price">69,000원</div>
+				<div class="product-qty" th:text="${item.quantity + '개'}"></div>
+				<div class="product-price" th:text="${#numbers.formatInteger(item.quantity * item.productStock.product.productPrice, 3, 'COMMA') + '원'}"></div>
 				<div class="product-ship">무료배송</div>
-			</div>
-			<!-- 3. 1 적립금 사용 -->
-			<div class="product-row">
-				<div class="product-info">
-					<div class="product-name">보유 적립금 사용</div>
-				</div>
-				<div>
-					<label for="use-allpoint-check">모든 포인트 사용</label> <input type="checkbox" id="use-allpoint-check">
-					<label for="use-point">사용 포인트</label><input type="number" id="use-point" value="0"> <label for="use-point">point</label>
-				</div>
-
 			</div>
 			<!-- 4. 결제 정보 센터 정렬 -->
 			<div class="summary-row">
-				<span class="summary-item"> 주문금액 <b id="total-product-price">198,000원</b>
-				</span> <img src="/member/images/substract.png" class="summary-icon"
-					style="position: relative; top: 2px;" alt="substract"> <span>
-					class="summary-item"> 총 할인금액 <b id="discount">52,000원</b>
-				</span> <img src="/member/images/equal.png" class="summary-icon" alt="equal"
+				<span class="summary-item"> 주문금액 <b id="total-product-price" th:text="${totalAmount != 0 ? #numbers.formatInteger(totalAmount, 3, 'COMMA') + '원' : '0원'}"
+													th:attr="data-value=${totalAmount != null ? totalAmount : 0}"></b>
+				</span>
+				<img src="/member/images/substract.png" class="summary-icon"
+					style="position: relative; top: 2px;" alt="substract">
+				<span
+					class="summary-item"> 총 할인금액<b id="discount"
+												   th:text="${totalDiscountAmount != 0 ? #numbers.formatInteger(totalDiscountAmount, 3, 'COMMA') + '원' : '0원'}"
+												   th:attr="data-value=${totalDiscountAmount != null ? totalDiscountAmount : 0}">
+</b>
+				</span>
+				<img src="/member/images/equal.png" class="summary-icon" alt="equal"
 					style="position: relative; top: 2px;"> <span
-					class="summary-item total"> 결제예정금액 <b id="total" class="total">146,000원</b>
+					class="summary-item total"> 결제예정금액 <b id="total" class="total"
+					th:text="${finalAmount != 0 ? #numbers.formatInteger(finalAmount, 3, 'COMMA') + '원' : '0원'}"
+					th:attr="data-value=${finalAmount != null ? finalAmount : 0}">
+				 </b>
 				</span>
 			</div>
 
@@ -107,7 +101,7 @@
 					<div class="form-title">주문 고객정보</div>
 					<div class="section-divider"></div>
 					<div class="form-row">
-						<label for="name" class="required-label">이름</label> <input
+						<label for="buyerName" class="required-label">이름</label> <input
 							type="text" id="buyerName" placeholder="이름을 입력하세요." required>
 					</div>
 					<div class="form-row">
@@ -122,21 +116,22 @@
 					<div class="section-divider"></div>
 					<!-- 5. 배송지 선택 체크박스(라디오) -->
 					<div class="address-select-row">
-						<label for="addselect">배송지 선택</label>
+						<label >배송지 선택
 						<input type="radio" name="addrtype" id="addr1" class="addr-radio" checked> 
 						<label for="addr1" class="addr-label">기본배송지</label> 
 						<input type="radio" name="addrtype" id="addr2" class="addr-radio"> 
 						<label for="addr2" class="addr-label">최근배송지</label> 
 						<input type="radio" name="addrtype" id="addr3" class="addr-radio"> 
 						<label for="addr3" class="addr-label">신규입력</label>
+						</label>
 					</div>
 					<div class="form-row">
-						<label for="name" class="required-label">이름</label> <input
+						<label for="receiverName" class="required-label">이름</label> <input
 							type="text" id="receiverName" placeholder="이름을 입력하세요.">
 					</div>
 					<div class="form-row">
-						<label for="phone" class="required-label">휴대폰번호</label> <input
-							type="tel" id="receicverPhone" placeholder="전화번호를 입력하세요.">
+						<label for="receiverPhone" class="required-label">휴대폰번호</label> <input
+							type="tel" id="receiverPhone" placeholder="전화번호를 입력하세요.">
 					</div>
 					<div class="form-row">
 						<label for="zipcode" class="required-label">주소</label>
@@ -155,7 +150,7 @@
 					</div>
 					<!-- 6. 배송요청사항 -->
 					<div class="form-row">
-						<label for="req">배송요청사항</label>
+						<label for="req-select">배송요청사항</label>
 						<div style="flex: 1;">
 							<div class="req-row">
 								<select class="req-select" id="req-select">
@@ -204,6 +199,8 @@
 		<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
 </body>
 
+<!-- 주소 api -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <!-- jQuery -->
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <!-- iamport.payment.js -->
@@ -252,23 +249,6 @@
     });
 });
 
-	// 장바구니 금액 총합
-	function updateTotalPrice() {
-		const priceElements = document.querySelectorAll(".product-price");
-		let total = 0;
-
-		priceElements.forEach(el => {
-		const price = Number(el.innerText.replace(/,/g, ''));
-		total += price;
-		});
-
-		document.getElementById("total").innerText = total.toLocaleString();
-	}
-
-		// 페이지 로드시 실행
-		updateTotalPrice();
-
-
 
 	// 결제 구현
 	var IMP = window.IMP;
@@ -313,6 +293,55 @@
 	});
 	}
 
-  </script>
+	// 주소 api 관련
+	function address() {
+		new daum.Postcode({
+			oncomplete: function(data) {
+				// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+				// 각 주소의 노출 규칙에 따라 주소를 조합한다.
+				// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+				var addr = ''; // 주소 변수
+				var extraAddr = ''; // 참고항목 변수
+
+				//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+				if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+					addr = data.roadAddress;
+				} else { // 사용자가 지번 주소를 선택했을 경우(J)
+					addr = data.jibunAddress;
+				}
+
+				// 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+				if(data.userSelectedType === 'R'){
+					// 법정동명이 있을 경우 추가한다. (법정리는 제외)
+					// 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+					if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+						extraAddr += data.bname;
+					}
+					// 건물명이 있고, 공동주택일 경우 추가한다.
+					if(data.buildingName !== '' && data.apartment === 'Y'){
+						extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+					}
+					// 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+					if(extraAddr !== ''){
+						extraAddr = ' (' + extraAddr + ')';
+					}
+					// 조합된 참고항목을 해당 필드에 넣는다.
+					document.getElementById("sample6_extraAddress").value = extraAddr;
+				
+				} else {
+					document.getElementById("sample6_extraAddress").value = '';
+				}
+
+				// 우편번호와 주소 정보를 해당 필드에 넣는다.
+				document.getElementById('sample6_postcode').value = data.zonecode;
+				document.getElementById("sample6_address").value = addr;
+				// 커서를 상세주소 필드로 이동한다.
+				document.getElementById("sample6_detailAddress").focus();
+			}
+		}).open();
+	}
+
+</script>
 
 </html>
