@@ -10,11 +10,13 @@ import com.test.shoebox.service.admin.CategoriesService;
 import com.test.shoebox.service.admin.ProductGroupService;
 import com.test.shoebox.service.admin.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -64,10 +66,10 @@ public class AdminProductController {
         redirectAttributes.addFlashAttribute("successMessage", "상품이 성공적으로 등록되었습니다.");
 
         // 상세 페이지로 리다이렉트
-        return "redirect:/admin/product/" + savedProduct.getProductId();
+        return "redirect:/admin/product/detail" + savedProduct.getProductId();
     }
 
-    @GetMapping("/product/{id}")
+    @GetMapping("/product/detail/{id}")
     public String showProductDetail(@PathVariable Long id, Model model) {
         Product product = productService.getProductById(id);
 
@@ -81,7 +83,7 @@ public class AdminProductController {
       // model.addAttribute("additionalImages", additionalImages);
        // model.addAttribute("stocks", stocks);
 
-        return "product/detail"; // templates/product/detail.html
+        return "admin/product/detail"; // templates/product/detail.html
     }
 
 
@@ -135,9 +137,127 @@ public class AdminProductController {
 
             return "admin/product/detail";
         }
+
+    /*@GetMapping("/products")
+    public String showProductList(
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate registrationDateStart,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate registrationDateEnd,
+            @RequestParam(required = false) String productStatus,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String searchKeyword,
+            @RequestParam(defaultValue = "createdAt_desc") String sort,
+            Model model
+    ) {
+        // 1. 검색 파라미터 DTO로 묶기 (선택사항, 현재는 개별 전달)
+        ProductSearchCondition condition = ProductSearchCondition.builder()
+                .registrationDateStart(registrationDateStart)
+                .registrationDateEnd(registrationDateEnd)
+                .productStatus(productStatus)
+                .categoryName(category)
+                .brandName(brand)
+                .searchType(searchType)
+                .searchKeyword(searchKeyword)
+                .sort(sort)
+                .build();
+
+        // 2. 서비스 호출로 실제 상품 리스트 조회
+        //List<ProductDTO> products = productService.searchProducts(condition);
+
+        // 3. 화면에 전달할 값
+        Object products = null;
+        model.addAttribute("products", products);
+        model.addAttribute("param", Map.of(
+                "registrationDateStart", registrationDateStart,
+                "registrationDateEnd", registrationDateEnd,
+                "productStatus", productStatus,
+                "category", category,
+                "brand", brand,
+                "searchType", searchType,
+                "searchKeyword", searchKeyword,
+                "sort", sort
+        ));
+
+        return "admin/product/register"; // 또는 "admin/product/list" 로 변경 가능
+    }*/
+    @GetMapping("/list")
+    public String showProductList(
+            @RequestParam(required = false) String productStatus,
+            @RequestParam(required = false) String brand,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String searchType,
+            @RequestParam(required = false) String searchKeyword,
+            @RequestParam(required = false) String registrationDateStart,
+            @RequestParam(required = false) String registrationDateEnd,
+            @RequestParam(defaultValue = "createdAt_desc") String sort,
+            Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith
+    ) {
+        // 🔧 파라미터 → DTO로 변환
+        ProductSearchCondition condition = ProductSearchCondition.builder()
+                .productStatus(productStatus)
+                .brandName(brand)
+                .categoryName(category)
+                .searchType(searchType)
+                .searchKeyword(searchKeyword)
+                .registrationDateStart(registrationDateStart != null ? LocalDate.parse(registrationDateStart) : null)
+                .registrationDateEnd(registrationDateEnd != null ? LocalDate.parse(registrationDateEnd) : null)
+                .sort(sort)
+                .build();
+
+        List<ProductDTO> products = productService.searchProducts(condition);
+
+        model.addAttribute("products", products);
+        model.addAttribute("param", condition); // 검색조건 유지용
+
+
+        if ("XMLHttpRequest".equals(requestedWith)) {
+            return "admin/product/list :: content";
+        }
+
+        return "admin/product/list";
     }
 
+    // ✅ 상품 수정 폼
+      @GetMapping("/edit/{id}")
+      public String showEditForm(@PathVariable Long id, Model model) {
+      ProductDTO dummy = ProductDTO.builder()
+              .productId(id)
+              .productName("아디다스 울트라부스트")
+              .productPrice(179000)
+              .discountRate(15.0)
+              .targetCustomerType("MEN")
+              .productRegisterDate(LocalDateTime.now().minusDays(5))
+              .brandId(2L)
+              .categoriesId(3L)
+              .productGroupId(1L)
+              .build();
 
+      List<Map<String, Object>> brandList = List.of(
+              Map.of("id", 1L, "name", "NIKE"),
+              Map.of("id", 2L, "name", "ADIDAS"),
+              Map.of("id", 3L, "name", "NEW BALANCE")
+      );
+
+      List<Map<String, Object>> categoryList = List.of(
+              Map.of("id", 1L, "name", "러닝화"),
+              Map.of("id", 2L, "name", "샌들"),
+              Map.of("id", 3L, "name", "스니커즈")
+      );
+
+      List<Map<String, Object>> groupList = List.of(
+              Map.of("id", 1L, "name", "신상품"),
+              Map.of("id", 2L, "name", "인기상품")
+      );
+
+      model.addAttribute("product", dummy);
+      model.addAttribute("brands", brandList);
+      model.addAttribute("categories", categoryList);
+      model.addAttribute("groups", groupList);
+
+      return "admin/product/edit";
+  }
+}
 
 /*
 
