@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <title>우먼스 나이키 줌 벨라 6 상세페이지</title>
@@ -17,29 +17,21 @@
 				style="display: flex; flex-direction: column;">
 				<!-- 이미지/썸네일 -->
 				<div class="product-gallery">
-					<img src="/common/images/nike/NIKE AIR MAX NUAXIS (5).jpg"
-						class="product-main-img" id="mainImg" alt="우먼스 나이키 줌 벨라 6">
+					<img th:src="'/common/images/' + ${firstImage.fileName}"
+     class="product-main-img" id="mainImg" alt="">
+
 					<div class="product-thumbs">
-						<img src="/common/images/nike/NIKE AIR MAX NUAXIS (2).jpg"
-							class="product-thumb selected" alt="thumb1"
-							onclick="switchImg(this)"> <img
-							src="/common/images/nike/NIKE AIR MAX NUAXIS (1).jpg"
-							class="product-thumb" alt="thumb2" onclick="switchImg(this)">
-						<img src="/common/images/nike/NIKE AIR MAX NUAXIS (5).jpg"
-							class="product-thumb" alt="thumb3" onclick="switchImg(this)">
-						<img src="/common/images/nike/NIKE AIR MAX NUAXIS (3).jpg"
-							class="product-thumb" alt="thumb4" onclick="switchImg(this)">
-						<img src="/common/images/nike/NIKE AIR MAX NUAXIS (4).jpg"
-							class="product-thumb" alt="thumb5" onclick="switchImg(this)">
+						<img th:each="item : ${productImageDTOList}" th:src="'/common/images/' + ${item.fileName}" class="product-thumb" alt=""	onclick="switchImg(this)"> 
 					</div>
+
+
 				</div>
 				<!-- 상품만족도 -->
 				<div class="product-score-box">
 					<div class="product-score-left">
 						<div class="product-score-label">상품만족도</div>
 						<div class="product-score-num-row">
-							<span class="product-score-num">5</span><span
-								class="product-score-point">점</span>
+							<span th:text="${rating}" class="product-score-num"></span><span class="product-score-point">점</span>
 						</div>
 						<div class="product-score-star">★★★★★</div>
 					</div>
@@ -72,15 +64,16 @@
 			<!-- 상품 정보/옵션 -->
 			<div class="product-info-box">
 				<div class="product-brand-row">
-					<span class="product-brand">나이키</span> <span class="product-icons">
+					<span th:text="${brandDTO.brandName}" class="product-brand">나이키</span>
+					<span class="product-icons">
 						<button class="icon-btn">♡</button>
 					</span>
 				</div>
-				<div class="product-title">우먼스 나이키 줌 벨라 6</div>
+				<div class="product-title" th:text="${productDTO.productName}">우먼스 나이키 줌 벨라 6</div>
 				<div class="product-title-en">W NIKE ZOOM BELLA 6</div>
 				<div class="product-price-row">
-					<span class="product-price-label">판매가</span> <span
-						class="product-price" id="infoPrice">179,000원</span>
+					<span class="product-price-label">판매가</span>
+					<span th:text="${#numbers.formatInteger(productDTO.productPrice, 3, 'COMMA')} + '원'" class="product-price" id="infoPrice">179,000원</span>
 				</div>
 				<div class="product-member-row">
 					<span class="product-member-label">신규 회원가</span> <img
@@ -96,18 +89,10 @@
 				<div class="product-size-row">
 					<span class="product-size-label">사이즈 선택</span>
 					<div class="product-size-options" id="sizeOptions">
-						<button class="product-size-btn" data-size="230">230</button>
-						<button class="product-size-btn" data-size="235">235</button>
-						<button class="product-size-btn" data-size="240">240</button>
-						<button class="product-size-btn" data-size="235">245</button>
-						<button class="product-size-btn" data-size="250">250</button>
-						<button class="product-size-btn" data-size="235">255</button>
-						<button class="product-size-btn" data-size="260">260</button>
-						<button class="product-size-btn" data-size="235">265</button>
-						<button class="product-size-btn" data-size="270">270</button>
-						<button class="product-size-btn" data-size="235">275</button>
-						<button class="product-size-btn" data-size="280">280</button>
-						<button class="product-size-btn" data-size="235">285</button>
+						<button th:each="ps : ${productStockDTOList}" th:text="${ps.shoeSize}" class="product-size-btn" th:attr="data-productstockId=${ps.productStockId}, data-size=${ps.shoeSize}">230</button>
+						
+						<!-- <button class="product-size-btn" data-size="235">235</button>
+						<button class="product-size-btn" data-size="235">285</button> -->
 					</div>
 				</div>
 
@@ -149,18 +134,18 @@
 		<div class="product-tab-row">
 			<div class="product-tab active" onclick="showTab('info')">상품정보</div>
 			<div class="product-tab" onclick="showTab('review')">
-				상품후기 (<span id="review-count">4</span>)
+				상품후기 (<span id="review-count" th:text="${mYOrderReviewMapDTOList.size()}">4</span>)
 			</div>
 			<div class="product-tab" onclick="showTab('qa')">
-				상품 Q&A (<span id="qa-count">0</span>)
+				상품 Q&A (<span id="qa-count" th:text="${mYProductPostQnaMapDTOList.size()}">0</span>)
 			</div>
 		</div>
 		<!-- 탭별 컨텐츠 -->
 		<div id="tab-info" class="tab-content" style="display: block;">
 			<!-- 상품정보 내용 (예: 상세 이미지, 고시 등) -->
 			<div class="product-detail-img-box">
-				<img src="/common/images/nike/NIKE AIR MAX NUAXIS (6).jpg"
-					class="product-detail-img" alt="상세이미지">
+				
+				<img th:each="ppi : ${productPostImageDTOList}" th:src="'/common/images/' + ${ppi.fileName}" class="product-detail-img" alt="상세이미지">
 			</div>
 			<!-- 상품정보제공고시 -->
 			<div class="product-info-table-wrap">
@@ -336,6 +321,14 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('selectedSizeList').style.display = 'none';
   document.getElementById('totalPrice').innerText = '0';
 });
+
+
+
+
+
+
+
+
 
   </script>
 </html>

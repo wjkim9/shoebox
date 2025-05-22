@@ -14,6 +14,7 @@ import com.test.shoebox.dto.CategoriesDTO;
 import com.test.shoebox.dto.DetailMap;
 import com.test.shoebox.dto.MYOrderReviewMapDTO;
 import com.test.shoebox.dto.MYProductPostQnaMapDTO;
+import com.test.shoebox.dto.ProductDTO;
 import com.test.shoebox.dto.ProductGroupDTO;
 import com.test.shoebox.dto.ProductImageDTO;
 import com.test.shoebox.dto.ProductPostDTO;
@@ -52,6 +53,7 @@ public class DetailController {
 		CategoriesDTO categoriesDTO = productPost.getProduct().getCategories().toDTO();
 		ProductGroupDTO productGroupDTO = productPost.getProduct().getProductGroup().toDTO();
 		BrandDTO brandDTO = productPost.getProduct().getBrand().toDTO();
+		ProductDTO productDTO = productPost.getProduct().toDTO();
 		
 //		System.out.println(productPostDTO.getProductPostId());
 //		System.out.println(categoriesDTO.getCategoriesName());
@@ -62,6 +64,7 @@ public class DetailController {
 		model.addAttribute("categoriesDTO", categoriesDTO);
 		model.addAttribute("productGroupDTO", productGroupDTO);
 		model.addAttribute("brandDTO", brandDTO);
+		model.addAttribute("productDTO", productDTO);
 		
 		//상품사진(선택한 상품)
 		List<ProductImage> productImageList = productImageRepository.findByProductOrderBySortOrderAsc(productPost.getProduct());
@@ -69,7 +72,7 @@ public class DetailController {
 		List<ProductImageDTO> productImageDTOList = new ArrayList<>();
 
 		for (ProductImage pi : productImageList) {
-			//System.out.println(pi.getFileName());
+			System.out.println(pi.getFileName());
 
 			ProductImageDTO dto = pi.toDTO();
 
@@ -77,6 +80,11 @@ public class DetailController {
 		}
 
 		model.addAttribute("productImageDTOList", productImageDTOList);
+
+		//첫번째 사진 꺼내기
+		ProductImageDTO firstImage = productImageDTOList.get(0);
+		
+		model.addAttribute("firstImage", firstImage);
 		
 		//상품게시글사진
 		List<ProductPostImage> productPostImageList = productPostImageRepository.findByProductPost(productPost);
@@ -100,10 +108,11 @@ public class DetailController {
 		
 		for (ProductStock ps : productStockList) {
 
-			//System.out.println("사이즈: " + ps.getShoeSize() + " _ 수량 " + ps.getStockQuantity());
 
 			ProductStockDTO dto = ps.toDTO();
 
+			System.out.println("사이즈: " + dto.getShoeSize() + " _ 수량 " + dto.getStockQuantity());
+			
 			productStockDTOList.add(dto);
 		}
 
