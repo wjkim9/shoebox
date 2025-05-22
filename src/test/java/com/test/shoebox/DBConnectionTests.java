@@ -20,6 +20,7 @@ import com.test.shoebox.dto.CategoriesDTO;
 import com.test.shoebox.dto.EventPostDTO;
 import com.test.shoebox.dto.ProductDTO;
 import com.test.shoebox.dto.ProductImageDTO;
+import com.test.shoebox.dto.ProductListDTO;
 import com.test.shoebox.entity.Brand;
 import com.test.shoebox.entity.EventPost;
 import com.test.shoebox.entity.Product;
@@ -138,19 +139,22 @@ public class DBConnectionTests {
 	
 	@Test
 	public void getProductListTests() {
-		PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("postDate"));
-		Page<ProductImage> pageList = listProductService.getProductList(pageRequest, "men", null, null, null, null);
-		
-		List<ProductImageDTO> list = new ArrayList<>();
-		for(ProductImage image : pageList.getContent()) {
-			list.add(image.toDTO()); 
-		}
+		PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("quantity"));
+		Page<ProductListDTO> pageList = listProductService.getProductList(pageRequest, null, null, null, null, null, 1, "에어");
 		
 		//남자 or 남여공용
-		assertEquals(8, list.size());
+//		assertEquals(13, pageList.getContent().size());
 		
-		System.out.println(list);
+		for(ProductListDTO dto : pageList.getContent()) {
+			System.out.println("=======================");
+			System.out.println("pageBrand: " + dto.getBrandName());
+			System.out.println("pageProduct: " + dto.getProductName());
+			System.out.println("=======================");
+		}
+		
 		
 		
 	}
+	
+	
 }

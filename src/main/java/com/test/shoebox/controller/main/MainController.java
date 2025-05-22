@@ -3,6 +3,7 @@ package com.test.shoebox.controller.main;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,13 +22,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.test.shoebox.dto.BrandDTO;
 import com.test.shoebox.dto.CategoriesDTO;
+import com.test.shoebox.dto.ProductListDTO;
 import com.test.shoebox.entity.Brand;
+import com.test.shoebox.entity.Categories;
 import com.test.shoebox.entity.EventPost;
 import com.test.shoebox.entity.MainBanner;
 import com.test.shoebox.entity.Product;
 import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.entity.ProductPost;
 import com.test.shoebox.repository.BrandRepository;
+import com.test.shoebox.repository.CategoriesRepository;
 import com.test.shoebox.repository.CustomDetailRepository;
 import com.test.shoebox.repository.MainBannerRepository;
 import com.test.shoebox.service.main.ListProductService;
@@ -44,6 +49,8 @@ public class MainController {
 	private final ListProductService listProductService;
 	
 	private final BrandRepository brandRepository;
+	
+	private final CategoriesRepository categoriesRepository;
 	
 	private final MainService mainService;
 	
@@ -116,28 +123,63 @@ public class MainController {
 		
 		return "main/main";
 	}
-//	http://localhost:8090/main/listProduct?targetCustomerType=asdf&categoriesId=1&brandId=1&startPrice=18000&endPrice=30000
+	//정렬 방법
+	//베스트상품순: orderBestDesc
+	//신상품순: orderNewDesc
+	//할인율 높은순: orderDiscountDesc
+	//상품평순: orderReviewDesc
+	//낮은가격순: orderPriceAsc
+	//높은가격순: orderPriceDesc
+	
 	@GetMapping(value = "listProduct")
 	public String listProduct(Model model, 
 		@PageableDefault(page = 0, size = 20) Pageable pageable,
-		@RequestParam(value = "order", required = false, defaultValue = "postDate") String order,
+		@RequestParam(value = "order", required = false, defaultValue = "orderBestDesc") String order,
 		@RequestParam(value = "targetCustomerType", required = false) String targetCustomerType,
 		@RequestParam(value = "categoriesId", required = false) Long categoriesId, 
 		@RequestParam(value = "brandId", required = false) Long brandId, 
 		@RequestParam(value = "startPrice", required = false) Integer startPrice, 
-		@RequestParam(value = "endPrice", required = false) Integer endPrice
+		@RequestParam(value = "endPrice", required = false) Integer endPrice,
+		@RequestParam(value = "search", required = false, defaultValue = "0") Integer search,
+		@RequestParam(value = "searchWord", required = false) String searchWord,
+		@RequestParam(value = "menu", required = false) String menu,
+		@RequestParam(value = "filter", required = false) Integer filter
+		
 	) {
 		
-		System.out.println("==============================");
-		System.out.println("order: " + order);
-		System.out.println("targetCustomerType: " + targetCustomerType);
-		System.out.println("categoriesId: " + categoriesId);
-		System.out.println("brandId: " + brandId);
-		System.out.println("startPrice: " + startPrice);
-		System.out.println("endPrice: " + endPrice);
 		
 		
-		PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(order));
+		PageRequest pageRequest = null;
+		
+		//파라미터에 따라 pageRequest 생성
+		if(order.equals("orderBestDesc")) {
+			
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "quantity"));
+			
+		} else if(order.equals("orderNewDesc")) {
+			
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "postDate"));
+			
+		} else if(order.equals("orderDiscountDesc")) {
+			
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "discountRate"));
+			
+		} else if(order.equals("orderReviewDesc")) {
+			//손봐야함, count
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "reviewCount"));
+			
+		} else if(order.equals("orderPriceAsc")) {
+			
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.ASC, "productPrice"));
+			
+		} else if(order.equals("orderPriceDesc")) {
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "productPrice"));
+		} else {
+			
+			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "postDate"));
+		}
+		
+		
 		
 		
 		//필터로 보여줄 항목
@@ -147,28 +189,118 @@ public class MainController {
 		List<CategoriesDTO> categoriesOnFilterList = mainService.getCategoriesOnFilter();
 		
 		
-		//상품목록
-		Page<ProductImage> productImageList = listProductService.getProductList(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
+		
+		//상품페이지 경로
+		Optional<Categories> categories = categoriesRepository.findCategoriesNameByCategoriesId(categoriesId);
+		Optional<Brand> brand = brandRepository.findBrandNameByBrandId(brandId);
+		
 		
 		StringBuilder sb = new StringBuilder();
+		StringBuilder sbForSort = new StringBuilder();
 		
-		for(int i=0; i<productImageList.getTotalPages(); i++) {
-			sb.append("""
-					<a href="/main/listProduct?page=%d&size=20&sort=%s,desc">%d</a>
-					""".formatted(i, order, i+1));
+		StringBuilder sbForQueryString = new StringBuilder();
+		
+		
+		pageRequest.getSort().forEach(item -> sbForSort.append(item.getProperty() + "," + item.getDirection()));
+		
+		sbForQueryString.append("""
+				<a href="/main/listProduct?page=%d&size=20&sort=%s
+				""");
+		if(order != null) {
+			sbForQueryString.append("&order=%s".formatted(order));
 		}
 		
+		if(targetCustomerType != null) {
+			sbForQueryString.append("&targetCustomerType=%s".formatted(targetCustomerType));
+		}
+		
+		if(categoriesId != null) {
+			sbForQueryString.append("&categoriesId=%d".formatted(categoriesId));
+		}
+		
+		if(brandId != null) {
+			sbForQueryString.append("&brandId=%d".formatted(brandId));
+		}
+		
+		if(startPrice != null) {
+			sbForQueryString.append("&startPrice=%d".formatted(startPrice));
+		}
+		
+		if(endPrice != null) {
+			sbForQueryString.append("&endPrice=%d".formatted(endPrice));
+		}
+		
+		if(search != null) {
+			sbForQueryString.append("&search=%d".formatted(search));
+		}
+		
+		if(searchWord != null) {
+			sbForQueryString.append("&searchWord=%s".formatted(searchWord));
+		}
+		
+		if(menu != null) {
+			sbForQueryString.append("&menu=%s".formatted(menu));
+		}
+		
+		
+		sbForQueryString.append("\">%d</a>");
+		
+		
+		System.out.println("sbForSort: " + sbForSort.toString());
+		
+		
+		
+		
+		//상품목록
+		Page<ProductListDTO> productList = listProductService.getProductList(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord);
+		
+		for(int i=0; i<productList.getTotalPages(); i++) {
+			sb.append(sbForQueryString.toString().formatted(i, sbForSort, i+1));
+		}
+		
+		System.out.println("TotalPages: " + productList.getTotalPages());
+		System.out.println("Size: " + productList.getSize());
+		System.out.println("Size: " + productList.getSize());
+		System.out.println("Offset: " + pageRequest.getOffset());
 		System.out.println("sb: " + sb);
+		
 		
 		//상품경로
 		model.addAttribute("targetCustomerType", targetCustomerType);
+		
 		
 		//필터 출력 항목
 		model.addAttribute("brandOnFilterList", brandOnFilterList);
 		model.addAttribute("categoriesOnFilterList", categoriesOnFilterList);
 		
+		//필터 상태 유지 항목
+		model.addAttribute("filter", filter);
+		model.addAttribute("categoriesId", categoriesId);
+		model.addAttribute("brandId", brandId);
+		model.addAttribute("startPrice", startPrice);
+		model.addAttribute("endPrice", endPrice);
+		
 		//상품 정보
-		model.addAttribute("productImageList", productImageList);
+		model.addAttribute("productList", productList);
+		
+		//검색 유무
+		model.addAttribute("search", search);
+		model.addAttribute("searchWord", searchWord);
+		
+		if(categories.isPresent()) {
+			model.addAttribute("categories", categories.get().toDTO());
+		} else {
+			model.addAttribute("categories", Categories.builder().categoriesName("ALL").build());
+		}
+		
+		if(brand.isPresent()) {
+			model.addAttribute("brand", brand.get().toDTO());
+		} else {
+			model.addAttribute("brand", Brand.builder().brandName("ALL").build());
+		}
+		
+		//메뉴 진입 경로
+		model.addAttribute("menu", menu);
 		
 		//페이지네이션
 		model.addAttribute("sb", sb);
