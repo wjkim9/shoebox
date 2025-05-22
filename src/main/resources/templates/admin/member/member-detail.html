@@ -36,7 +36,8 @@
 	                  </tr>
 	                  <tr>
 	                      <th>발 사이즈</th>
-	                      <td th:text="${memberDetail.memberInfo.footSize != null ? memberDetail.memberInfo.footSize : '-'}">250</td>
+						  <td th:text="${memberDetail.memberInfo.footSize != null ? #numbers.formatInteger(memberDetail.memberInfo.footSize, 1, 'NONE') : '-'}">250</td>
+
 	                      <th>포인트</th>
 	                      <td th:text="${memberDetail.memberInfo.point}">1000</td>
 	                  </tr>
