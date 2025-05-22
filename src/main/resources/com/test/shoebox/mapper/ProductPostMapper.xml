@@ -9,12 +9,76 @@
 		select sysdate from dual
 	</select>
 	
-	<select id="detailtest" resultType="Map">
+	<select id="detailtest" parameterType="String" resultType="DetailMap">
 		select pi.file_name as fileName , pp.productpost_id as productpostId from Product p
 			join ProductPost pp on pp.product_id = p.product_id
 				join ProductImage pi on pi.product_id = p.product_id
-					where p.productgroup_id = 1
+					where p.productgroup_id = #{productgroupId}
 						and pi.sort_order = 1
+	</select>
+	
+	<select id="getProductPostQna" parameterType="String" resultType="MYProductPostQnaMapDTO">
+		select 
+			ppq.productpostqna_id as productpostqnaId,
+			ppq.title as title,
+			ppq.content as content,
+			ppq.write_date as writeDate,
+			ppq.answer_title as answerTitle,
+			ppq.answer_content as answerContent,
+			ppq.answer_date as answerDate,
+			ppq.productpost_id as productpostId,
+			m.nickname as nickname,
+			m.members_id as membersId
+		from ProductPostQna ppq
+			join Members m on m.members_id = ppq.members_id
+				where ppq.productpost_id = #{productPostId}
+	</select>
+	
+	
+<!-- 	
+	<resultMap type="" id="OrderReviewMap">
+		
+	</resultMap>
+ -->
+ 
+ <!--
+	<select id="getOrderReview" parameterType="String" resultMap="OrderReviewMap">
+		select * from ProductStock ps
+			join ProductStockOrder pso on pso.productstock_id = ps.productstock_id
+				join OrderReview odr on pso.productstockorder_id = odr.productstockorder_id
+					join OrderReviewImage ori on ori.orderreview_id = odr.orderreview_id
+						where ps.product_id = #{productId}
+	</select>
+ -->
+
+	<select id="getOrderReview" parameterType="String" resultType="MYOrderReviewMapDTO">
+		select
+			ps.product_id as productId,
+			ps.shoe_size as shoeSize,
+			pso.quantity as quantity,
+			odr.orderreview_id as orderreviewId,
+			odr.content as content,
+			odr.rating as rating,
+			odr.like_count as likeCount,
+			odr.write_date as writeDate,
+			odr.is_blind as isBlind,
+			ori.file_name as fileName,
+			m.nickname as nickname,
+			m.members_id as membersId
+		from ProductStock ps
+			join ProductStockOrder pso on pso.productstock_id = ps.productstock_id
+				join OrderReview odr on pso.productstockorder_id = odr.productstockorder_id
+					join OrderReviewImage ori on ori.orderreview_id = odr.orderreview_id
+						join Orders od on od.orders_id = pso.orders_id
+							join Members m on m.members_id = od.members_id
+								where ps.product_id = #{productId}
+	</select>
+	
+	<select id="getAvgRating" parameterType="String" resultType="String">
+		select nvl(avg(odr.rating), 0) as rating from ProductStock ps
+			join ProductStockOrder pso on ps.productstock_id = pso.productstock_id
+				join OrderReview odr on odr.productstockorder_id = pso.productstockorder_id
+					where ps.product_id = #{productId}
 	</select>
 	
 </mapper>

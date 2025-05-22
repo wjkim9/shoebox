@@ -308,13 +308,7 @@ public class MainController {
 		
 		return "main/category";
 	}
-	
 
-	@GetMapping("/login")
-	public String login(Model model) {
-
-		return "main/login";
-	}
 
 	@GetMapping("/findid")
 	public String findid(Model model) {
@@ -328,11 +322,6 @@ public class MainController {
 		return "main/findpw";
 	}
 
-	@GetMapping("/register")
-	public String register(Model model) {
-
-		return "main/register";
-	}
 	@GetMapping("/category")
 	public String category(Model model) {
 

@@ -46,6 +46,13 @@ public class SecurityConfig {
 		    .successHandler(oAuth2SuccessHandler) // 동적 리다이렉션 하고 싶으면 이 방식
 		);
 		
+		http.logout(logout -> logout
+            .logoutUrl("/main/logout") // 기본값은 /logout 이지만 명시 가능
+            .logoutSuccessUrl("/main/") // 로그아웃 후 이동할 페이지
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID")
+        );
+
 		return http.build();
 	}
 
