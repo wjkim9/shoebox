@@ -9,25 +9,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.test.shoebox.dto.BrandDTO;
+import com.test.shoebox.dto.CategoriesDTO;
 import com.test.shoebox.dto.DetailMap;
 import com.test.shoebox.dto.MYOrderReviewMapDTO;
 import com.test.shoebox.dto.MYProductPostQnaMapDTO;
+import com.test.shoebox.dto.ProductGroupDTO;
 import com.test.shoebox.dto.ProductImageDTO;
+import com.test.shoebox.dto.ProductPostDTO;
 import com.test.shoebox.dto.ProductPostImageDTO;
-import com.test.shoebox.dto.ProductPostQnaDTO;
 import com.test.shoebox.dto.ProductStockDTO;
 import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.entity.ProductPost;
 import com.test.shoebox.entity.ProductPostImage;
-import com.test.shoebox.entity.ProductPostQna;
 import com.test.shoebox.entity.ProductStock;
 import com.test.shoebox.mapper.ProductPostMapper;
 import com.test.shoebox.repository.CustomDetailRepository;
 import com.test.shoebox.repository.ProductImageRepository;
 import com.test.shoebox.repository.ProductPostImageRepository;
-import com.test.shoebox.repository.ProductPostQnaRepository;
 import com.test.shoebox.repository.ProductStockRepository;
-import com.test.shoebox.service.main.OAuth2SuccessHandler;
+
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -35,14 +36,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class DetailController {
 
-    private final OAuth2SuccessHandler OAuth2SuccessHandler;
-
-    private final LoginController loginController;
-
 	private final CustomDetailRepository customDetailRepository;
 	private final ProductImageRepository productImageRepository;
 	private final ProductPostImageRepository productPostImageRepository;
-	private final ProductPostQnaRepository productPostQnaRepository;
 	private final ProductStockRepository productStockRepository;
 	private final ProductPostMapper productPostMapper;
 
@@ -52,11 +48,20 @@ public class DetailController {
 		//기본 상품게시글 정보
 		ProductPost productPost = customDetailRepository.findById(productPostId);
 
-		System.out.println(productPost.getProductPostId());
-		System.out.println(productPost.getProduct().getProductName());
-		System.out.println(productPost.getProduct().getCategories().getCategoriesName());
-		System.out.println(productPost.getProduct().getProductGroup().getProductGroupName());
-		System.out.println(productPost.getProduct().getBrand().getBrandName());
+		ProductPostDTO productPostDTO = productPost.toDTO();
+		CategoriesDTO categoriesDTO = productPost.getProduct().getCategories().toDTO();
+		ProductGroupDTO productGroupDTO = productPost.getProduct().getProductGroup().toDTO();
+		BrandDTO brandDTO = productPost.getProduct().getBrand().toDTO();
+		
+//		System.out.println(productPostDTO.getProductPostId());
+//		System.out.println(categoriesDTO.getCategoriesName());
+//		System.out.println(productGroupDTO.getProductGroupName());
+//		System.out.println(brandDTO.getBrandName());
+		
+		model.addAttribute("productPostDTO", productPostDTO);
+		model.addAttribute("categoriesDTO", categoriesDTO);
+		model.addAttribute("productGroupDTO", productGroupDTO);
+		model.addAttribute("brandDTO", brandDTO);
 		
 		//상품사진(선택한 상품)
 		List<ProductImage> productImageList = productImageRepository.findByProductOrderBySortOrderAsc(productPost.getProduct());
@@ -64,25 +69,29 @@ public class DetailController {
 		List<ProductImageDTO> productImageDTOList = new ArrayList<>();
 
 		for (ProductImage pi : productImageList) {
-			System.out.println(pi.getFileName());
+			//System.out.println(pi.getFileName());
 
 			ProductImageDTO dto = pi.toDTO();
 
 			productImageDTOList.add(dto);
 		}
 
+		model.addAttribute("productImageDTOList", productImageDTOList);
+		
 		//상품게시글사진
 		List<ProductPostImage> productPostImageList = productPostImageRepository.findByProductPost(productPost);
 		
 		List<ProductPostImageDTO> productPostImageDTOList = new ArrayList<>();
 
 		for (ProductPostImage ppi : productPostImageList) {
-			System.out.println(ppi.getFileName());
+			//System.out.println(ppi.getFileName());
 			
 			ProductPostImageDTO dto = ppi.toDTO();
 			
 			productPostImageDTOList.add(dto);
 		}
+		
+		model.addAttribute("productPostImageDTOList", productPostImageDTOList);
 		
 		//상품재고 리스트 가져오기
 		List<ProductStock> productStockList = productStockRepository.findByProduct(productPost.getProduct());
@@ -91,52 +100,49 @@ public class DetailController {
 		
 		for (ProductStock ps : productStockList) {
 
-			System.out.println("사이즈: " + ps.getShoeSize() + " _ 수량 " + ps.getStockQuantity());
+			//System.out.println("사이즈: " + ps.getShoeSize() + " _ 수량 " + ps.getStockQuantity());
 
 			ProductStockDTO dto = ps.toDTO();
 
 			productStockDTOList.add(dto);
 		}
 
+		model.addAttribute("productStockDTOList", productStockDTOList);
+		
 		//상품게시글Q&A
 		List<MYProductPostQnaMapDTO> mYProductPostQnaMapDTOList = productPostMapper.getProductPostQna(productPostId);
 		
-		for (MYProductPostQnaMapDTO dto : mYProductPostQnaMapDTOList) {
-			System.out.println(dto.getTitle());
-		}
+//		for (MYProductPostQnaMapDTO dto : mYProductPostQnaMapDTOList) {
+//			System.out.println(dto.getTitle());
+//		}
+		
+		model.addAttribute("mYProductPostQnaMapDTOList", mYProductPostQnaMapDTOList);
 		
 		//상품그룹 자식(상품사진, 상품게시글)리스트 가져오기
 		List<DetailMap> productGroupMapList = productPostMapper.detailtest(productPostId);
 
+		model.addAttribute("productGroupMapList", productGroupMapList);
+		
 		//상품게시글에 해당하는 상품id 얻어오기
 		String productId = productPost.getProduct().getProductId() + "";
 		
 		//상품 자식(상품재고, 상품재고_주문, 주문후기, 주문후기사진, 주문, 회원) 리스트 가져오기
 		List<MYOrderReviewMapDTO> mYOrderReviewMapDTOList = productPostMapper.getOrderReview(productId);
 		
-		for (MYOrderReviewMapDTO dto : mYOrderReviewMapDTOList) {
-			System.out.println(dto.getContent());
-		}
+		model.addAttribute("mYOrderReviewMapDTOList", mYOrderReviewMapDTOList);
+		
+//		for (MYOrderReviewMapDTO dto : mYOrderReviewMapDTOList) {
+//			System.out.println(dto.getContent());
+//		}
 
+		//평균 별점 가져오기
+		String rating = productPostMapper.getAvgRating(productId);
+		
+		model.addAttribute("rating", rating);
+		
+		//System.out.println("별점~~~" + rating);
 
 		return "main/detailpage";
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

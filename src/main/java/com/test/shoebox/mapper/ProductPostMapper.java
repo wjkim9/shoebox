@@ -19,4 +19,5 @@ public interface ProductPostMapper {
 	
 	List<MYOrderReviewMapDTO> getOrderReview(String productId);
 	
+	String getAvgRating(String productId);
 }
