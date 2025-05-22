@@ -230,7 +230,7 @@ public class CustomRepository {
 												.offset(pageRequest.getOffset())
 												.limit(pageRequest.getPageSize())
 												.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId)
-												.orderBy(productStockOrder.quantity.sum().desc())
+												.orderBy(productStockOrder.quantity.coalesce(0).sum().desc())
 												.fetch();
 		
 		List<Tuple> allContent = jpaQueryFactory.select(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId, productStockOrder.quantity.coalesce(0).sum())
@@ -248,7 +248,6 @@ public class CustomRepository {
 														
 												)
 												.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId)
-												.orderBy(productStockOrder.quantity.sum().desc())
 												.fetch();
 		
 												
@@ -323,7 +322,7 @@ public class CustomRepository {
 												.offset(pageRequest.getOffset())
 												.limit(pageRequest.getPageSize())
 												.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId)
-												.orderBy(productStockOrder.quantity.sum().desc())
+												.orderBy(orderReview.orderReviewId.count().desc())
 												.fetch();
 		
 		List<Tuple> allContent = jpaQueryFactory.select(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId, orderReview.orderReviewId.count())
@@ -342,7 +341,6 @@ public class CustomRepository {
 														
 												)
 												.groupBy(product.productId, productImage.fileName, brand.brandName, product.productName, product.productPrice, productPost.productPostId)
-												.orderBy(productStockOrder.quantity.sum().desc())
 												.fetch();
 		
 												

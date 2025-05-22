@@ -15,10 +15,25 @@
 	<div class="container">
 		<!-- 좌측 카테고리/필터 -->
 		<aside class="side-filter">
-			<h2 th:text="${#strings.toUpperCase(targetCustomerType)}">WOMEN</h2>
+			
+			<h2 th:text="${#strings.toUpperCase(menu)}">WOMEN</h2>
+			
 			<ul class="category-list">
+				
+				<th:block th:if="${menu == 'brand'}">
+				<li class="selected" data-brandId="all">ALL</li>
+				<li th:each="item : ${brandOnFilterList}" th:text="${item.brandName}" th:attr="data-brandId=${item.brandId}">Nike</li>
+				</th:block>
+				
+				<th:block th:if="${menu == 'etc'}">
+				<li class="selected" data-categoriesId="all" onclick="location.href='/main/listProduct?menu=etc&categoriesId=7'">ALL</li>
+				</th:block>
+				
+				<th:block th:unless="${menu == 'brand' || menu == 'etc'}">
 				<li class="selected" data-categoriesId="all">ALL</li>
 				<li th:each="item : ${categoriesOnFilterList}" th:text="${item.categoriesName}" th:attr="data-categoriesId=${item.categoriesId}">운동화</li>
+				</th:block>
+				
 				<!-- 
 				<li>운동화</li>
 				<li>슬리퍼/샌들</li>
@@ -101,9 +116,21 @@
 		</aside>
 		<!-- 우측 상품 리스트 -->
 		<main class="main-area">
-			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(targetCustomerType)} + ' > ' + ${categories.categoriesName}"></div>
+			<th:block th:if="${menu == 'brand'}">
+			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(menu)} + ' > ' + ${brand.brandName}"></div>
+			</th:block>
+			<th:block th:unless="${menu == 'brand'}">
+			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(menu)} + ' > ' + ${categories.categoriesName}"></div>
+			</th:block>
+			
 			<div class="topbar">
+				<th:block th:if="${menu == 'brand'}">
+				<div class="category-title" th:text="${brand.brandName}">Nike</div>
+				</th:block>
+				<th:block th:unless="${menu == 'brand'}">
 				<div class="category-title" th:text="${categories.categoriesName}">런닝화</div>
+				</th:block>
+				
 				<div class="sort-dropdown">
 					<select id="orderSelect" class="sort-select">
 						<option value="orderBestDesc">베스트상품순</option>
@@ -253,19 +280,38 @@
 	});
 	
 	//좌측 메뉴 클릭 이벤트
-	document.querySelectorAll('.side-filter .category-list li').forEach(category => {
-		category.addEventListener('click', (target) =>{
-			
-			if(target.target.getAttribute('data-categoriesid') == 'all') {
-				location.href = '/main/listProduct?targetCustomerType=' + [[${targetCustomerType}]];
-			} else {
-				location.href = '/main/listProduct?categoriesId=' + target.target.getAttribute('data-categoriesid') + '&targetCustomerType=' + [[${targetCustomerType}]];
-			}
-			
+	if([[${menu}]] == 'brand') {
+		document.querySelectorAll('.side-filter .category-list li').forEach(category => {
+			category.addEventListener('click', (target) =>{
+				
+				if(target.target.getAttribute('data-brandid') == 'all') {
+					location.href = '/main/listProduct?menu=' + [[${menu}]];
+				} else {
+					location.href = '/main/listProduct?menu=' + [[${menu}]] + '&brandId=' + target.target.getAttribute('data-brandid');
+				}
+				
+				
+			});
 			
 		});
-		
-	});
+	}
+	if([[${menu}]] == 'men' || [[${menu}]] == 'women' || [[${menu}]] == 'kids') {
+		document.querySelectorAll('.side-filter .category-list li').forEach(category => {
+			category.addEventListener('click', (target) =>{
+				
+				if(target.target.getAttribute('data-categoriesid') == 'all') {
+					location.href = '/main/listProduct?menu=' + [[${menu}]] + '&targetCustomerType=' + [[${targetCustomerType}]];
+				} else {
+					location.href = '/main/listProduct?menu=' + [[${menu}]] + '&categoriesId=' + target.target.getAttribute('data-categoriesid') + '&targetCustomerType=' + [[${targetCustomerType}]];
+				}
+				
+				
+			});
+			
+		});
+	}
+	
+	
 	
 	
 	//필터 검색 버튼 이벤트

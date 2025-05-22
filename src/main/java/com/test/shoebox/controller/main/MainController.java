@@ -141,7 +141,8 @@ public class MainController {
 		@RequestParam(value = "startPrice", required = false) Integer startPrice, 
 		@RequestParam(value = "endPrice", required = false) Integer endPrice,
 		@RequestParam(value = "search", required = false, defaultValue = "0") Integer search,
-		@RequestParam(value = "searchWord", required = false) String searchWord
+		@RequestParam(value = "searchWord", required = false) String searchWord,
+		@RequestParam(value = "menu", required = false) String menu
 		
 	) {
 		
@@ -186,8 +187,11 @@ public class MainController {
 		//카테고리
 		List<CategoriesDTO> categoriesOnFilterList = mainService.getCategoriesOnFilter();
 		
+		
+		
 		//상품페이지 경로
 		Optional<Categories> categories = categoriesRepository.findCategoriesNameByCategoriesId(categoriesId);
+		Optional<Brand> brand = brandRepository.findBrandNameByBrandId(brandId);
 		
 		
 		StringBuilder sb = new StringBuilder();
@@ -224,6 +228,20 @@ public class MainController {
 		if(endPrice != null) {
 			sbForQueryString.append("&endPrice=%d".formatted(endPrice));
 		}
+		
+		if(search != null) {
+			sbForQueryString.append("&search=%d".formatted(search));
+		}
+		
+		if(searchWord != null) {
+			sbForQueryString.append("&searchWord=%s".formatted(searchWord));
+		}
+		
+		if(menu != null) {
+			sbForQueryString.append("&menu=%s".formatted(menu));
+		}
+		
+		
 		sbForQueryString.append("\">%d</a>");
 		
 		
@@ -263,6 +281,14 @@ public class MainController {
 			model.addAttribute("categories", Categories.builder().categoriesName("ALL").build());
 		}
 		
+		if(brand.isPresent()) {
+			model.addAttribute("brand", brand.get().toDTO());
+		} else {
+			model.addAttribute("brand", Brand.builder().brandName("ALL").build());
+		}
+		
+		//메뉴 진입 경로
+		model.addAttribute("menu", menu);
 		
 		//페이지네이션
 		model.addAttribute("sb", sb);
