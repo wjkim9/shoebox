@@ -30,9 +30,13 @@ public class ProductGroup {
     @Column(name = "productgroup_id")
     private Long productGroupId;
 
+    @Column(name = "product_group_name")
+    private String productGroupName;
+
     public ProductGroupDTO toDTO() {
         return ProductGroupDTO.builder()
                 .productGroupId(this.productGroupId)
+                .productGroupName(this.productGroupName)
                 .build();
     }
 }

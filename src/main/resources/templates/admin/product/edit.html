@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+</head>
+<body>
+<section layout:fragment="content" th:fragment="content">
+    <link rel="stylesheet" th:href="@{/admin/css/product-list.css}" />
+    <script th:src="@{/admin/js/product-form.js}"></script>
+
+    <div class="admin-container" style="margin-top: var(--header-height);">
+        <div class="page-header">
+            <h2>상품 정보 수정</h2>
+            <div>
+                <a th:href="@{/admin/product/register}" class="btn btn-outline">
+                    <i class="fas fa-chevron-left"></i> 목록으로 돌아가기
+                </a>
+            </div>
+        </div>
+
+        <form th:action="@{/admin/product/update}" method="post" enctype="multipart/form-data">
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>기본 정보</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="productName">상품명 <span class="required">*</span></label>
+                                <input type="text" class="form-input" id="productName" name="productName" th:value="${product.productName}" required>
+                            </div>
+
+                            <!--<div class="form-group">
+                                <label for="productCode">상품 코드</label>
+                                <input type="text" class="form-input" id="productCode" th:value="${product.productId}" readonly>
+                                <input type="hidden" name="productId" th:value="${product.productId}" />
+                            </div>-->
+
+                            <div class="form-group">
+                                <label for="brandId">브랜드 <span class="required">*</span></label>
+                                <select class="form-select" id="brandId" name="brandId" required>
+                                    <option value="">브랜드 선택</option>
+                                    <option th:each="brand : ${brands}" th:value="${brand['brand_id']}" th:text="${brand['brand_name']}" th:selected="${brand['brand_id']} == ${product.brandId}"></option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="categoriesId">카테고리 <span class="required">*</span></label>
+                                <select class="form-select" id="categoriesId" name="categoriesId" required>
+                                    <option value="">카테고리 선택</option>
+                                    <option th:each="category : ${categories}" th:value="${category['id']}" th:text="${category['name']}" th:selected="${category['id']} == ${product.categoriesId}"></option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="productGroupId">상품그룹 <span class="required">*</span></label>
+                                <select class="form-select" id="productGroupId" name="productGroupId" required>
+                                    <option value="">상품그룹 선택</option>
+                                    <option th:each="group : ${groups}" th:value="${group['productgroup_id']}" th:text="${group['product_group_name']}" th:selected="${group['productgroup_id']} == ${product.productGroupId}"></option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>성별</label>
+                                <div class="option-group">
+                                    <label class="option-label"><input type="radio" name="targetCustomerType" value="MEN" th:checked="${product.targetCustomerType} == 'MEN'"> 남성</label>
+                                    <label class="option-label"><input type="radio" name="targetCustomerType" value="WOMEN" th:checked="${product.targetCustomerType} == 'WOMEN'"> 여성</label>
+                                    <label class="option-label"><input type="radio" name="targetCustomerType" value="UNISEX" th:checked="${product.targetCustomerType} == 'UNISEX'"> 공용</label>
+                                    <label class="option-label"><input type="radio" name="targetCustomerType" value="KIDS" th:checked="${product.targetCustomerType} == 'KIDS'"> 키즈</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="productPrice">가격 (원) <span class="required">*</span></label>
+                                <input type="number" class="form-input" id="productPrice" name="productPrice" min="0" th:value="${product.productPrice}" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="discountRate">할인율 (%)</label>
+                                <input type="number" class="form-input" id="discountRate" name="discountRate" min="0" max="100" th:value="${product.discountRate}">
+                            </div>
+
+                            <!--
+                            <div class="form-group">
+                                <label>등록일</label>
+                                <input type="text" class="form-input" th:value="${#temporals.format(product.productRegisterDate, 'yyyy-MM-dd HH:mm')}" readonly>
+                            </div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>사이즈 및 재고 관리</h3>
+                </div>
+                <div class="panel-body">
+                    <div id="sizeStockContainer">
+                        <div class="size-stock-row" th:each="stock, iter : ${stocks}">
+                            <div class="size-stock-column">
+                                <select class="form-select size-select" name="sizes[]" required>
+                                    <option value="">사이즈 선택</option>
+                                    <option th:each="size : ${availableSizes}" th:value="${size}" th:text="${size}" th:selected="${size == stock.size}"></option>
+                                </select>
+                            </div>
+                            <div class="size-stock-column">
+                                <input type="number" class="form-input size-stock" name="sizeStocks[]" placeholder="재고 수량" min="0" th:value="${stock.stock}" required>
+                            </div>
+                            <div class="size-stock-column">
+                                <div class="size-btn-group">
+                                    <button type="button" class="btn btn-icon add-size-btn"><i class="fas fa-plus"></i></button>
+                                    <button type="button" class="btn btn-icon btn-delete remove-size-btn" th:attr="disabled=${iter.index == 0}"><i class="fas fa-minus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h3>상품 이미지</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label for="mainImage">메인 이미지 <span class="required">*</span></label>
+                        <input type="file" id="mainImage" name="mainImage" accept="image/*">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="additionalImages">추가 이미지 (최대 5개)</label>
+                        <input type="file" id="additionalImages" name="additionalImages" accept="image/*" multiple>
+                        <div id="additionalImagesPreview"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 저장
+                </button>
+                <button type="button" class="btn btn-cancel" onclick="history.back()">
+                    <i class="fas fa-times"></i> 취소
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>
