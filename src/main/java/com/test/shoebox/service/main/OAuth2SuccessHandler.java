@@ -34,13 +34,16 @@ public class OAuth2SuccessHandler extends SavedRequestAwareAuthenticationSuccess
 		
 		if (members.isPresent()) {
 			//재방문 > 홈으로 이동
-			super.onAuthenticationSuccess(request, response, authentication);
+	        oAuth2User.getMembersDTO().setMembersId(members.get().getMembersId());
+	        oAuth2User.getMembersDTO().setRole("ROLE_MEMBER");
+	        
+			response.sendRedirect(request.getContextPath() + "/main/");
 		} else {
 			//첫방문 > 회원가입으로 이동
 			session.setAttribute("members", oAuth2User);
 			response.sendRedirect(request.getContextPath() + "/main/register");
 		}
-		
+
 	}
 	
 }
