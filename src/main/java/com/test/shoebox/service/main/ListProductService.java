@@ -60,7 +60,7 @@ public class ListProductService {
 	
 	//상품 목록
 	public Page<ProductListDTO> getProductList(PageRequest pageRequest, String targetCustomerType, Long categoriesId,
-			Long brandId, Integer startPrice, Integer endPrice) {
+			Long brandId, Integer startPrice, Integer endPrice, Integer search, String searchWord) {
 		
 		String orderProperty = "";
 		
@@ -69,34 +69,56 @@ public class ListProductService {
 		}
 		
 		Page<ProductListDTO> result = null;
-		List<ProductListDTO> dtoList;
+		List<ProductListDTO> dtoList = new ArrayList<>();
 		
-		if(orderProperty.equals("quantity")) {
-			Page<Tuple> tuple = customRepository.findProductImageByBest(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
+		if(orderProperty.equals("quantity") || orderProperty.equals("reviewCount")) {
 			
-			dtoList = new ArrayList<>();
+			Page<Tuple> tuple;
 			
-			for(Tuple item : tuple.getContent()) {
-				ProductListDTO dto = new ProductListDTO();
+			if(orderProperty.equals("quantity")) {
 				
-				dto.setProductId(item.get(0, Long.class));
-				dto.setFileName(item.get(1, String.class));
-				dto.setBrandName(item.get(2,String.class));
-				dto.setProductName(item.get(3, String.class));
-				dto.setProductPrice(item.get(4, Integer.class));
-				dto.setProductPostId(item.get(5, Long.class));
-				dto.setSalesQuantity(item.get(6, Integer.class));
+				tuple = customRepository.findProductImageByBest(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord);
 				
-				dtoList.add(dto);
+				for(Tuple item : tuple.getContent()) {
+					ProductListDTO dto = new ProductListDTO();
+					
+					dto.setProductId(item.get(0, Long.class));
+					dto.setFileName(item.get(1, String.class));
+					dto.setBrandName(item.get(2,String.class));
+					dto.setProductName(item.get(3, String.class));
+					dto.setProductPrice(item.get(4, Integer.class));
+					dto.setProductPostId(item.get(5, Long.class));
+					dto.setSalesQuantity(item.get(6, Integer.class));
+					
+					dtoList.add(dto);
+				}
 				
+			} else {
+				tuple = customRepository.findProductImageByReviewCount(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord);
 				
+				for(Tuple item : tuple.getContent()) {
+					ProductListDTO dto = new ProductListDTO();
+					
+					dto.setProductId(item.get(0, Long.class));
+					dto.setFileName(item.get(1, String.class));
+					dto.setBrandName(item.get(2,String.class));
+					dto.setProductName(item.get(3, String.class));
+					dto.setProductPrice(item.get(4, Integer.class));
+					dto.setProductPostId(item.get(5, Long.class));
+					dto.setReviewCount(item.get(6, Long.class));
+					
+					dtoList.add(dto);
+				}
 			}
+			
+			
+			
 			
 			result = new PageImpl<ProductListDTO>(dtoList, tuple.getPageable(), tuple.getTotalElements());
 			
 			
 		} else {
-			Page<ProductImage> page = customRepository.findProductPage(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
+			Page<ProductImage> page = customRepository.findProductPage(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord);
 			
 			dtoList = new ArrayList<>();
 			

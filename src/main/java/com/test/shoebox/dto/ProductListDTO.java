@@ -21,6 +21,6 @@ public class ProductListDTO {
 	private Integer productPrice;
 	private Long productPostId;
 	private Integer salesQuantity;
-	
+	private Long reviewCount;
 	
 }

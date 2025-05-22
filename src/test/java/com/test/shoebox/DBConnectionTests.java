@@ -140,7 +140,7 @@ public class DBConnectionTests {
 	@Test
 	public void getProductListTests() {
 		PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("quantity"));
-		Page<ProductListDTO> pageList = listProductService.getProductList(pageRequest, null, null, null, null, null);
+		Page<ProductListDTO> pageList = listProductService.getProductList(pageRequest, null, null, null, null, null, 1, "에어");
 		
 		//남자 or 남여공용
 //		assertEquals(13, pageList.getContent().size());

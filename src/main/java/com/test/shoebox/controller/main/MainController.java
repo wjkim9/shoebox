@@ -139,7 +139,10 @@ public class MainController {
 		@RequestParam(value = "categoriesId", required = false) Long categoriesId, 
 		@RequestParam(value = "brandId", required = false) Long brandId, 
 		@RequestParam(value = "startPrice", required = false) Integer startPrice, 
-		@RequestParam(value = "endPrice", required = false) Integer endPrice
+		@RequestParam(value = "endPrice", required = false) Integer endPrice,
+		@RequestParam(value = "search", required = false, defaultValue = "0") Integer search,
+		@RequestParam(value = "searchWord", required = false) String searchWord
+		
 	) {
 		
 		
@@ -230,7 +233,7 @@ public class MainController {
 		
 		
 		//상품목록
-		Page<ProductListDTO> productList = listProductService.getProductList(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice);
+		Page<ProductListDTO> productList = listProductService.getProductList(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord);
 		
 		for(int i=0; i<productList.getTotalPages(); i++) {
 			sb.append(sbForQueryString.toString().formatted(i, sbForSort, i+1));

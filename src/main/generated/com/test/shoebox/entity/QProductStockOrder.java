@@ -24,6 +24,8 @@ public class QProductStockOrder extends EntityPathBase<ProductStockOrder> {
 
     public final NumberPath<Integer> orderPrice = createNumber("orderPrice", Integer.class);
 
+    public final ListPath<OrderReview, QOrderReview> orderReview = this.<OrderReview, QOrderReview>createList("orderReview", OrderReview.class, QOrderReview.class, PathInits.DIRECT2);
+
     public final QOrders orders;
 
     public final QProductStock productStock;
