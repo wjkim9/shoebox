@@ -270,20 +270,21 @@
 		if (rsp.success) {
 			// 결제 성공 시 백엔드 검증 요청
 			fetch(`/api/v1/payments/verify/${rsp.imp_uid}?merchant_uid=${merchantUid}&amount=${rsp.paid_amount}`)
-			.then(response => response.json())
-			.then(data => {
-				if (data.status === 'paid') {
-					alert('결제가 완료되었습니다.');
-					// 결제 완료 후 결제 완료 창
-					window.location.href='/payment/payment_completed';
-				} else {
-					alert('결제 검증에 실패하였습니다.');
-					// 결제 실패 시 장바구니로 돌아가기
-					window.location.href='/payment/orderlist';
+					.then(response => response.json())
+					.then(data => {
+						// 응답 구조가 달라졌으므로 이에 맞게 처리
+						if (data.status === 'paid' || data.status === 'ready') {
+							alert('결제가 완료되었습니다.');
+							// 결제 완료 후 결제 완료 창
+							window.location.href='/payment/payment_completed';
+						} else {
+							alert('결제 검증에 실패하였습니다.');
+							// 결제 실패 시 장바구니로 돌아가기
+							window.location.href='/payment/orderlist';
+						}
+					})
 
-				}
-			})
-			.catch(error => {
+					.catch(error => {
 				console.error('결제 검증 중 오류 발생:', error);
 				alert('결제 검증 중 오류가 발생했습니다.');
 			});

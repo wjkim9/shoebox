@@ -644,42 +644,36 @@
 	}
 
 	function goToOrder() {
-		// 선택된 상품의 ID 수집
-		const selectedItems = Array.from(document.querySelectorAll('.cart-chk-item:checked'))
-			.map(checkbox => {
-				const cartItem = checkbox.closest('.cart-item');
-				return cartItem.querySelector('.cart-delete-btn').getAttribute('data-cart-item-id');
-			});
+    // 선택된 상품의 ID 수집
+    const selectedItems = Array.from(document.querySelectorAll('.cart-chk-item:checked'))
+        .map(checkbox => {
+            const cartItem = checkbox.closest('.cart-item');
+            return cartItem.querySelector('.cart-delete-btn').getAttribute('data-cart-item-id');
+        });
 
-		if (selectedItems.length === 0) {
-			alert('주문할 상품을 선택해주세요.');
-			return;
-		}
+    if (selectedItems.length === 0) {
+        alert('주문할 상품을 선택해주세요.');
+        return;
+    }
 
-		// 적용된 쿠폰 정보 수집
-		const appliedCoupons = {};
-		document.querySelectorAll('.cart-coupon-btn').forEach(btn => {
-			const cartItemId = btn.closest('.cart-item').querySelector('.cart-delete-btn').getAttribute('data-cart-item-id');
-			const couponsStr = btn.getAttribute('data-applied-coupons');
-			if (couponsStr) {
-				appliedCoupons[cartItemId] = JSON.parse(couponsStr);
-			}
-		});
+    // 선택된 상품 ID들을 쿼리 파라미터로 전달
+    let queryString = selectedItems.map(id => `cartItemIds=${id}`).join('&');
+    
+    // 포인트 사용 정보 (포인트 사용 인터페이스가 있는 경우)
+    const usePointInput = document.getElementById('use-point');
+    const useAllPointCheck = document.getElementById('use-allpoint-check');
+    
+    if (usePointInput) {
+        const pointValue = parseInt(usePointInput.value) || 0;
+        queryString += `&usePoint=${pointValue}`;
+    }
+    
+    if (useAllPointCheck) {
+        queryString += `&useAllPoint=${useAllPointCheck.checked}`;
+    }
 
-		// 사용 포인트 정보 수집
-		const usePoint = document.getElementById('use-point').value;
-		const useAllPoint = document.getElementById('use-allpoint-check').checked;
-
-		// 선택된 상품 ID들과 쿠폰 정보, 포인트 정보를 쿼리 파라미터로 전달
-		const queryString = new URLSearchParams({
-			cartItemIds: selectedItems,
-			appliedCoupons: JSON.stringify(appliedCoupons),
-			usePoint: usePoint,
-			useAllPoint: useAllPoint
-		}).toString();
-
-		window.location.href = `/payment/orderlist?${queryString}`;
-	}
+    window.location.href = `/payment/orderlist?${queryString}`;
+}
 </script>
 
 </html>

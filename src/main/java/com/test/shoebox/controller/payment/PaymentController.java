@@ -41,54 +41,13 @@ public class PaymentController {
         model.addAttribute("impKey", apiKey);
         
         if (cartItemIds != null && !cartItemIds.isEmpty()) {
-            List<CartItem> selectedItems = cartItemRepository.findAllById(cartItemIds);
-            model.addAttribute("selectedItems", selectedItems);
+            Map<String, Object> amounts = paymentService.calculateOrderAmounts(cartItemIds, appliedCoupons, usePoint, useAllPoint);
             
-            // 총 주문 금액 계산
-            int totalAmount = selectedItems.stream()
-                .mapToInt(item -> item.getProductStock().getProduct().getProductPrice() * item.getQuantity())
-                .sum();
-            model.addAttribute("totalAmount", totalAmount);
-            
-            // 총 할인 금액 계산
-            int totalDiscountAmount = selectedItems.stream()
-                .mapToInt(item -> {
-                    int itemPrice = item.getProductStock().getProduct().getProductPrice() * item.getQuantity();
-                    int productDiscount = (int) (itemPrice * (item.getProductStock().getProduct().getDiscountRate() / 100.0));
-                    
-                    // 쿠폰 할인 계산
-                    int couponDiscount = 0;
-                    if (appliedCoupons != null && !appliedCoupons.isEmpty()) {
-                        try {
-                            Map<Long, List<Map<String, Object>>> allAppliedCoupons = new ObjectMapper().readValue(appliedCoupons, Map.class);
-                            List<Map<String, Object>> itemCoupons = allAppliedCoupons.get(item.getCartItemId());
-                            if (itemCoupons != null) {
-                                for (Map<String, Object> coupon : itemCoupons) {
-                                    double discountRate = Double.parseDouble(coupon.get("discountRate").toString());
-                                    couponDiscount += (int) (itemPrice * (discountRate / 100.0));
-                                }
-                            }
-                        } catch (Exception e) {
-                            log.error("쿠폰 할인 계산 중 오류 발생", e);
-                        }
-                    }
-                    
-                    return productDiscount + couponDiscount;
-                })
-                .sum();
-            model.addAttribute("totalDiscountAmount", totalDiscountAmount);
-            
-            // 포인트 사용 금액 계산
-            int pointDiscount = usePoint;
-            if (useAllPoint) {
-                // TODO: 사용자의 전체 포인트 조회 로직 구현 필요
-                // pointDiscount = memberService.getTotalPoint();
-            }
-            model.addAttribute("pointDiscount", pointDiscount);
-            
-            // 결제 예정 금액 계산 (포인트 할인 포함)
-            int finalAmount = totalAmount - totalDiscountAmount - pointDiscount;
-            model.addAttribute("finalAmount", finalAmount);
+            model.addAttribute("selectedItems", amounts.get("selectedItems"));
+            model.addAttribute("totalAmount", amounts.get("totalAmount"));
+            model.addAttribute("totalDiscountAmount", amounts.get("totalDiscountAmount"));
+            model.addAttribute("pointDiscount", amounts.get("pointDiscount"));
+            model.addAttribute("finalAmount", amounts.get("finalAmount"));
         }
         
         return "payment/orderlist";
@@ -114,7 +73,8 @@ public class PaymentController {
                 @RequestParam String merchant_uid,
                 @RequestParam BigDecimal amount) {
             try {
-                Payment payment = paymentService.verifyPayment(imp_uid, merchant_uid, amount).getResponse();
+                // 수정: .getResponse() 호출 제거
+                Payment payment = paymentService.verifyPayment(imp_uid, merchant_uid, amount);
                 return ResponseEntity.ok(payment);
             } catch (Exception e) {
                 log.error("결제 검증 중 오류 발생", e);
@@ -125,12 +85,14 @@ public class PaymentController {
         @GetMapping("/status/{imp_uid}")
         public ResponseEntity<?> getPaymentStatus(@PathVariable String imp_uid) {
             try {
-                Payment payment = paymentService.getPaymentStatus(imp_uid).getResponse();
+                // 수정: .getResponse() 호출 제거
+                Payment payment = paymentService.getPaymentStatus(imp_uid);
                 return ResponseEntity.ok(payment);
             } catch (Exception e) {
                 log.error("결제 상태 조회 중 오류 발생", e);
                 return ResponseEntity.badRequest().body("결제 상태 조회 중 오류가 발생했습니다: " + e.getMessage());
             }
         }
+
     }
 }
