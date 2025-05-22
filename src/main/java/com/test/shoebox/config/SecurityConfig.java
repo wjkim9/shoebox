@@ -45,7 +45,7 @@ public class SecurityConfig {
 			//.defaultSuccessUrl("/main/") // 로그인 성공 후 항상 이동
 		    .successHandler(oAuth2SuccessHandler) // 동적 리다이렉션 하고 싶으면 이 방식
 		);
-		
+
 		http.logout(logout -> logout
             .logoutUrl("/main/logout") // 기본값은 /logout 이지만 명시 가능
             .logoutSuccessUrl("/main/") // 로그아웃 후 이동할 페이지
