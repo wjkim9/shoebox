@@ -13,6 +13,7 @@ import com.test.shoebox.service.payment.PaymentService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import com.test.shoebox.entity.CartItem;
 import com.test.shoebox.repository.CartItemRepository;
 import com.test.shoebox.entity.Members;
 import com.test.shoebox.repository.MemberGradeRepository;
+import com.test.shoebox.service.main.CustomOAuth2User;
 import com.test.shoebox.service.payment.CartItemService;
 
 @Controller
@@ -57,13 +59,12 @@ public class MypageController {
     }
 
     @GetMapping("/cart")
-    public String cart(Model model) {
+    public String cart(Model model, @AuthenticationPrincipal CustomOAuth2User user) {
         try {
-            // 임시로 테스트용 회원 ID 사용
-            Long testMemberId = 1L;  // 테스트용 회원 ID
-
+        	
             // 연관 엔티티를 함께 로드하는 메서드 사용
-            List<CartItem> cartItems = cartItemRepository.findByMembersIdWithProductAndImages(testMemberId);
+            List<CartItem> cartItems = cartItemRepository.findByMembersIdWithProductAndImages(user.getMembersDTO().getMembersId());
+            
             if (cartItems == null) {
                 cartItems = new ArrayList<>();
             }

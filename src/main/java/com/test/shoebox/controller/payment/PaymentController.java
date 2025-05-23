@@ -37,10 +37,10 @@ public class PaymentController {
 
     @GetMapping("/orderlist")
     public String getOrderList(
-            @RequestParam List<Long> cartItemIds,
-            @RequestParam(required = false) String appliedCoupons,
-            @RequestParam(defaultValue = "0") int usePoint,
-            @RequestParam(defaultValue = "false") boolean useAllPoint,
+            @RequestParam(value = "cartItemIds") List<Long> cartItemIds,
+            @RequestParam(value = "appliedCoupons", required = false) String appliedCoupons,
+            @RequestParam(value = "usePoint", defaultValue = "0") int usePoint,
+            @RequestParam(value = "useAllPoint",defaultValue = "false") boolean useAllPoint,
             Model model) {
         
         // 임시로 첫 번째 회원 정보 가져오기 (나중에 로그인 구현 후 수정 필요)

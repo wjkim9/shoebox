@@ -80,7 +80,7 @@ public class LoginController {
 
 		memberAddressRepository.save(madto.toEntity(members));
 
-		return "main/main";
+		return "redirect:/main/";
 	}
 	
 //	@GetMapping("/logout")

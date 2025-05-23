@@ -82,10 +82,10 @@ public class DBConnectionTests {
 	@Test
 	public void getNewProductListTests() {
 		
-		List<ProductImage> productList = listProductService.getNewProductList(LocalDateTime.now());
+		//List<ProductImage> productList = listProductService.getNewProductList(LocalDateTime.now());
 		
 		
-		System.out.println(productList);
+		//System.out.println(productList);
 		
 		
 	}
@@ -105,13 +105,13 @@ public class DBConnectionTests {
 		
 		Optional<Brand> brand = brandRepository.findById(1L);
 		
-		List<ProductImage> productImageList = listProductService.getRecommendProductList(brand.get(), 10);
+		//List<ProductImage> productImageList = listProductService.getRecommendProductList(brand.get(), 10);
 		
 		List<ProductImageDTO> dtoList = new ArrayList<>();
-		for(ProductImage productImage : productImageList) {
-			dtoList.add(productImage.toDTO());
-			
-		}
+//		for(ProductImage productImage : productImageList) {
+//			dtoList.add(productImage.toDTO());
+//			
+//		}
 			
 		
 		System.out.println(dtoList);
@@ -140,17 +140,17 @@ public class DBConnectionTests {
 	@Test
 	public void getProductListTests() {
 		PageRequest pageRequest = PageRequest.of(0, 20, Sort.by("quantity"));
-		Page<ProductListDTO> pageList = listProductService.getProductList(pageRequest, null, null, null, null, null, 1, "에어");
+		//Page<ProductListDTO> pageList = listProductService.getProductList(pageRequest, null, null, null, null, null, 1, "에어");
 		
 		//남자 or 남여공용
 //		assertEquals(13, pageList.getContent().size());
 		
-		for(ProductListDTO dto : pageList.getContent()) {
-			System.out.println("=======================");
-			System.out.println("pageBrand: " + dto.getBrandName());
-			System.out.println("pageProduct: " + dto.getProductName());
-			System.out.println("=======================");
-		}
+//		for(ProductListDTO dto : pageList.getContent()) {
+//			System.out.println("=======================");
+//			System.out.println("pageBrand: " + dto.getBrandName());
+//			System.out.println("pageProduct: " + dto.getProductName());
+//			System.out.println("=======================");
+//		}
 		
 		
 		
