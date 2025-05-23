@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.test.shoebox.entity.CartItem;
+import com.test.shoebox.entity.Members;
 
 public interface CartItemRepository extends JpaRepository<CartItem, Long>{
 
@@ -19,5 +20,8 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long>{
        "WHERE ci.members.membersId = :membersId")
     List<CartItem> findByMembersIdWithProductAndImages(@Param("membersId") Long membersId);
 
+    List<CartItem> findByMembers(Members members);
+
+    List<CartItem> findByMembers_MembersId(Long memberId);
 
 }

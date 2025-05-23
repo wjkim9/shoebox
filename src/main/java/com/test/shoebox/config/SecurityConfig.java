@@ -14,14 +14,11 @@ public class SecurityConfig {
 	//암호 인코더
 	@Bean
 	BCryptPasswordEncoder bCryptPasswordEncoder() {
-
 		return new BCryptPasswordEncoder();
 	}
 
 	@Bean
 	SecurityFilterChain filterchain(HttpSecurity http) throws Exception {
-
-
 		http.authorizeHttpRequests(
 			auth -> auth.requestMatchers("/**").permitAll()
 						//.requestMatchers("/register", "/registerok").permitAll()
@@ -49,7 +46,6 @@ public class SecurityConfig {
 		
 		return http.build();
 	}
-
 }
 
 

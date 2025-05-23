@@ -15,6 +15,8 @@ import com.test.shoebox.service.payment.PaymentService;
 import com.test.shoebox.entity.CartItem;
 import com.test.shoebox.repository.CartItemRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.test.shoebox.repository.MembersRepository;
+import com.test.shoebox.entity.Members;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,27 +30,50 @@ public class PaymentController {
     
     private final PaymentService paymentService;
     private final CartItemRepository cartItemRepository;
+    private final MembersRepository membersRepository;
 
     @Value("${imp.api.key}")
     private String apiKey;
 
     @GetMapping("/orderlist")
-    public String orderlist(Model model, 
-            @RequestParam(required = false) List<Long> cartItemIds,
+    public String getOrderList(
+            @RequestParam List<Long> cartItemIds,
             @RequestParam(required = false) String appliedCoupons,
-            @RequestParam(required = false, defaultValue = "0") int usePoint,
-            @RequestParam(required = false, defaultValue = "false") boolean useAllPoint) {
-        model.addAttribute("impKey", apiKey);
+            @RequestParam(defaultValue = "0") int usePoint,
+            @RequestParam(defaultValue = "false") boolean useAllPoint,
+            Model model) {
         
-        if (cartItemIds != null && !cartItemIds.isEmpty()) {
-            Map<String, Object> amounts = paymentService.calculateOrderAmounts(cartItemIds, appliedCoupons, usePoint, useAllPoint);
-            
-            model.addAttribute("selectedItems", amounts.get("selectedItems"));
-            model.addAttribute("totalAmount", amounts.get("totalAmount"));
-            model.addAttribute("totalDiscountAmount", amounts.get("totalDiscountAmount"));
-            model.addAttribute("pointDiscount", amounts.get("pointDiscount"));
-            model.addAttribute("finalAmount", amounts.get("finalAmount"));
+        // 임시로 첫 번째 회원 정보 가져오기 (나중에 로그인 구현 후 수정 필요)
+        Members currentMember = membersRepository.findAll().stream().findFirst().orElse(null);
+        if (currentMember == null) {
+            return "redirect:/login";
         }
+
+        // 회원 정보를 모델에 추가
+        model.addAttribute("member", Map.of(
+            "name", currentMember.getName(),
+            "phone", currentMember.getContact(),
+            "email", currentMember.getEmail()
+        ));
+
+        // 기본 배송지 정보를 모델에 추가
+        model.addAttribute("defaultAddress", Map.of(
+            "name", currentMember.getName(),
+            "phone", currentMember.getContact(),
+            "zipcode", "12345", // 임시 우편번호
+            "address", "서울시 강남구", // 임시 주소
+            "detailAddress", "123-45" // 임시 상세주소
+        ));
+
+        // 주문 금액 계산
+        Map<String, Object> amounts = paymentService.calculateOrderAmounts(
+            cartItemIds, appliedCoupons, usePoint, useAllPoint);
+        
+        // 각각의 값을 모델에 추가
+        model.addAttribute("selectedItems", amounts.get("selectedItems"));
+        model.addAttribute("totalAmount", amounts.get("totalAmount"));
+        model.addAttribute("totalDiscountAmount", amounts.get("totalDiscountAmount"));
+        model.addAttribute("finalAmount", amounts.get("finalAmount"));
         
         return "payment/orderlist";
     }

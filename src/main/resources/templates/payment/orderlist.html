@@ -30,6 +30,29 @@
 		font-weight: 700;
 		color: #444;
 	}
+
+	.address-select-row {
+		display: flex;
+		align-items: center;
+		margin-bottom: 20px;
+	}
+	.address-label {
+		width: 100px;
+		font-weight: 500;
+		margin-right: 10px;
+	}
+	.address-options {
+		display: flex;
+		align-items: center;
+		gap: 15px;
+		padding-left: 100px;
+	}
+	.addr-radio {
+		margin-right: 3px;
+	}
+	.addr-label {
+		font-weight: normal;
+	}
 </style>
 </head>
 <body>
@@ -100,54 +123,142 @@
 				<div class="customer-form">
 					<div class="form-title">주문 고객정보</div>
 					<div class="section-divider"></div>
+					<!-- 주문 고객 정보 -->
 					<div class="form-row">
-						<label for="buyerName" class="required-label">이름</label> <input
-							type="text" id="buyerName" placeholder="이름을 입력하세요." required>
+						<label for="buyerName" class="required-label">이름</label>
+						<input type="text" id="buyerName" th:value="${member.name}" placeholder="이름을 입력하세요." required>
 					</div>
 					<div class="form-row">
-						<label for="buyerPhone" class="required-label">휴대폰번호</label> <input
-							type="tel" id="buyerPhone" placeholder="전화번호를 입력하세요." required>
+						<label for="buyerPhone" class="required-label">휴대폰번호</label>
+						<input type="tel" id="buyerPhone" th:value="${member.phone}" placeholder="전화번호를 입력하세요." required>
 					</div>
 					<div class="form-row">
-						<label for="buyerEmail" class="required-label">이메일</label> <input
-							type="text" id="buyerEmail" placeholder="이메일 주소를 입력하세요." required>
+						<label for="buyerEmail" class="required-label">이메일</label>
+						<input type="text" id="buyerEmail" th:value="${member.email}" placeholder="이메일 주소를 입력하세요." required>
 					</div>
 					<div class="form-title" style="margin-top: 24px;">배송 정보</div>
 					<div class="section-divider"></div>
 					<!-- 5. 배송지 선택 체크박스(라디오) -->
 					<div class="address-select-row">
-						<label >배송지 선택
-						<input type="radio" name="addrtype" id="addr1" class="addr-radio" checked> 
-						<label for="addr1" class="addr-label">기본배송지</label> 
-						<input type="radio" name="addrtype" id="addr2" class="addr-radio"> 
-						<label for="addr2" class="addr-label">최근배송지</label> 
-						<input type="radio" name="addrtype" id="addr3" class="addr-radio"> 
-						<label for="addr3" class="addr-label">신규입력</label>
-						</label>
-					</div>
-					<div class="form-row">
-						<label for="receiverName" class="required-label">이름</label> <input
-							type="text" id="receiverName" placeholder="이름을 입력하세요.">
-					</div>
-					<div class="form-row">
-						<label for="receiverPhone" class="required-label">휴대폰번호</label> <input
-							type="tel" id="receiverPhone" placeholder="전화번호를 입력하세요.">
-					</div>
-					<div class="form-row">
-						<label for="zipcode" class="required-label">주소</label>
-						<div style="flex: 1;">
-							<div class="address-row">
-								<input type="text" class="zipcode-input" id="zipcode"
-									placeholder="우편번호" readonly>
-								<button type="button" class="zipcode-btn" id="searchZipBtn">우편번호
-									찾기</button>
-							</div>
-							<!-- 필요하다면 아래에 주소, 상세주소 input 추가 -->
+						<span class="address-label">배송지 선택</span>
+						<div class="address-options">
+							<input type="radio" name="addrtype" id="addr1" class="addr-radio" checked> 
+							<label for="addr1" class="addr-label">기본배송지</label> 
+							<input type="radio" name="addrtype" id="addr2" class="addr-radio"> 
+							<label for="addr2" class="addr-label">최근배송지</label> 
+							<input type="radio" name="addrtype" id="addr3" class="addr-radio"> 
+							<label for="addr3" class="addr-label">신규입력</label>
 						</div>
 					</div>
-					<div class="form-row">
-						<label></label> <input type="text" placeholder="상세주소 입력" required>
+
+					<!-- 기본 배송지 정보 -->
+					<div id="defaultAddress" class="address-info">
+						<div class="form-row">
+							<label for="receiverName" class="required-label">이름</label>
+							<input type="text" id="receiverName" th:value="${defaultAddress.name}" placeholder="이름을 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="receiverPhone" class="required-label">휴대폰번호</label>
+							<input type="tel" id="receiverPhone" th:value="${defaultAddress.phone}" placeholder="전화번호를 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="zipcode" class="required-label">주소</label>
+							<div style="flex: 1;">
+								<div class="address-row">
+									<input type="text" class="zipcode-input" id="zipcode" th:value="${defaultAddress.zipcode}" placeholder="우편번호" readonly>
+									<button type="button" class="zipcode-btn" id="searchZipBtn">우편번호 찾기</button>
+								</div>
+							</div>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" th:value="${defaultAddress.address}" placeholder="기본주소" readonly>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" th:value="${defaultAddress.detailAddress}" placeholder="상세주소 입력" required>
+						</div>
 					</div>
+
+					<!-- 최근 배송지 정보 -->
+					<div id="recentAddress" class="address-info" style="display: none;">
+						<div class="form-row">
+							<label for="recentReceiverName" class="required-label">이름</label>
+							<input type="text" id="recentReceiverName" placeholder="이름을 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="recentReceiverPhone" class="required-label">휴대폰번호</label>
+							<input type="tel" id="recentReceiverPhone" placeholder="전화번호를 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="recentZipcode" class="required-label">주소</label>
+							<div style="flex: 1;">
+								<div class="address-row">
+									<input type="text" class="zipcode-input" id="recentZipcode" placeholder="우편번호" readonly>
+									<button type="button" class="zipcode-btn" id="recentSearchZipBtn">우편번호 찾기</button>
+								</div>
+							</div>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" placeholder="기본주소" readonly>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" placeholder="상세주소 입력" required>
+						</div>
+					</div>
+
+					<!-- 신규 입력 -->
+					<div id="newAddress" class="address-info" style="display: none;">
+						<div class="form-row">
+							<label for="newReceiverName" class="required-label">이름</label>
+							<input type="text" id="newReceiverName" placeholder="이름을 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="newReceiverPhone" class="required-label">휴대폰번호</label>
+							<input type="tel" id="newReceiverPhone" placeholder="전화번호를 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="newZipcode" class="required-label">주소</label>
+							<div style="flex: 1;">
+								<div class="address-row">
+									<input type="text" class="zipcode-input" id="newZipcode" placeholder="우편번호" readonly>
+									<button type="button" class="zipcode-btn" id="newSearchZipBtn">우편번호 찾기</button>
+								</div>
+							</div>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" placeholder="기본주소" readonly>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" placeholder="상세주소 입력" required>
+						</div>
+					</div>
+
+					<script>
+						// 배송지 선택에 따른 폼 표시/숨김 처리
+						document.querySelectorAll('input[name="addrtype"]').forEach(radio => {
+							radio.addEventListener('change', function() {
+								// 모든 배송지 정보 숨기기
+								document.querySelectorAll('.address-info').forEach(div => {
+									div.style.display = 'none';
+								});
+								
+								// 선택된 배송지 정보 표시
+								if (this.id === 'addr1') {
+									document.getElementById('defaultAddress').style.display = 'block';
+								} else if (this.id === 'addr2') {
+									document.getElementById('recentAddress').style.display = 'block';
+								} else if (this.id === 'addr3') {
+									document.getElementById('newAddress').style.display = 'block';
+								}
+							});
+						});
+					</script>
+
 					<!-- 6. 배송요청사항 -->
 					<div class="form-row">
 						<label for="req-select">배송요청사항</label>
