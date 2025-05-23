@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+    <link rel="stylesheet" th:href="@{/admin/css/category.css}" />
+    <script th:src="@{/admin/js/category.js}"></script>
+</head>
+<body>
+<section layout:fragment="content" th:fragment="content">
+    <link rel="stylesheet" th:href="@{/admin/css/category.css}" />
+    <div class="admin-container" style="margin-top: var(--header-height);">
+        <div class="page-header">
+            <h2>브랜드 카테고리 관리</h2>
+            <button class="category_addbtn" name="category_addbtn" type="button">카테고리 추가</button>
+        </div>
+    </div>
+    <div class="brand-list-wrapper">
+        <ul class="brand-category-list">
+            <li th:each="cat : ${categories}">
+                <img th:src="${cat.picName != null} ? @{/admin/images/{img}(img=${cat.picName})} : 'https://via.placeholder.com/100x50?text=Logo'">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class="brand-name" th:text="${cat.categoriesName}"></span>
+                <button type="button" class="move-btn" onclick="window.location.href='/main/category'">쇼핑몰 카테고리 이동</button>
+                <button type="button" class="edit-btn" th:attr="data-id=${cat.categoriesId}">수정</button>
+                <button type="button" class="delete-btn" th:attr="data-id=${cat.categoriesId}">삭제</button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 모달 배경 -->
+    <div id="editModalBg" class="modal-bg">
+        <div class="modal-content">
+            <form id="editBrandForm" method="post">
+                <label>브랜드명 <input type="text" id="brandName" name="categoriesName"></label>
+                <label>카테고리
+                    <select id="brandCategory" name="brandCategory">
+                        <option value="">대분류</option>
+                        <option value="스니커즈">스니커즈</option>
+                        <option value="운동화">운동화</option>
+                        <option value="구두">구두</option>
+                        <option value="로퍼">로퍼</option>
+                        <option value="기타">기타</option>
+                    </select>
+                </label>
+                <label>브랜드 로고 <input type="file" id="brandImage" name="brandImage"></label>
+                <input type="hidden" id="picName" name="picName">
+                <img id="brandImgPreview" style="display: none; max-width: 100px;">
+                <div class="form-buttons">
+                    <button type="submit">저장</button>
+                    <button type="button" onclick="closeEditModal()">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/admin/js/category.js}"></script>
+</section>
+</body>
+</html>

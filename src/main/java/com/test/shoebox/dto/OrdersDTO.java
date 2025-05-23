@@ -21,6 +21,7 @@ public class OrdersDTO {
 	
     private Long ordersId;
 
+    
     private Integer ordersStatus;
 
     private Integer paymentAmount;
@@ -54,6 +55,8 @@ public class OrdersDTO {
     private Long issuedCouponId;
     
     private Long membersId;
+    
+    private String statusName; //주문상태 추가
 
     public Orders toEntity(IssuedCoupon issuedCoupon, Members members) {
         return Orders.builder()

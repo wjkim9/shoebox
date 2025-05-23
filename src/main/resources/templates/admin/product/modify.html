@@ -1,297 +1,298 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="ko" xmlns:th="http://www.thymeleaf.org">-->
-<!--<body>-->
-<!--<div th:fragment="content">-->
-<!--  <div class="card">-->
-<!--    <div class="card-header">-->
-<!--      <h5>상품 수정</h5>-->
-<!--      <div>-->
-<!--        <button type="button" class="btn btn-light" onclick="goBack()">-->
-<!--          <i class="fas fa-arrow-left"></i> 돌아가기-->
-<!--        </button>-->
-<!--      </div>-->
-<!--    </div>-->
-<!--    <div class="card-body">-->
-<!--      <form id="productModifyForm" th:action="@{/admin/product/modify}" method="post" enctype="multipart/form-data" th:object="${productDTO}">-->
-<!--        <input type="hidden" th:field="*{productId}" />-->
+<!--
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content">
+  <div class="card">
+    <div class="card-header">
+      <h5>상품 수정</h5>
+      <div>
+        <button type="button" class="btn btn-light" onclick="goBack()">
+          <i class="fas fa-arrow-left"></i> 돌아가기
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <form id="productModifyForm" th:action="@{/admin/product/modify}" method="post" enctype="multipart/form-data" th:object="${productDTO}">
+        <input type="hidden" th:field="*{productId}" />
 
-<!--        <div class="row mb-3">-->
-<!--          <div class="col-md-6">-->
-<!--            <label for="productName" class="form-label">상품명 <span class="text-danger">*</span></label>-->
-<!--            <input type="text" class="form-control" id="productName" th:field="*{productName}" required>-->
-<!--            <div class="invalid-feedback" th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}"></div>-->
-<!--          </div>-->
-<!--          <div class="col-md-6">-->
-<!--            <label for="brand" class="form-label">브랜드 <span class="text-danger">*</span></label>-->
-<!--            <input type="text" class="form-control" id="brand" th:field="*{brand}" required>-->
-<!--            <div class="invalid-feedback" th:if="${#fields.hasErrors('brand')}" th:errors="*{brand}"></div>-->
-<!--          </div>-->
-<!--        </div>-->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="productName" class="form-label">상품명 <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="productName" th:field="*{productName}" required>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('productName')}" th:errors="*{productName}"></div>
+          </div>
+          <div class="col-md-6">
+            <label for="brand" class="form-label">브랜드 <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="brand" th:field="*{brand}" required>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('brand')}" th:errors="*{brand}"></div>
+          </div>
+        </div>
 
-<!--        <div class="row mb-3">-->
-<!--          <div class="col-md-4">-->
-<!--            <label for="category" class="form-label">카테고리 <span class="text-danger">*</span></label>-->
-<!--            <select class="form-select" id="category" th:field="*{category}" required>-->
-<!--              <option value="">카테고리 선택</option>-->
-<!--              <option value="RUNNING">러닝화</option>-->
-<!--              <option value="BASKETBALL">농구화</option>-->
-<!--              <option value="CASUAL">캐주얼</option>-->
-<!--              <option value="HIKING">등산화</option>-->
-<!--              <option value="SOCCER">축구화</option>-->
-<!--            </select>-->
-<!--            <div class="invalid-feedback" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>-->
-<!--          </div>-->
-<!--          <div class="col-md-4">-->
-<!--            <label for="price" class="form-label">가격 (원) <span class="text-danger">*</span></label>-->
-<!--            <input type="number" class="form-control" id="price" th:field="*{price}" min="0" required>-->
-<!--            <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>-->
-<!--          </div>-->
-<!--          <div class="col-md-4">-->
-<!--            <label for="discountRate" class="form-label">할인율 (%)</label>-->
-<!--            <input type="number" class="form-control" id="discountRate" th:field="*{discountRate}" min="0" max="100">-->
-<!--            <div class="invalid-feedback" th:if="${#fields.hasErrors('discountRate')}" th:errors="*{discountRate}"></div>-->
-<!--          </div>-->
-<!--        </div>-->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="category" class="form-label">카테고리 <span class="text-danger">*</span></label>
+            <select class="form-select" id="category" th:field="*{category}" required>
+              <option value="">카테고리 선택</option>
+              <option value="RUNNING">러닝화</option>
+              <option value="BASKETBALL">농구화</option>
+              <option value="CASUAL">캐주얼</option>
+              <option value="HIKING">등산화</option>
+              <option value="SOCCER">축구화</option>
+            </select>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+          </div>
+          <div class="col-md-4">
+            <label for="price" class="form-label">가격 (원) <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" id="price" th:field="*{price}" min="0" required>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+          </div>
+          <div class="col-md-4">
+            <label for="discountRate" class="form-label">할인율 (%)</label>
+            <input type="number" class="form-control" id="discountRate" th:field="*{discountRate}" min="0" max="100">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('discountRate')}" th:errors="*{discountRate}"></div>
+          </div>
+        </div>
 
-<!--        <div class="mb-3">-->
-<!--          <label for="description" class="form-label">상품 설명</label>-->
-<!--          <textarea class="form-control" id="description" th:field="*{description}" rows="4"></textarea>-->
-<!--          <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>-->
-<!--        </div>-->
+        <div class="mb-3">
+          <label for="description" class="form-label">상품 설명</label>
+          <textarea class="form-control" id="description" th:field="*{description}" rows="4"></textarea>
+          <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+        </div>
 
-<!--        <div class="row mb-3">-->
-<!--          <div class="col-md-4">-->
-<!--            <label for="releaseDate" class="form-label">출시일</label>-->
-<!--            <input type="date" class="form-control" id="releaseDate" th:field="*{releaseDate}">-->
-<!--            <div class="invalid-feedback" th:if="${#fields.hasErrors('releaseDate')}" th:errors="*{releaseDate}"></div>-->
-<!--          </div>-->
-<!--          <div class="col-md-4">-->
-<!--            <label for="status" class="form-label">상태 <span class="text-danger">*</span></label>-->
-<!--            <select class="form-select" id="status" th:field="*{status}" required>-->
-<!--              <option value="AVAILABLE">판매중</option>-->
-<!--              <option value="SOLD_OUT">품절</option>-->
-<!--              <option value="DISCONTINUED">단종</option>-->
-<!--              <option value="COMING_SOON">출시예정</option>-->
-<!--            </select>-->
-<!--            <div class="invalid-feedback" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>-->
-<!--          </div>-->
-<!--          <div class="col-md-4">-->
-<!--            <label for="featured" class="form-label">추천 상품</label>-->
-<!--            <div class="form-check form-switch mt-2">-->
-<!--              <input class="form-check-input" type="checkbox" id="featured" th:field="*{featured}">-->
-<!--              <label class="form-check-label" for="featured">추천 상품으로 표시</label>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
+        <div class="row mb-3">
+          <div class="col-md-4">
+            <label for="releaseDate" class="form-label">출시일</label>
+            <input type="date" class="form-control" id="releaseDate" th:field="*{releaseDate}">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('releaseDate')}" th:errors="*{releaseDate}"></div>
+          </div>
+          <div class="col-md-4">
+            <label for="status" class="form-label">상태 <span class="text-danger">*</span></label>
+            <select class="form-select" id="status" th:field="*{status}" required>
+              <option value="AVAILABLE">판매중</option>
+              <option value="SOLD_OUT">품절</option>
+              <option value="DISCONTINUED">단종</option>
+              <option value="COMING_SOON">출시예정</option>
+            </select>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
+          </div>
+          <div class="col-md-4">
+            <label for="featured" class="form-label">추천 상품</label>
+            <div class="form-check form-switch mt-2">
+              <input class="form-check-input" type="checkbox" id="featured" th:field="*{featured}">
+              <label class="form-check-label" for="featured">추천 상품으로 표시</label>
+            </div>
+          </div>
+        </div>
 
-<!--        <div class="mb-4">-->
-<!--          <label class="form-label">상품 이미지</label>-->
-<!--          <div class="row">-->
-<!--            <div class="col-md-6 mb-3">-->
-<!--              <label class="form-label">현재 이미지</label>-->
-<!--              <div class="image-preview-container border rounded p-2">-->
-<!--                <div th:if="${productDTO.imageUrls != null && !productDTO.imageUrls.isEmpty()}" class="d-flex flex-wrap gap-2">-->
-<!--                  <div th:each="imgUrl, stat : ${productDTO.imageUrls}" class="position-relative image-preview">-->
-<!--                    <img th:src="${imgUrl}" alt="상품 이미지" class="img-thumbnail" style="max-height: 150px;">-->
-<!--                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 remove-image"-->
-<!--                            th:data-index="${stat.index}">-->
-<!--                      <i class="fas fa-times"></i>-->
-<!--                    </button>-->
-<!--                    <input type="hidden" th:name="|imageUrls[${stat.index}]|" th:value="${imgUrl}">-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div th:if="${productDTO.imageUrls == null || productDTO.imageUrls.isEmpty()}" class="text-center p-3">-->
-<!--                  <p class="text-muted">등록된 이미지가 없습니다.</p>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--            <div class="col-md-6">-->
-<!--              <label for="newImages" class="form-label">새 이미지 추가</label>-->
-<!--              <input type="file" class="form-control" id="newImages" name="newImages" multiple accept="image/*">-->
-<!--              <div class="form-text">최대 5개까지 이미지를 추가할 수 있습니다.</div>-->
-<!--              <div id="newImagePreview" class="d-flex flex-wrap gap-2 mt-2"></div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
+        <div class="mb-4">
+          <label class="form-label">상품 이미지</label>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label">현재 이미지</label>
+              <div class="image-preview-container border rounded p-2">
+                <div th:if="${productDTO.imageUrls != null && !productDTO.imageUrls.isEmpty()}" class="d-flex flex-wrap gap-2">
+                  <div th:each="imgUrl, stat : ${productDTO.imageUrls}" class="position-relative image-preview">
+                    <img th:src="${imgUrl}" alt="상품 이미지" class="img-thumbnail" style="max-height: 150px;">
+                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 remove-image"
+                            th:data-index="${stat.index}">
+                      <i class="fas fa-times"></i>
+                    </button>
+                    <input type="hidden" th:name="|imageUrls[${stat.index}]|" th:value="${imgUrl}">
+                  </div>
+                </div>
+                <div th:if="${productDTO.imageUrls == null || productDTO.imageUrls.isEmpty()}" class="text-center p-3">
+                  <p class="text-muted">등록된 이미지가 없습니다.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label for="newImages" class="form-label">새 이미지 추가</label>
+              <input type="file" class="form-control" id="newImages" name="newImages" multiple accept="image/*">
+              <div class="form-text">최대 5개까지 이미지를 추가할 수 있습니다.</div>
+              <div id="newImagePreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+            </div>
+          </div>
+        </div>
 
-<!--        <h5 class="mb-3 mt-4">재고 관리</h5>-->
-<!--        <div class="card mb-4">-->
-<!--          <div class="card-body">-->
-<!--            <div class="table-responsive">-->
-<!--              <table class="table table-bordered" id="inventoryTable">-->
-<!--                <thead>-->
-<!--                <tr>-->
-<!--                  <th>사이즈</th>-->
-<!--                  <th>재고 수량</th>-->
-<!--                  <th>작업</th>-->
-<!--                </tr>-->
-<!--                </thead>-->
-<!--                <tbody>-->
-<!--                <tr th:each="inventory, stat : ${productDTO.inventories}">-->
-<!--                  <td>-->
-<!--                    <input type="hidden" th:field="*{inventories[__${stat.index}__].inventoryId}" />-->
-<!--                    <input type="number" class="form-control" th:field="*{inventories[__${stat.index}__].size}" required step="0.5" min="220" max="310">-->
-<!--                  </td>-->
-<!--                  <td>-->
-<!--                    <input type="number" class="form-control" th:field="*{inventories[__${stat.index}__].quantity}" required min="0">-->
-<!--                  </td>-->
-<!--                  <td>-->
-<!--                    <button type="button" class="btn btn-danger btn-sm" onclick="removeInventoryRow(this)">-->
-<!--                      <i class="fas fa-trash"></i>-->
-<!--                    </button>-->
-<!--                  </td>-->
-<!--                </tr>-->
-<!--                </tbody>-->
-<!--              </table>-->
-<!--            </div>-->
-<!--            <button type="button" class="btn btn-primary btn-sm" onclick="addInventoryRow()">-->
-<!--              <i class="fas fa-plus"></i> 사이즈/재고 추가-->
-<!--            </button>-->
-<!--          </div>-->
-<!--        </div>-->
+        <h5 class="mb-3 mt-4">재고 관리</h5>
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered" id="inventoryTable">
+                <thead>
+                <tr>
+                  <th>사이즈</th>
+                  <th>재고 수량</th>
+                  <th>작업</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="inventory, stat : ${productDTO.inventories}">
+                  <td>
+                    <input type="hidden" th:field="*{inventories[__${stat.index}__].inventoryId}" />
+                    <input type="number" class="form-control" th:field="*{inventories[__${stat.index}__].size}" required step="0.5" min="220" max="310">
+                  </td>
+                  <td>
+                    <input type="number" class="form-control" th:field="*{inventories[__${stat.index}__].quantity}" required min="0">
+                  </td>
+                  <td>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeInventoryRow(this)">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" onclick="addInventoryRow()">
+              <i class="fas fa-plus"></i> 사이즈/재고 추가
+            </button>
+          </div>
+        </div>
 
-<!--        <div class="text-center mt-4">-->
-<!--          <button type="submit" class="btn btn-primary">-->
-<!--            <i class="fas fa-save"></i> 상품 수정-->
-<!--          </button>-->
-<!--          <button type="button" class="btn btn-danger ms-2" id="deleteProductBtn">-->
-<!--            <i class="fas fa-trash"></i> 상품 삭제-->
-<!--          </button>-->
-<!--        </div>-->
-<!--      </form>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--</div>-->
+        <div class="text-center mt-4">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> 상품 수정
+          </button>
+          <button type="button" class="btn btn-danger ms-2" id="deleteProductBtn">
+            <i class="fas fa-trash"></i> 상품 삭제
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
-<!--<style>-->
-<!--  .form-label {-->
-<!--    font-weight: 500;-->
-<!--  }-->
+<style>
+  .form-label {
+    font-weight: 500;
+  }
 
-<!--  .image-preview {-->
-<!--    position: relative;-->
-<!--    display: inline-block;-->
-<!--  }-->
+  .image-preview {
+    position: relative;
+    display: inline-block;
+  }
 
-<!--  .image-preview .remove-image {-->
-<!--    position: absolute;-->
-<!--    top: 5px;-->
-<!--    right: 5px;-->
-<!--    padding: 0.2rem 0.4rem;-->
-<!--    font-size: 0.7rem;-->
-<!--  }-->
+  .image-preview .remove-image {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 0.2rem 0.4rem;
+    font-size: 0.7rem;
+  }
 
-<!--  #newImagePreview img {-->
-<!--    max-height: 150px;-->
-<!--    margin-top: 10px;-->
-<!--  }-->
-<!--</style>-->
+  #newImagePreview img {
+    max-height: 150px;
+    margin-top: 10px;
+  }
+</style>
 
-<!--<script>-->
-<!--  function goBack() {-->
-<!--    window.history.back();-->
-<!--  }-->
+<script>
+  function goBack() {
+    window.history.back();
+  }
 
-<!--  // 새 이미지 미리보기-->
-<!--  document.getElementById('newImages').addEventListener('change', function(e) {-->
-<!--    const previewDiv = document.getElementById('newImagePreview');-->
-<!--    previewDiv.innerHTML = '';-->
+  // 새 이미지 미리보기
+  document.getElementById('newImages').addEventListener('change', function(e) {
+    const previewDiv = document.getElementById('newImagePreview');
+    previewDiv.innerHTML = '';
 
-<!--    if (this.files) {-->
-<!--      const maxFiles = 5;-->
-<!--      const files = Array.from(this.files).slice(0, maxFiles);-->
+    if (this.files) {
+      const maxFiles = 5;
+      const files = Array.from(this.files).slice(0, maxFiles);
 
-<!--      files.forEach(file => {-->
-<!--        if (file.type.match('image.*')) {-->
-<!--          const reader = new FileReader();-->
-<!--          reader.onload = function(e) {-->
-<!--            const imgDiv = document.createElement('div');-->
-<!--            imgDiv.className = 'position-relative image-preview';-->
+      files.forEach(file => {
+        if (file.type.match('image.*')) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const imgDiv = document.createElement('div');
+            imgDiv.className = 'position-relative image-preview';
 
-<!--            const img = document.createElement('img');-->
-<!--            img.src = e.target.result;-->
-<!--            img.className = 'img-thumbnail';-->
-<!--            img.style.maxHeight = '150px';-->
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            img.className = 'img-thumbnail';
+            img.style.maxHeight = '150px';
 
-<!--            imgDiv.appendChild(img);-->
-<!--            previewDiv.appendChild(imgDiv);-->
-<!--          }-->
-<!--          reader.readAsDataURL(file);-->
-<!--        }-->
-<!--      });-->
+            imgDiv.appendChild(img);
+            previewDiv.appendChild(imgDiv);
+          }
+          reader.readAsDataURL(file);
+        }
+      });
 
-<!--      if (this.files.length > maxFiles) {-->
-<!--        alert(`최대 ${maxFiles}개까지만 선택할 수 있습니다. 처음 ${maxFiles}개만 처리됩니다.`);-->
-<!--      }-->
-<!--    }-->
-<!--  });-->
+      if (this.files.length > maxFiles) {
+        alert(`최대 ${maxFiles}개까지만 선택할 수 있습니다. 처음 ${maxFiles}개만 처리됩니다.`);
+      }
+    }
+  });
 
-<!--  // 기존 이미지 삭제-->
-<!--  document.querySelectorAll('.remove-image').forEach(btn => {-->
-<!--    btn.addEventListener('click', function() {-->
-<!--      const index = this.getAttribute('data-index');-->
-<!--      this.closest('.image-preview').remove();-->
-<!--      document.querySelector(`input[name="imageUrls[${index}]"]`).remove();-->
+  // 기존 이미지 삭제
+  document.querySelectorAll('.remove-image').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const index = this.getAttribute('data-index');
+      this.closest('.image-preview').remove();
+      document.querySelector(`input[name="imageUrls[${index}]"]`).remove();
 
-<!--      // 인덱스 재정렬 필요-->
-<!--      const remainingImages = document.querySelectorAll('.image-preview');-->
-<!--      remainingImages.forEach((imgDiv, newIndex) => {-->
-<!--        const button = imgDiv.querySelector('.remove-image');-->
-<!--        button.setAttribute('data-index', newIndex);-->
+      // 인덱스 재정렬 필요
+      const remainingImages = document.querySelectorAll('.image-preview');
+      remainingImages.forEach((imgDiv, newIndex) => {
+        const button = imgDiv.querySelector('.remove-image');
+        button.setAttribute('data-index', newIndex);
 
-<!--        const hiddenInput = imgDiv.querySelector('input[type="hidden"]');-->
-<!--        const imgUrl = hiddenInput.value;-->
-<!--        hiddenInput.name = `imageUrls[${newIndex}]`;-->
-<!--      });-->
-<!--    });-->
-<!--  });-->
+        const hiddenInput = imgDiv.querySelector('input[type="hidden"]');
+        const imgUrl = hiddenInput.value;
+        hiddenInput.name = `imageUrls[${newIndex}]`;
+      });
+    });
+  });
 
-<!--  // 재고 행 추가-->
-<!--  function addInventoryRow() {-->
-<!--    const table = document.getElementById('inventoryTable').getElementsByTagName('tbody')[0];-->
-<!--    const newRowIndex = table.rows.length;-->
+  // 재고 행 추가
+  function addInventoryRow() {
+    const table = document.getElementById('inventoryTable').getElementsByTagName('tbody')[0];
+    const newRowIndex = table.rows.length;
 
-<!--    const newRow = table.insertRow();-->
-<!--    newRow.innerHTML = `-->
-<!--                <td>-->
-<!--                    <input type="hidden" name="inventories[${newRowIndex}].inventoryId" value="0" />-->
-<!--                    <input type="number" class="form-control" name="inventories[${newRowIndex}].size" required step="0.5" min="220" max="310">-->
-<!--                </td>-->
-<!--                <td>-->
-<!--                    <input type="number" class="form-control" name="inventories[${newRowIndex}].quantity" required min="0" value="0">-->
-<!--                </td>-->
-<!--                <td>-->
-<!--                    <button type="button" class="btn btn-danger btn-sm" onclick="removeInventoryRow(this)">-->
-<!--                        <i class="fas fa-trash"></i>-->
-<!--                    </button>-->
-<!--                </td>-->
-<!--            `;-->
-<!--  }-->
+    const newRow = table.insertRow();
+    newRow.innerHTML = `
+                <td>
+                    <input type="hidden" name="inventories[${newRowIndex}].inventoryId" value="0" />
+                    <input type="number" class="form-control" name="inventories[${newRowIndex}].size" required step="0.5" min="220" max="310">
+                </td>
+                <td>
+                    <input type="number" class="form-control" name="inventories[${newRowIndex}].quantity" required min="0" value="0">
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm" onclick="removeInventoryRow(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+  }
 
-<!--  // 재고 행 삭제-->
-<!--  function removeInventoryRow(button) {-->
-<!--    const row = button.closest('tr');-->
-<!--    row.parentNode.removeChild(row);-->
+  // 재고 행 삭제
+  function removeInventoryRow(button) {
+    const row = button.closest('tr');
+    row.parentNode.removeChild(row);
 
-<!--    // 인덱스 재정렬-->
-<!--    const inventoryRows = document.querySelectorAll('#inventoryTable tbody tr');-->
-<!--    inventoryRows.forEach((row, index) => {-->
-<!--      const inputs = row.querySelectorAll('input');-->
-<!--      inputs.forEach(input => {-->
-<!--        const name = input.name;-->
-<!--        const nameParts = name.split('.');-->
-<!--        input.name = `inventories[${index}].${nameParts[1]}`;-->
-<!--      });-->
-<!--    });-->
-<!--  }-->
+    // 인덱스 재정렬
+    const inventoryRows = document.querySelectorAll('#inventoryTable tbody tr');
+    inventoryRows.forEach((row, index) => {
+      const inputs = row.querySelectorAll('input');
+      inputs.forEach(input => {
+        const name = input.name;
+        const nameParts = name.split('.');
+        input.name = `inventories[${index}].${nameParts[1]}`;
+      });
+    });
+  }
 
-<!--  // 상품 삭제 버튼-->
-<!--  document.getElementById('deleteProductBtn').addEventListener('click', function() {-->
-<!--    if (confirm('정말 이 상품을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {-->
-<!--      const productId = document.querySelector('input[name="productId"]').value;-->
-<!--      window.location.href = `/admin/product/delete?id=${productId}`;-->
-<!--    }-->
-<!--  });-->
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->
+  // 상품 삭제 버튼
+  document.getElementById('deleteProductBtn').addEventListener('click', function() {
+    if (confirm('정말 이 상품을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+      const productId = document.querySelector('input[name="productId"]').value;
+      window.location.href = `/admin/product/delete?id=${productId}`;
+    }
+  });
+</script>
+</body>
+</html>-->

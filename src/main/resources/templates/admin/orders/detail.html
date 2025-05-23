@@ -27,35 +27,44 @@
             <div class="panel-header">
                 <h3>주문 정보</h3>
                 <div class="status-container">
-                    <span class="status-badge" th:classappend="${'status-' + #strings.toLowerCase(order.status)}"
-                          th:text="${order.statusName}">결제완료</span>
+                    <span class="status-badge"
+                          th:classappend="'status-' + order.orders.statusName"
+                          th:text="${order.orders.statusName}">결제확인중입니다~</span>
+
                 </div>
             </div>
             <div class="panel-body">
                 <div class="info-grid">
                     <div class="info-group">
                         <div class="info-label">주문번호</div>
-                        <div class="info-value" th:text="${order.orderNumber}">20240516-123456</div>
+                        <div class="info-value" th:text="${order.orders.ordersId}">20240516-123456</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">주문일시</div>
-                        <div class="info-value" th:text="${order.orderDateStr}">2024-05-16 14:30</div>
+                        <div class="info-value" th:text="${order.orders.ordersDate}">2024-05-16 14:30</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">주문자명</div>
-                        <div class="info-value" th:text="${order.customerName}">홍길동</div>
+                        <div class="info-value" th:text="${order.member.name}">홍길동</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">연락처</div>
-                        <div class="info-value" th:text="${order.customerPhone}">010-1234-5678</div>
+                        <div class="info-value" th:text="${order.member.contact}">010-1234-5678</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">이메일</div>
-                        <div class="info-value" th:text="${order.customerEmail}">user@example.com</div>
+                        <div class="info-value" th:text="${order.member.email}">user@example.com</div>
+                    </div><div class="info-group">
+                        <div class="info-label">연락처</div>
+                        <div class="info-value" th:text="${order.orders.receiverContact}">010-1234-5678</div>
+                    </div>
+                    <div class="info-group">
+                        <div class="info-label">이메일</div>
+                        <div class="info-value" th:text="${order.orders.receiverEmail}">user@example.com</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">결제방법</div>
-                        <div class="info-value" th:text="${order.paymentMethod}">카드결제</div>
+                        <div class="info-value" th:text="${order.orders.paymentMethod}">카드결제</div>
                     </div>
                 </div>
             </div>
@@ -65,66 +74,60 @@
         <div class="panel">
             <div class="panel-header">
                 <h3>배송 정보</h3>
-                <div th:if="${order.status == 'PREPARING' || order.status == 'PAYMENT_COMPLETE'}">
+                <div th:if="${order.orders.statusName == '배송준비중' || order.orders.statusName == '결제 확인완료'}">
                     <button id="updateShippingBtn" class="btn btn-primary btn-sm">
                         <i class="fas fa-pen"></i> 배송정보 수정
                     </button>
                 </div>
+
             </div>
             <div class="panel-body">
                 <div class="info-grid">
                     <div class="info-group">
                         <div class="info-label">수령인</div>
-                        <div class="info-value" th:text="${order.recipientName}">홍길동</div>
+                        <div class="info-value" th:text="${order.orders.receiverName}">홍길동</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">연락처</div>
-                        <div class="info-value" th:text="${order.recipientPhone}">010-1234-5678</div>
+                        <div class="info-value" th:text="${order.orders.receiverContact}">010-1234-5678</div>
                     </div>
                     <div class="info-group full-width">
                         <div class="info-label">배송지</div>
                         <div class="info-value">
-                            <div th:text="${order.zipCode + ' ' + order.address}">12345 서울시 강남구 테헤란로 123</div>
-                            <div th:text="${order.addressDetail}">456동 789호</div>
+                            <div th:text="${order.orders.destinationZipCode + ' ' + order.orders.destinationRoadAddress}">12345 서울시 강남구 테헤란로 123</div>
+                            <div th:text="${order.orders.destinationJibunAddress+ ' '+order.orders.destinationDetailAddress}">456동 789호</div>
                         </div>
                     </div>
                     <div class="info-group full-width">
                         <div class="info-label">배송 요청사항</div>
-                        <div class="info-value" th:text="${order.deliveryRequest ?: '요청사항 없음'}">
+                        <div class="info-value" th:text="${order.orders.destinationReference ?: '요청사항 없음'}">
                             부재시 경비실에 맡겨주세요.
                         </div>
                     </div>
                 </div>
 
                 <div class="shipping-tracking">
-                    <h4>배송 현황</h4>
-                    <div th:if="${order.trackingNumber}" class="tracking-info">
+                    <div  class="tracking-info">
                         <div class="info-group">
                             <div class="info-label">택배사</div>
-                            <div class="info-value" th:text="${order.trackingCompany}">CJ대한통운</div>
+                            <div class="info-value" >CJ대한통운</div>
                         </div>
                         <div class="info-group">
                             <div class="info-label">송장번호</div>
                             <div class="info-value">
-                                <a href="#" target="_blank" th:href="${order.trackingLink}" th:text="${order.trackingNumber}">
+                                <a href="#" target="_blank"  >
                                     123456789012
                                 </a>
                             </div>
                         </div>
-                        <div class="tracking-actions" th:if="${order.status == 'SHIPPING'}">
-                            <button id="markDeliveredBtn" class="btn btn-success btn-sm" th:data-id="${order.id}">
+                        <div class="tracking-actions" th:if="${order.orders.statusName == '배송중'}">
+                            <button id="markDeliveredBtn" class="btn btn-success btn-sm" th:data-id="${order.orders.ordersId}">
                                 <i class="fas fa-check"></i> 배송완료 처리
                             </button>
                         </div>
+
                     </div>
-                    <div th:unless="${order.trackingNumber}" class="no-tracking">
-                        <p class="text-light">아직 송장 정보가 등록되지 않았습니다.</p>
-                        <div th:if="${order.status == 'PREPARING'}">
-                            <button id="addTrackingBtn" class="btn btn-primary btn-sm" th:data-id="${order.id}">
-                                <i class="fas fa-truck"></i> 송장 등록하기
-                            </button>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -138,7 +141,7 @@
                 <table class="order-items-table">
                     <thead>
                     <tr>
-                        <th style="width: 80px;">상품 이미지</th>
+                        <th style="width: 120px;">상품 이미지</th>
                         <th>상품정보</th>
                         <th style="width: 100px;">수량</th>
                         <th style="width: 120px;">판매가</th>
@@ -154,16 +157,15 @@
                         <td class="product-info">
                             <div class="product-name" th:text="${item.productName}">나이키 에어맥스 90</div>
                             <div class="product-options">
-                                <span class="option-item" th:text="${'사이즈: ' + item.size}">사이즈: 260</span>
-                                <span class="option-item" th:if="${item.color}" th:text="${'색상: ' + item.color}">색상: 화이트</span>
+                                <span class="option-item" th:text="${'사이즈: ' + item.shoeSize}">사이즈: 260</span>
                             </div>
                             <div class="product-id text-light">
                                 상품코드: <span th:text="${item.productId}">P12345</span>
                             </div>
                         </td>
                         <td class="product-quantity" th:text="${item.quantity}">1</td>
-                        <td class="product-price" th:text="${#numbers.formatInteger(item.price, 0, 'COMMA') + '원'}">89,000원</td>
-                        <td class="product-subtotal" th:text="${#numbers.formatInteger(item.price * item.quantity, 0, 'COMMA') + '원'}">89,000원</td>
+                        <td class="product-price" th:text="${#numbers.formatInteger(order.orders.paymentAmount, 0, 'COMMA') + '원'}">89,000원</td>
+                        <td class="product-subtotal" th:text="${#numbers.formatInteger(item.orderPrice, 0, 'COMMA') + '원'}">89,000원</td>
                     </tr>
                     </tbody>
                 </table>
@@ -179,19 +181,21 @@
                 <div class="payment-summary">
                     <div class="payment-row">
                         <div class="payment-label">상품 금액</div>
-                        <div class="payment-value" th:text="${#numbers.formatInteger(order.productAmount, 0, 'COMMA') + '원'}">89,000원</div>
+                        <div class="payment-value" th:text="${#numbers.formatInteger(order.totalOrderPrice, 0, 'COMMA') + '원'}">89,000원</div>
                     </div>
                     <div class="payment-row">
                         <div class="payment-label">배송비</div>
-                        <div class="payment-value" th:text="${#numbers.formatInteger(order.shippingFee, 0, 'COMMA') + '원'}">3,000원</div>
+                        <div class="payment-value" th:text="${#numbers.formatInteger(order.orders.shippingFee, 0, 'COMMA') + '원'}">3,000원</div>
                     </div>
-                    <div class="payment-row" th:if="${order.discountAmount > 0}">
+                    <div class="payment-row" th:if="${order.totalOrderPrice > 0}">
                         <div class="payment-label">할인 금액</div>
-                        <div class="payment-value discount" th:text="${'-' + #numbers.formatInteger(order.discountAmount, 0, 'COMMA') + '원'}">-5,000원</div>
+                        <div class="payment-value discount"
+                             th:text="${'-' + #numbers.formatInteger(order.discountAmount, 0, 'COMMA') + '원'}">-5,000원</div>
+
                     </div>
                     <div class="payment-row total">
                         <div class="payment-label">총 결제 금액</div>
-                        <div class="payment-value" th:text="${#numbers.formatInteger(order.totalAmount, 0, 'COMMA') + '원'}">87,000원</div>
+                        <div class="payment-value" th:text="${#numbers.formatInteger(order.orders.paymentAmount, 0, 'COMMA') + '원'}">87,000원</div>
                     </div>
                 </div>
 
@@ -200,65 +204,11 @@
                     <div class="info-grid">
                         <div class="info-group">
                             <div class="info-label">결제 방법</div>
-                            <div class="info-value" th:text="${order.paymentMethod}">카드결제</div>
+                            <div class="info-value" th:text="${order.orders.paymentMethod}">카드결제</div>
                         </div>
                         <div class="info-group">
                             <div class="info-label">결제 상태</div>
-                            <div class="info-value" th:text="${order.paymentStatus}">결제완료</div>
-                        </div>
-                        <div class="info-group" th:if="${order.cardCompany}">
-                            <div class="info-label">카드사</div>
-                            <div class="info-value" th:text="${order.cardCompany}">신한카드</div>
-                        </div>
-                        <div class="info-group" th:if="${order.cardNumber}">
-                            <div class="info-label">카드번호</div>
-                            <div class="info-value" th:text="${order.cardNumber}">5412-xxxx-xxxx-4321</div>
-                        </div>
-                        <div class="info-group">
-                            <div class="info-label">결제일시</div>
-                            <div class="info-value" th:text="${order.paymentDateStr}">2024-05-16 14:35</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 주문 처리 이력 -->
-        <div class="panel">
-            <div class="panel-header">
-                <h3>주문 처리 이력</h3>
-            </div>
-            <div class="panel-body">
-                <div class="order-history">
-                    <div class="timeline">
-                        <div class="timeline-item" th:each="history : ${order.histories}">
-                            <div class="timeline-icon"
-                                 th:classappend="${'status-' + #strings.toLowerCase(history.status)}"
-                                 th:switch="${history.status}">
-                                <i class="fas fa-clock"        th:case="'PAYMENT_PENDING'"></i>
-                                <i class="fas fa-check-circle" th:case="'PAYMENT_COMPLETE'"></i>
-                                <i class="fas fa-box"          th:case="'PREPARING'"></i>
-                                <i class="fas fa-truck"        th:case="'SHIPPING'"></i>
-                                <i class="fas fa-home"         th:case="'DELIVERED'"></i>
-                                <i class="fas fa-times-circle" th:case="'CANCELED'"></i>
-                                <i class="fas fa-undo"         th:case="'RETURNED'"></i>
-                                <i class="fas fa-exchange-alt" th:case="'EXCHANGED'"></i>
-                                <!-- default -->
-                                <i class="fas fa-circle"       th:case="*"></i>
-                            </div>
-
-                            <div class="timeline-content">
-                                <div class="timeline-header">
-                                    <h5 th:text="${history.statusName}">결제완료</h5>
-                                    <span class="timestamp" th:text="${history.createdAtStr}">2024-05-16 14:35</span>
-                                </div>
-                                <div class="timeline-description" th:if="${history.description}" th:text="${history.description}">
-                                    주문이 정상적으로 결제되었습니다.
-                                </div>
-                                <div class="timeline-meta" th:if="${history.adminName}">
-                                    처리자: <span th:text="${history.adminName}">관리자</span>
-                                </div>
-                            </div>
+                            <div class="info-value" th:text="${order.orders.statusName}">결제완료</div>
                         </div>
                     </div>
                 </div>
@@ -269,27 +219,31 @@
         <div class="panel action-panel">
             <div class="panel-body">
                 <div class="order-actions">
-                    <div th:if="${order.status == 'PAYMENT_COMPLETE'}">
-                        <button id="prepareOrderBtn" class="btn btn-primary" th:data-id="${order.id}">
+                    <div th:if="${order.orders.statusName == '결제 확인완료'}">
+                        <button id="prepareOrderBtn" class="btn btn-primary" th:data-id="${order.orders.ordersId}">
                             <i class="fas fa-box"></i> 상품 준비 처리
                         </button>
                     </div>
-                    <div th:if="${order.status == 'PREPARING' and order.trackingNumber == null}">
-                        <button id="registerTrackingBtn" class="btn btn-primary" th:data-id="${order.id}">
+
+                    <div th:if="${order.orders.statusName == '배송준비중'}">
+                        <button id="registerTrackingBtn" class="btn btn-primary" th:data-id="${order.orders.ordersId}">
                             <i class="fas fa-truck"></i> 송장 등록
                         </button>
                     </div>
-                    <div th:if="${order.status == 'SHIPPING'}">
-                        <button id="completeDeliveryBtn" class="btn btn-success" th:data-id="${order.id}">
+
+                    <div th:if="${order.orders.statusName == '배송중'}">
+                        <button id="completeDeliveryBtn" class="btn btn-success" th:data-id="${order.orders.ordersId}">
                             <i class="fas fa-check-circle"></i> 배송 완료 처리
                         </button>
                     </div>
-                    <div th:if="${order.status != 'CANCELED' && order.status != 'RETURNED' && order.status != 'EXCHANGED'}">
-                        <button id="cancelOrderBtn" class="btn btn-danger" th:data-id="${order.id}">
+
+                    <div th:if="${order.orders.statusName != '취소 확정' && order.orders.statusName != '반송완료' && order.orders.statusName != '환불완료'}">
+                        <button id="cancelOrderBtn" class="btn btn-danger" th:data-id="${order.orders.ordersId}">
                             <i class="fas fa-times-circle"></i> 주문 취소
                         </button>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -303,7 +257,7 @@
             </div>
             <div class="modal-body">
                 <form id="trackingForm">
-                    <input type="hidden" id="orderId" name="orderId" th:value="${order.id}">
+                    <input type="hidden" id="orderId" name="orderId" th:value="${order.orders.ordersId}">
                     <div class="form-group">
                         <label for="trackingCompany">택배사</label>
                         <select class="form-select" id="trackingCompany" name="trackingCompany" required>
@@ -339,7 +293,7 @@
             </div>
             <div class="modal-body">
                 <form id="cancelOrderForm">
-                    <input type="hidden" id="cancelOrderId" name="orderId" th:value="${order.id}">
+                    <input type="hidden" id="cancelOrderId" name="orderId" th:value="${order.orders.ordersId}">
                     <div class="form-group">
                         <label for="cancelReason">취소 사유</label>
                         <select class="form-select" id="cancelReason" name="cancelReason" required>
@@ -358,7 +312,7 @@
                     </div>
                     <div class="modal-actions">
                         <button type="submit" class="btn btn-danger">주문 취소</button>
-                        <button type="button" class="btn btn-cancel close-modal-btn">취소</button>
+                        <button type="button" class="btn btn-cancel close-modal-btn">닫기</button>
                     </div>
                 </form>
             </div>
@@ -374,39 +328,39 @@
             </div>
             <div class="modal-body">
                 <form id="shippingInfoForm">
-                    <input type="hidden" id="shippingOrderId" name="orderId" th:value="${order.id}">
+                    <input type="hidden" id="shippingOrderId" name="orderId" th:value="${order.orders.ordersId}">
                     <div class="form-group">
                         <label for="recipientName">수령인</label>
                         <input type="text" class="form-input" id="recipientName" name="recipientName"
-                               th:value="${order.recipientName}" required>
+                               th:value="${order.orders.receiverName}" required>
                     </div>
                     <div class="form-group">
                         <label for="recipientPhone">연락처</label>
                         <input type="text" class="form-input" id="recipientPhone" name="recipientPhone"
-                               th:value="${order.recipientPhone}" required>
+                               th:value="${order.orders.receiverContact}" required>
                     </div>
                     <div class="form-group">
                         <label for="zipCode">우편번호</label>
                         <div class="zip-code-row">
                             <input type="text" class="form-input" id="zipCode" name="zipCode"
-                                   th:value="${order.zipCode}" readonly required>
+                                   th:value="${order.orders.destinationZipCode}" readonly required>
                             <button type="button" id="findAddressBtn" class="btn btn-outline">주소 찾기</button>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="address">주소</label>
                         <input type="text" class="form-input" id="address" name="address"
-                               th:value="${order.address}" readonly required>
+                               th:value="${order.orders.destinationRoadAddress}" readonly required>
                     </div>
                     <div class="form-group">
                         <label for="addressDetail">상세주소</label>
                         <input type="text" class="form-input" id="addressDetail" name="addressDetail"
-                               th:value="${order.addressDetail}">
+                               th:value="${order.orders.destinationDetailAddress}">
                     </div>
                     <div class="form-group">
                         <label for="deliveryRequest">배송 요청사항</label>
                         <textarea class="form-input" id="deliveryRequest" name="deliveryRequest" rows="2"
-                                  th:text="${order.deliveryRequest}"></textarea>
+                                  th:text="${order.orders.destinationReference}"></textarea>
                     </div>
                     <div class="modal-actions">
                         <button type="submit" class="btn btn-primary">수정</button>
@@ -416,8 +370,8 @@
             </div>
         </div>
     </div>
+    <script th:src="@{/admin/js/orders-detail.js}"></script>
 </section>
 
-<script th:src="@{/admin/js/orders-detail.js}"></script>
 </body>
 </html>

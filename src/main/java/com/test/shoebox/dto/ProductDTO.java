@@ -1,6 +1,8 @@
 package com.test.shoebox.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.test.shoebox.entity.Brand;
 import com.test.shoebox.entity.Categories;
@@ -13,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -38,6 +41,24 @@ public class ProductDTO {
     private Long categoriesId;
     
     private Long productGroupId;
+
+
+    private String productCode;
+    private String mainImageUrl;
+    private BrandDTO brand;
+    private CategoriesDTO category;
+    private String status;
+
+    private LocalDate registerDate;
+
+    private List<String> sizes;           // 폼에서 name="sizes[]"
+    private List<Integer> sizeStocks;     // 폼에서 name="sizeStocks[]"
+    private Integer totalStock; // 전체 재고 합계
+
+    private MultipartFile mainImage;              // 폼에서 name="mainImage"
+    private List<MultipartFile> additionalImages; // 폼에서 name="additionalImages"
+
+
 
     public Product toEntity(Brand brand, Categories categories, ProductGroup productGroup) {
         return Product.builder()

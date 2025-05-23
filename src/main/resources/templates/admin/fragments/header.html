@@ -13,7 +13,7 @@
                     <!-- <div class="admin-email" th:text="${#authentication.principal instanceof T(org.springframework.security.oauth2.core.user.OAuth2User) ? #authentication.principal.attributes['email'] : ''}">admin@example.com</div> -->
                 </div>
             </div>
-            <a href="/shop" target="_blank" class="btn btn-light">
+            <a href="/main/" target="_blank" class="btn btn-light">
                 <i class="fas fa-store"></i> 쇼핑몰 가기
             </a>
             <form th:action="@{/logout}" method="post" style="display: inline;">

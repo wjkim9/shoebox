@@ -24,8 +24,6 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/payment")
-@RequiredArgsConstructor
-@Slf4j
 public class PaymentController {
     
     private final PaymentService paymentService;

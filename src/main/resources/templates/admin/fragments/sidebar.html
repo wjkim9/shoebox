@@ -2,20 +2,20 @@
 <div th:fragment="sidebar">
     <div class="sidebar">
         <div class="sidebar-header">
-            <a href="/admin/" class="logo">
-                <i class="fas fa-shoe-prints"></i> 슈즈몰 관리자
+            <a href="/main/" class="logo">
+                <i class="fas fa-shoe-prints"></i> 슈박스 관리자
             </a>
         </div>
         <ul class="sidebar-menu">
             <!-- 상품 관리 -->
             <li class="menu-item">
                 <a href="#" class="menu-link">
-                    <div><i class="fas fa-box"></i><span>상품 관리</span></div>
+                    <div><i class="fas fa-box"></i><span> 상품 관리</span></div>
                     <i class="fas fa-angle-down"></i>
                 </a>
                 <ul class="submenu">
                     <li class="submenu-item">
-                        <a href="/admin/product/register" class="submenu-link">상품 리스트(조회/등록/수정/삭제/재고관리)</a>
+                        <a href="/admin/product/list" class="submenu-link">상품 리스트(조회/등록/수정/삭제/재고관리)</a>
                     </li>
                     <li class="submenu-item">
                         <a href="/admin/product/discount" class="submenu-link">할인 관리</a>
@@ -27,22 +27,12 @@
             </li>
             <!-- 주문 관리 -->
             <li class="menu-item">
-                <a href="#" class="menu-link">
-                    <div><i class="fas fa-shopping-cart"></i><span>주문 관리</span></div>
-                    <i class="fas fa-angle-down"></i>
+                <a href="/admin/orders/list" class="menu-link">
+                    <div><i class="fas fa-shopping-cart"></i><span> 주문 관리</span></div>
                 </a>
-                <ul class="submenu">
-                    <li class="submenu-item">
-                        <a href="/admin/orders/list" class="submenu-link">전체 주문 목록</a>
-                    </li>
-                    <li class="submenu-item">
-                        <a href="/admin/orders/cancel" class="submenu-link">주문 취소 요청 목록</a>
-                    </li>
-                    <li class="submenu-item">
-                        <a href="/admin/orders/refund" class="submenu-link">환불 요청 목록</a>
-                    </li>
-                </ul>
             </li>
+
+
             <!-- 홈페이지 관리 -->
             <li class="menu-item">
                 <a href="#" class="menu-link">
@@ -85,16 +75,13 @@
                 </a>
                 <ul class="submenu">
                     <li class="submenu-item">
-                        <a href="/admin/category/brand" class="submenu-link">브랜드 카테고리</a>
-                    </li>
-                    <li class="submenu-item">
-                        <a href="/admin/category/type" class="submenu-link">신발 종류 카테고리</a>
+                        <a href="/admin/category/brandcategory" class="submenu-link">브랜드 카테고리 관리</a>
                     </li>
                 </ul>
             </li>
 
             <!-- 회원 관리 -->
-            <li class="menu-item">
+<!--            <li class="menu-item">
                 <a href="#" class="menu-link">
                     <div>
                         <i class="fas fa-users"></i>
@@ -104,13 +91,16 @@
                 </a>
                 <ul class="submenu">
                     <li class="submenu-item">
-                        <a href="/admin/member/list" class="submenu-link">회원 조회</a>
-                    </li>
-                    <li class="submenu-item">
-                        <a href="/admin/member/modify" class="submenu-link">회원 정보 수정</a>
+                        <a href="/admin/member/member-list" class="submenu-link">회원 조회 및 수정</a>
                     </li>
                 </ul>
-            </li>
+            </li>-->
+			
+			<li class="menu-item">
+			         <a href="/admin/member/member-list" class="menu-link">
+			             <div><i class="fas fa-users"></i><span> 회원 관리</span></div>
+			         </a>
+			     </li>
 
 
             <!-- 설정 -->
