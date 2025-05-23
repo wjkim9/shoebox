@@ -154,9 +154,33 @@ label {
 
 .order-table {
     width: 100%;
+	table-layout: fixed; /* 테이블 레이아웃을 고정으로 설정 */
     border-collapse: collapse;
     font-size: 14px;
 }
+
+/* 각 열의 너비 설정 */
+.order-table th:nth-child(1), .order-table td:nth-child(1) { width: 6%; }  /* 회원번호 */
+.order-table th:nth-child(2), .order-table td:nth-child(2) { width: 7%; }  /* 아이디 */
+.order-table th:nth-child(3), .order-table td:nth-child(3) { width: 6%; }  /* 이름 */
+.order-table th:nth-child(4), .order-table td:nth-child(4) { width: 8%; }  /* 닉네임 */
+.order-table th:nth-child(5), .order-table td:nth-child(5) { width: 11%; } /* 이메일 */
+.order-table th:nth-child(6), .order-table td:nth-child(6) { width: 10%; } /* 연락처 */
+.order-table th:nth-child(7), .order-table td:nth-child(7) { width: 6%; }  /* 발 사이즈 */
+.order-table th:nth-child(8), .order-table td:nth-child(8) { width: 6%; }  /* 포인트 */
+.order-table th:nth-child(9), .order-table td:nth-child(9) { width: 8%; }  /* 가입일 */
+.order-table th:nth-child(10), .order-table td:nth-child(10) { width: 6%; } /* 상태 */
+.order-table th:nth-child(11), .order-table td:nth-child(11) { width: 6%; } /* 등급 */
+.order-table th:nth-child(12), .order-table td:nth-child(12) { width: 8%; } /* 관리 */
+
+/* 셀 내용 처리 */
+.order-table td,
+.order-table th {
+    white-space: nowrap;       /* 텍스트 줄바꿈 방지 */
+	overflow: hidden;          
+    /*text-overflow: ellipsis;*/   
+}
+
 
 .order-table th,
 .order-table td {
