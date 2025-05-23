@@ -36,7 +36,8 @@
 	                  </tr>
 	                  <tr>
 	                      <th>발 사이즈</th>
-	                      <td th:text="${memberDetail.memberInfo.footSize != null ? memberDetail.memberInfo.footSize : '-'}">250</td>
+						  <td th:text="${memberDetail.memberInfo.footSize != null ? #numbers.formatInteger(memberDetail.memberInfo.footSize, 1, 'NONE') : '-'}">250</td>
+
 	                      <th>포인트</th>
 	                      <td th:text="${memberDetail.memberInfo.point}">1000</td>
 	                  </tr>
@@ -147,7 +148,7 @@
 	          </div>
 
 	          <!-- 채팅 내역 -->
-	          <div class="detail-section">
+	          <!--<div class="detail-section">
 	              <h3 class="section-title">상담 채팅</h3>
 	              <div th:if="${memberDetail.chatMessages.isEmpty()}" class="no-data">
 	                  상담채팅이 없습니다.
@@ -170,7 +171,33 @@
 	                      </tbody>
 	                  </table>
 	              </div>
-	          </div>
+	          </div>-->
+			  
+			  <!-- 상담 채팅 -->
+			  <div class="detail-section">
+			    <h3 class="section-title">상담 채팅</h3>
+			    <div th:if="${memberDetail.chatMessages.isEmpty()}" class="no-data">
+			      상담채팅이 없습니다.
+			    </div>
+			    <div th:unless="${memberDetail.chatMessages.isEmpty()}">
+			      <div class="chat-box">
+			        <div th:each="message : ${memberDetail.chatMessages}"
+			             class="chat-message"
+			             th:classappend="${message.writerClassify == 2} ? ' admin' : 
+			                             (${message.writerClassify == 1} ? ' user' : ' system')">
+			          <div class="chat-bubble">
+			            <div class="chat-meta">
+			              <span th:text="${message.writerClassify == 2 ? '관리자' : (message.writerClassify == 1 ? '회원' : '시스템')}">작성자</span>
+			              <span class="chat-time" th:text="${#temporals.format(message.sendDatetime, 'yyyy-MM-dd HH:mm')}">2025-05-10 14:30</span>
+			            </div>
+			            <div class="chat-content" th:text="${message.content}">안녕하세요. 문의드립니다.</div>
+			          </div>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+
+
 
 	          <!-- 버튼 영역 -->
 	          <div class="btn-container">
