@@ -1,15 +1,22 @@
 package com.test.shoebox.controller.main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.test.shoebox.dto.BrandDTO;
+import com.test.shoebox.dto.CartItemDTO;
 import com.test.shoebox.dto.CategoriesDTO;
 import com.test.shoebox.dto.DetailMap;
 import com.test.shoebox.dto.MYOrderReviewMapDTO;
@@ -20,15 +27,20 @@ import com.test.shoebox.dto.ProductImageDTO;
 import com.test.shoebox.dto.ProductPostDTO;
 import com.test.shoebox.dto.ProductPostImageDTO;
 import com.test.shoebox.dto.ProductStockDTO;
+import com.test.shoebox.entity.CartItem;
+import com.test.shoebox.entity.Members;
 import com.test.shoebox.entity.ProductImage;
 import com.test.shoebox.entity.ProductPost;
 import com.test.shoebox.entity.ProductPostImage;
 import com.test.shoebox.entity.ProductStock;
 import com.test.shoebox.mapper.ProductPostMapper;
+import com.test.shoebox.repository.CartItemRepository;
 import com.test.shoebox.repository.CustomDetailRepository;
+import com.test.shoebox.repository.MembersRepository;
 import com.test.shoebox.repository.ProductImageRepository;
 import com.test.shoebox.repository.ProductPostImageRepository;
 import com.test.shoebox.repository.ProductStockRepository;
+import com.test.shoebox.service.main.CustomOAuth2User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -43,6 +55,9 @@ public class DetailController {
 	private final ProductStockRepository productStockRepository;
 	private final ProductPostMapper productPostMapper;
 
+    private final CartItemRepository cartItemRepository;
+    private final MembersRepository membersRepository;
+	
 	@GetMapping("/detailpage")
 	public String detailpage(@RequestParam("productPostId") String productPostId, Model model) {
 		
@@ -154,4 +169,59 @@ public class DetailController {
 		return "main/detailpage";
 	}
 	
+	@PostMapping("/test")
+	@ResponseBody
+	public String test(@RequestBody OrderForm orderForm, Model model) {
+	    List<OrderItemDTO> items = orderForm.getItems();
+
+	    for (OrderItemDTO item : items) {
+	        System.out.println("상품: " + item.getProductStockId() + ", 수량: " + item.getQty());
+	    }
+
+	    model.addAttribute("items", items);
+	    return "redirect:/main/"; // 또는 redirect
+	}
+	
+	@PostMapping("/add")
+	@ResponseBody
+	public Map<String, Object> addToCart(@RequestBody OrderForm orderForm, @AuthenticationPrincipal CustomOAuth2User user) {
+
+		Map<String, Object> result = new HashMap<>();
+		
+		//회원, 비회원 구분 >> 비회원 => 로그인
+	    if (user == null || user.getMembersDTO() == null) {
+	        result.put("success", false);
+	        result.put("needLogin", true); // JS에서 확인용
+	        return result;
+	    }
+		
+		Long memberId = user.getMembersDTO().getMembersId();
+		
+		List<OrderItemDTO> items = orderForm.getItems();
+		
+		Members members = membersRepository.findById(memberId).get();
+		
+	    try {
+	    	
+	    	for (OrderItemDTO item : items) {
+	    		CartItem entity = new CartItem();
+	    		
+	    		ProductStock productStock = productStockRepository.findById(item.getProductStockId()).get();
+	    		entity.setQuantity(item.getQty());
+	    		entity.setMembers(members);
+	    		entity.setProductStock(productStock);
+	    		
+	    		cartItemRepository.save(entity);
+	    		
+		    }
+
+	        result.put("success", true);
+	    } catch (Exception e) {
+	        result.put("success", false);
+	        result.put("message", e.getMessage());
+	    }
+
+	    return result;
+	}
+
 }
