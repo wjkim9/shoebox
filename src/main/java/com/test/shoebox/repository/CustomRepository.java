@@ -2,7 +2,11 @@ package com.test.shoebox.repository;
 
 
 
+import static java.time.temporal.TemporalAdjusters.firstDayOfMonth;
+import static java.time.temporal.TemporalAdjusters.lastDayOfMonth;
+
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,25 +49,27 @@ public class CustomRepository {
 	
 	private final JPAQueryFactory jpaQueryFactory;
 
-	public List<ProductImage> findProductByDatetime(LocalDateTime startTime, LocalDateTime endTime) {
+	public List<ProductImage> findProductByDatetime(LocalDateTime startTime, LocalDateTime endTime, Integer offset, Integer fetchSize) {
 
 		return jpaQueryFactory.select(productImage)
 							.from(productImage)
 							.innerJoin(productImage.product, product)
 							.innerJoin(product.productPost, productPost)
 							.where(productPost.postDate.between(startTime, endTime).and(productImage.sortOrder.eq(1)))
+							.offset(offset)
+							.limit(fetchSize)
 							.fetch();
 	}
 
-	public List<ProductImage> findByProductImageByBrand(Brand brand, Integer maxFetch) {
+	public List<ProductImage> findByProductImageByBrand(Brand brand, Integer offset,Integer fetchSize) {
 		
 		return jpaQueryFactory.select(productImage)
 								.from(productImage)
 								.innerJoin(productImage.product, product)
 								.innerJoin(product.productPost, productPost)
 								.where(product.brand.eq(brand).and(productImage.sortOrder.eq(1)))
-								.offset(0)
-								.limit(maxFetch)
+								.offset(offset)
+								.limit(fetchSize)
 								.orderBy(productPost.viewCount.desc())
 								.fetch();
 	}
@@ -71,7 +77,7 @@ public class CustomRepository {
 	
 	
 	public Page<ProductImage> findProductPage(PageRequest pageRequest, String targetCustomerType,
-			Long categoriesId, Long brandId, Integer startPrice, Integer endPrice, Integer search, String searchWord) {
+			Long categoriesId, Long brandId, Integer startPrice, Integer endPrice, Integer search, String searchWord, Optional<Integer> newItem) {
 		
 		BooleanBuilder builder = new BooleanBuilder();
 		
@@ -101,6 +107,18 @@ public class CustomRepository {
 		if(startPrice != null) {
 			builder.and(product.productPrice.loe(endPrice));
 		}
+		
+		if(newItem.isPresent()){
+			if(newItem.get() == 1) {
+				
+				LocalDateTime startTime = LocalDateTime.now().with(firstDayOfMonth()).with(LocalTime.MIN); // 당월 1일 00:00:00
+				LocalDateTime endTime = LocalDateTime.now().with(lastDayOfMonth()).with(LocalTime.MAX); // 당월 마지막날 23:59:59
+				
+				builder.and(productPost.postDate.between(startTime, endTime));
+			}
+		}
+		
+		
 		
 		
 		if(search == 1 && searchWord != null) {
@@ -172,7 +190,7 @@ public class CustomRepository {
 	}
 
 	public Page<Tuple> findProductImageByBest(PageRequest pageRequest, String targetCustomerType, Long categoriesId,
-			Long brandId, Integer startPrice, Integer endPrice, Integer search, String searchWord) {
+			Long brandId, Integer startPrice, Integer endPrice, Integer search, String searchWord, Optional<Integer> newItem) {
 		
 		BooleanBuilder builder = new BooleanBuilder();
 		
@@ -202,6 +220,18 @@ public class CustomRepository {
 		if(startPrice != null) {
 			builder.and(product.productPrice.loe(endPrice));
 		}
+		
+		if(newItem.isPresent()){
+			if(newItem.get() == 1) {
+				
+				LocalDateTime startTime = LocalDateTime.now().with(firstDayOfMonth()).with(LocalTime.MIN); // 당월 1일 00:00:00
+				LocalDateTime endTime = LocalDateTime.now().with(lastDayOfMonth()).with(LocalTime.MAX); // 당월 마지막날 23:59:59
+				
+				builder.and(productPost.postDate.between(startTime, endTime));
+			}
+		}
+		
+		
 		
 		
 		if(search == 1 && searchWord != null) {
@@ -264,7 +294,7 @@ public class CustomRepository {
 	}
 
 	public Page<Tuple> findProductImageByReviewCount(PageRequest pageRequest, String targetCustomerType,
-			Long categoriesId, Long brandId, Integer startPrice, Integer endPrice, Integer search, String searchWord) {
+			Long categoriesId, Long brandId, Integer startPrice, Integer endPrice, Integer search, String searchWord, Optional<Integer> newItem) {
 		
 		BooleanBuilder builder = new BooleanBuilder();
 		
@@ -293,6 +323,16 @@ public class CustomRepository {
 		
 		if(startPrice != null) {
 			builder.and(product.productPrice.loe(endPrice));
+		}
+		
+		if(newItem.isPresent()){
+			if(newItem.get() == 1) {
+				
+				LocalDateTime startTime = LocalDateTime.now().with(firstDayOfMonth()).with(LocalTime.MIN); // 당월 1일 00:00:00
+				LocalDateTime endTime = LocalDateTime.now().with(lastDayOfMonth()).with(LocalTime.MAX); // 당월 마지막날 23:59:59
+				
+				builder.and(productPost.postDate.between(startTime, endTime));
+			}
 		}
 		
 		
