@@ -8,6 +8,7 @@
 </head>
 <body>
 <section layout:fragment="content" th:fragment="content">
+    <link rel="stylesheet" th:href="@{/admin/css/category.css}" />
     <div class="admin-container" style="margin-top: var(--header-height);">
         <div class="page-header">
             <h2>브랜드 카테고리 관리</h2>
@@ -52,6 +53,8 @@
             </form>
         </div>
     </div>
+
+    <script th:src="@{/admin/js/category.js}"></script>
 </section>
 </body>
 </html>
