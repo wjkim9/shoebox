@@ -121,6 +121,7 @@ public class MembersService {
 
         // 4. 쿠폰 정보
         List<Object[]> couponResults = issuedCouponRepository.findValidCouponsByMembersId(membersId);
+        //FIXME
         List<IssuedCouponDTO> issuedCoupons = couponResults.stream()
             .map(result -> new IssuedCouponDTO(
                 toLong(result[0]),
