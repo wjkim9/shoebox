@@ -243,7 +243,7 @@
 						</div>
 					</td>
 					<td>
-						<div class="cart-price item-price" th:text="${#numbers.formatInteger(item.productStock.product.productPrice * item.quantity, 3, 'COMMA') + '원'}"
+						<div class="cart-price item-price" th:text="${#numbers.formatInteger(item.productStock.product.productPrice * item.quantity, 0, 'COMMA') + '원'}"
          th:data-price="${item.productStock.product.productPrice * item.quantity}"></div>
 						<button type="button" class="cart-coupon-btn"
 								th:data-cart-item-id="${item.cartItemId}"
@@ -285,8 +285,7 @@
 
 		<!-- 상단 선택삭제/배송변경/품절삭제 버튼 -->
 		<div class="cart-top-actions">
-			<button class="cart-top-btn">선택삭제</button>
-			<button class="cart-top-btn red">품절/판매종료 삭제</button>
+			<button class="cart-top-btn delete-selected-btn">선택삭제</button>
 		</div>
 
 		<!-- 금액 요약 -->
@@ -699,6 +698,64 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         calculateAmounts();
     }
+
+    // 선택 삭제 버튼 이벤트
+    document.querySelector('.delete-selected-btn').addEventListener('click', async function() {
+        const selectedItems = Array.from(document.querySelectorAll('.cart-chk-item:checked'))
+            .map(checkbox => checkbox.getAttribute('data-cart-item-id'));
+
+        if (selectedItems.length === 0) {
+            alert('삭제할 상품을 선택해주세요.');
+            return;
+        }
+
+        // 확인 메시지 표시
+        if (confirm('선택한 상품들을 삭제하시겠습니까?')) {
+            const response = await fetch('/mypage/api/cart/deleteSelected', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(selectedItems)
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('선택한 상품이 삭제되었습니다.');
+                window.location.reload(); // 페이지 새로고침하여 변경사항 반영
+            } else {
+                alert('상품 삭제에 실패했습니다: ' + data.message);
+            }
+        }
+    });
+
+    // 개별 상품 삭제 버튼 이벤트
+    document.querySelectorAll('.cart-delete-btn').forEach(button => {
+        button.addEventListener('click', async function() {
+            const cartItemId = this.getAttribute('data-cart-item-id');
+
+            // 확인 메시지 표시
+            if (confirm('이 상품을 장바구니에서 삭제하시겠습니까?')) {
+                const response = await fetch('/mypage/api/cart/deleteSelected', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify([cartItemId]) // 단일 상품 ID를 배열로 전송
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('상품이 삭제되었습니다.');
+                    window.location.reload(); // 페이지 새로고침하여 변경사항 반영
+                } else {
+                    alert('상품 삭제에 실패했습니다: ' + data.message);
+                }
+            }
+        });
+    });
 });
 
 function goToOrder() {

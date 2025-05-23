@@ -1,6 +1,9 @@
 package com.test.shoebox.controller.payment;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.test.shoebox.entity.MemberAddress;
+import com.test.shoebox.entity.Orders;
+import com.test.shoebox.repository.MemberAddressRepository;
+import com.test.shoebox.repository.OrdersRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.test.shoebox.service.payment.PaymentService;
-import com.test.shoebox.entity.CartItem;
 import com.test.shoebox.repository.CartItemRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.shoebox.repository.MembersRepository;
 import com.test.shoebox.entity.Members;
 
@@ -31,6 +32,8 @@ public class PaymentController {
     private final PaymentService paymentService;
     private final CartItemRepository cartItemRepository;
     private final MembersRepository membersRepository;
+    private final OrdersRepository ordersRepository;
+    private final MemberAddressRepository memberAddressRepository;
 
     @Value("${imp.api.key}")
     private String apiKey;
@@ -58,13 +61,33 @@ public class PaymentController {
         ));
 
         // 기본 배송지 정보를 모델에 추가
+        MemberAddress memberAddress = memberAddressRepository.findAll().stream()
+                .filter(order -> order.getMembers().getMembersId().equals(currentMember.getMembersId()))
+                .findFirst()
+                .orElse(null);
         model.addAttribute("defaultAddress", Map.of(
             "name", currentMember.getName(),
             "phone", currentMember.getContact(),
-            "zipcode", "12345", // 임시 우편번호
-            "address", "서울시 강남구", // 임시 주소
-            "detailAddress", "123-45" // 임시 상세주소
+            "zipcode", memberAddress.getZipCode(), // 우편번호
+            "address", memberAddress.getRoadAddress(), // 주소
+            "detailAddress", memberAddress.getDetailAddress() // 상세주소
         ));
+
+        // 최근 배송지 정보 모델에 추가
+        Orders orders = ordersRepository.findAll().stream()
+                .filter(order -> order.getMembers().getMembersId().equals(currentMember.getMembersId()))
+                .sorted((o1, o2) -> o2.getOrdersDate().compareTo(o1.getOrdersDate())) // 내림차순 정렬
+                .findFirst()
+                .orElse(null);
+        model.addAttribute("recentAddress", Map.of(
+                "name", orders.getReceiverName(),
+                "phone", orders.getReceiverContact(),
+                "zipcode", orders.getDestinationZipCode(), // 임시 우편번호
+                "address", orders.getDestinationRoadAddress(), // 임시 주소
+                "detailAddress", orders.getDestinationDetailAddress() // 임시 상세주소
+        ));
+
+
 
         // 주문 금액 계산
         Map<String, Object> amounts = paymentService.calculateOrderAmounts(

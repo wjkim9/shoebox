@@ -256,6 +256,11 @@ public class PaymentService {
         }
     }
 
+    @Transactional
+    public void deleteCartItems(List<Long> cartItemIds) {
+        cartItemRepository.deleteAllByCartItemIdIn(cartItemIds);
+    }
+
     private Orders createOrder(Map<String, Object> orderData) {
         Members member = membersRepository.findById((Long) orderData.get("membersId"))
             .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));

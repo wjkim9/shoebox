@@ -420,13 +420,6 @@ WHERE MEMBERS_ID = 3;
 commit;
 
 
-select * from coupon;
-select * from members;
-select * from ISSUEDCOUPON;
-select * from product;
-select * from PRODUCTSTOCK;
-select * from CARTITEM;
-select * from MEMBERGRADE;
 
 
 
@@ -453,5 +446,60 @@ INSERT INTO CartItem VALUES (
                                 cartitem_seq.NEXTVAL, 1,
                                 11, 1  -- member1이 productstock2를 1개 담음
                             );
+
+commit;
+
+
+
+
+
+-- Orders 추가 (Orders 테이블)
+DECLARE
+    v_issuedcoupon_id NUMBER := 1; -- IssuedCoupon 테이블에 있는 ID 사용
+BEGIN
+    INSERT INTO Orders (
+        orders_id, orders_status, payment_amount, payment_point,
+        shipping_fee, receiver_name, receiver_email, receiver_contact,
+        payment_method, payment_info, destination_zip_code,
+        destination_road_address, destination_jibun_address,
+        destination_detail_address, destination_reference,
+        orders_date, issuedcoupon_id, members_id
+    ) VALUES (
+                 orders_seq.NEXTVAL, 1, 50, 0,
+                 0, '홍길동', 'user1@email.com', '010-1234-5678',
+                 '카드결제', '신용카드/1234-xxxx-xxxx-5678', 12345,
+                 '서울시 강남구 테헤란로 123', '서울시 강남구 역삼동 123-45',
+                 '101호', '문 앞에 놓아주세요',
+                 SYSDATE, v_issuedcoupon_id, 1
+             );
+END;
+/
+
+
+-- MemberAddress 추가 (회원 ID 1번을 위한 배송지 정보)
+INSERT INTO MemberAddress (
+    memberaddress_id, zip_code, road_address,
+    jibun_address, detail_address, address_reference,
+    members_id
+) VALUES (
+             memberaddress_seq.NEXTVAL, 12345, '서울시 강남구 테헤란로 123',
+             '서울시 강남구 역삼동 123-45', '101호', '엘리베이터 있음',
+             1
+         );
+
+commit;
+
+
+update PRODUCT set PRODUCT_PRICE = 150 where PRODUCT_NAME = '테스트';
+
+select * from coupon;
+select * from members;
+select * from ISSUEDCOUPON;
+select * from product;
+select * from PRODUCTSTOCK;
+select * from CARTITEM;
+select * from MEMBERGRADE;
+select * from MEMBERADDRESS;
+
 
 commit;

@@ -23,10 +23,14 @@ import com.test.shoebox.repository.CartItemRepository;
 import com.test.shoebox.entity.Members;
 import com.test.shoebox.repository.MemberGradeRepository;
 import com.test.shoebox.service.payment.CartItemService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 
 @Controller
 @RequestMapping("/mypage")
 @RequiredArgsConstructor
+@Slf4j
 public class MypageController {
 
     private final CartItemRepository cartItemRepository;
@@ -35,6 +39,7 @@ public class MypageController {
     private final PaymentService paymentService;
     private final CartItemService cartItemService;
     private final MembersRepository membersRepository;
+    private final MemberGradeRepository memberGradeRepository;
 
 
     @GetMapping("/api/coupons")
@@ -140,17 +145,43 @@ public class MypageController {
         );
     }
 
-    @PostMapping("/api/cart/quantity")
-    @ResponseBody
+    // 장바구니 수량 변경 API (POST 요청으로 변경)
+    @PostMapping("/api/cart/quantity") // 경로 수정
+    @ResponseBody // JSON 응답을 위해 추가
     public ResponseEntity<?> updateCartItemQuantity(@RequestBody Map<String, Object> request) {
         try {
             Long cartItemId = Long.parseLong(request.get("cartItemId").toString());
-            Integer quantity = Integer.parseInt(request.get("quantity").toString());
-            
-            cartItemService.updateQuantity(cartItemId, quantity);
-            return ResponseEntity.ok().build();
+            Integer quantity = (Integer) request.get("quantity");
+
+            cartItemRepository.findById(cartItemId).ifPresent(cartItem -> {
+                cartItem.setQuantity(quantity);
+                cartItemRepository.save(cartItem);
+            });
+
+            // 수량 변경 후 금액 재계산 및 반환 (필요하다면 calculateAmounts 결과 반환)
+            // 현재는 성공 응답만 반환
+            return ResponseEntity.ok(Map.of("success", true));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("수량 변경 중 오류가 발생했습니다.");
+            log.error("장바구니 수량 변경 오류", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    // 선택된 장바구니 상품 삭제 API
+    @PostMapping("/api/cart/deleteSelected") // 경로 수정
+    @ResponseBody // JSON 응답을 위해 추가
+    public ResponseEntity<?> deleteSelectedCartItems(@RequestBody List<Long> cartItemIds) {
+        try {
+            if (cartItemIds == null || cartItemIds.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "삭제할 상품 ID가 없습니다."));
+            }
+
+            paymentService.deleteCartItems(cartItemIds); // PaymentService의 삭제 메서드 사용
+
+            return ResponseEntity.ok(Map.of("success", true));
+        } catch (Exception e) {
+            log.error("선택된 장바구니 상품 삭제 오류", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("success", false, "message", e.getMessage()));
         }
     }
 

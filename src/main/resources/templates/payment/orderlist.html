@@ -19,18 +19,6 @@
 		-moz-appearance: textfield;
 	}
 
-	#use-point {
-		margin-right: 10px;
-		width: 100px;
-		height: 30px;
-		border: 1px solid #ccc;
-		border-radius: 3px;
-		text-align: right;
-		font-size: 14px;
-		font-weight: 700;
-		color: #444;
-	}
-
 	.address-select-row {
 		display: flex;
 		align-items: center;
@@ -53,6 +41,35 @@
 	.addr-label {
 		font-weight: normal;
 	}
+	.address-row {
+		display: flex;
+		gap: 10px;
+		width: 100%;
+	}
+	.zipcode-input {
+		flex: 1;
+	}
+	.zipcode-btn {
+		white-space: nowrap;
+	}
+
+	/* 우편번호 입력 필드 스타일 */
+	input[readonly] {
+		background-color: #f5f5f5;
+	}
+
+	.product-img {
+		width: 80px;
+		height: 80px;
+		object-fit: cover;
+		border-radius: 4px;
+		margin-right: 15px; /* 이미지 오른쪽 여백 */
+	}
+
+	.product-info {
+		flex: 1; /* 남은 공간 차지 */
+		/* padding-left: 15px; 제거 */
+	}
 </style>
 </head>
 <body>
@@ -66,18 +83,14 @@
 		</div>
 		<div style="font-size: 1.5em; font-weight: 700;">주문서작성/결제</div>
 		<!-- 2. 주문리스트 -->
-		<div style="font-size: 1.15em ; position: relative; top: 35px; font-weight: 700;">주문
-
-
-			리스트</div>
+		<div style="font-size: 1.15em; position: relative; top: 35px; font-weight: 700; margin-bottom: 20px;">주문 리스트</div>
 		<button class="order-edit-btn" onclick="window.location.href='/mypage/cart'">주문정보수정</button>
 		<div class="product-list">
 			<div class="product-header">
-				<div style="width: 90px;">상품정보</div>
-				<div style="flex: 1;">상품명</div>
+				<div style="width: 95px;">상품정보</div>
+				<div style="flex: 1; padding-left: 15px;">상품명</div>
 				<div style="width: 60px; text-align: center;">수량</div>
 				<div style="width: 110px; text-align: right;">상품금액</div>
-				<div style="width: 80px; text-align: center;">배송비</div>
 			</div>
 			<!-- 3. 구매 상품 가격 및 정보 리스트 -->
 			<div class="product-row" th:each="item : ${selectedItems}">
@@ -94,26 +107,25 @@
 					<div class="product-desc" th:text="${item.productStock.shoeSize + '/' + item.quantity + '개'}"></div>
 				</div>
 				<div class="product-qty" th:text="${item.quantity + '개'}"></div>
-				<div class="product-price" th:text="${#numbers.formatInteger(item.quantity * item.productStock.product.productPrice, 3, 'COMMA') + '원'}"></div>
-				<div class="product-ship">무료배송</div>
+				<div class="product-price" th:text="${#numbers.formatInteger(item.quantity * item.productStock.product.productPrice, 0, 'COMMA') + '원'}"></div>
 			</div>
 			<!-- 4. 결제 정보 센터 정렬 -->
 			<div class="summary-row">
-				<span class="summary-item"> 주문금액 <b id="total-product-price" th:text="${totalAmount != 0 ? #numbers.formatInteger(totalAmount, 3, 'COMMA') + '원' : '0원'}"
+				<span class="summary-item"> 주문금액 <b id="total-product-price" th:text="${totalAmount != 0 ? #numbers.formatInteger(totalAmount, 0, 'COMMA') + '원' : '0원'}"
 													th:attr="data-value=${totalAmount != null ? totalAmount : 0}"></b>
 				</span>
 				<img src="/member/images/substract.png" class="summary-icon"
 					style="position: relative; top: 2px;" alt="substract">
 				<span
 					class="summary-item"> 총 할인금액<b id="discount"
-												   th:text="${totalDiscountAmount != 0 ? #numbers.formatInteger(totalDiscountAmount, 3, 'COMMA') + '원' : '0원'}"
+												   th:text="${totalDiscountAmount != 0 ? #numbers.formatInteger(totalDiscountAmount, 0, 'COMMA') + '원' : '0원'}"
 												   th:attr="data-value=${totalDiscountAmount != null ? totalDiscountAmount : 0}">
 </b>
 				</span>
 				<img src="/member/images/equal.png" class="summary-icon" alt="equal"
 					style="position: relative; top: 2px;"> <span
 					class="summary-item total"> 결제예정금액 <b id="total" class="total"
-					th:text="${finalAmount != 0 ? #numbers.formatInteger(finalAmount, 3, 'COMMA') + '원' : '0원'}"
+					th:text="${finalAmount != 0 ? #numbers.formatInteger(finalAmount, 0, 'COMMA') + '원' : '0원'}"
 					th:attr="data-value=${finalAmount != null ? finalAmount : 0}">
 				 </b>
 				</span>
@@ -154,7 +166,7 @@
 					<!-- 기본 배송지 정보 -->
 					<div id="defaultAddress" class="address-info">
 						<div class="form-row">
-							<label for="receiverName" class="required-label" >이름</label>
+							<label for="receiverName" class="required-label">이름</label>
 							<input type="text" id="receiverName" th:value="${defaultAddress.name}" placeholder="이름을 입력하세요." readonly>
 						</div>
 						<div class="form-row">
@@ -163,12 +175,7 @@
 						</div>
 						<div class="form-row">
 							<label for="zipcode" class="required-label">주소</label>
-							<div style="flex: 1;">
-								<div class="address-row">
-									<input type="text" class="zipcode-input" id="zipcode" th:value="${defaultAddress.zipcode}" placeholder="우편번호" readonly>
-									<button type="button" class="zipcode-btn" id="searchZipBtn" onclick="address()">우편번호 찾기</button>
-								</div>
-							</div>
+							<input type="text" id="zipcode" th:value="${defaultAddress.zipcode}" placeholder="우편번호" readonly>
 						</div>
 						<div class="form-row">
 							<label></label>
@@ -184,33 +191,28 @@
 					<div id="recentAddress" class="address-info" style="display: none;">
 						<div class="form-row">
 							<label for="recentReceiverName" class="required-label">이름</label>
-							<input type="text" id="recentReceiverName" placeholder="이름을 입력하세요." readonly>
+							<input type="text" id="recentReceiverName" th:value="${recentAddress.name}" placeholder="이름을 입력하세요." readonly>
 						</div>
 						<div class="form-row">
 							<label for="recentReceiverPhone" class="required-label">휴대폰번호</label>
-							<input type="tel" id="recentReceiverPhone" placeholder="전화번호를 입력하세요." readonly>
+							<input type="tel" id="recentReceiverPhone" th:value="${recentAddress.phone}" placeholder="전화번호를 입력하세요." readonly>
 						</div>
 						<div class="form-row">
-							<label for="recentZipcode" class="required-label">주소</label>
-							<div style="flex: 1;">
-								<div class="address-row">
-									<input type="text" class="zipcode-input" id="recentZipcode" placeholder="우편번호" readonly>
-									<button type="button" class="zipcode-btn" id="recentSearchZipBtn" onclick="address()">우편번호 찾기</button>
-								</div>
-							</div>
+							<label class="required-label">주소</label>
+							<input type="text" th:value="${recentAddress.zipcode}" placeholder="우편번호" readonly>
 						</div>
 						<div class="form-row">
 							<label></label>
-							<input type="text" placeholder="기본주소" readonly>
+							<input type="text" th:value="${recentAddress.address}" placeholder="기본주소" readonly>
 						</div>
 						<div class="form-row">
 							<label></label>
-							<input type="text" placeholder="상세주소 입력" required>
+							<input type="text" th:value="${recentAddress.detailAddress}" placeholder="상세주소 입력" required>
 						</div>
 					</div>
 
 					<!-- 신규 입력 -->
-					<div id="newAddress" class="address-info" style="display: none;">
+					<div id="newAddressInput" class="address-info" style="display: none;">
 						<div class="form-row">
 							<label for="newReceiverName" class="required-label">이름</label>
 							<input type="text" id="newReceiverName" th:value="${defaultAddress.name}" placeholder="이름을 입력하세요.">
@@ -230,11 +232,11 @@
 						</div>
 						<div class="form-row">
 							<label></label>
-							<input type="text" placeholder="기본주소" readonly>
+							<input type="text" id="newAddress" placeholder="기본주소" readonly>
 						</div>
 						<div class="form-row">
 							<label></label>
-							<input type="text" placeholder="상세주소 입력" required>
+							<input type="text" id="newDetailAddress" placeholder="상세주소 입력" required>
 						</div>
 					</div>
 
@@ -253,7 +255,7 @@
 								} else if (this.id === 'addr2') {
 									document.getElementById('recentAddress').style.display = 'block';
 								} else if (this.id === 'addr3') {
-									document.getElementById('newAddress').style.display = 'block';
+									document.getElementById('newAddressInput').style.display = 'block';
 								}
 							});
 						});
@@ -344,7 +346,6 @@
 	// 결제 버튼 누르면 결제로 넘어감
 	document.querySelectorAll('.order-btn').forEach(btn => {
     btn.addEventListener('click', function () {
-
         // selected 클래스를 가진 pay-btn이 있는지 확인
         if (!document.querySelector('.pay-btn.selected')) {
             alert('결제수단을 선택해주세요.');
@@ -356,8 +357,17 @@
 			return;
         }
 
-		requestPay();
+        const totalElement = document.getElementById('total');
+        
+        if (!totalElement) {
+            console.error('결제 금액 요소를 찾을 수 없습니다.');
+            alert('결제 금액을 불러올 수 없습니다. 페이지를 새로고침해주세요.');
+            return;
+        }
 
+        const dataValue = totalElement.getAttribute('data-value');
+        console.log('결제요청 금액:', dataValue);
+        requestPay();
     });
 });
 
@@ -367,6 +377,17 @@
 	IMP.init('imp62156183'); // 아임포트 테스트 계정 식별코드
 
 	function requestPay() {
+		const totalElement = document.getElementById('total');
+        
+        if (!totalElement) {
+            console.error('결제 금액 요소를 찾을 수 없습니다.');
+            alert('결제 금액을 불러올 수 없습니다. 페이지를 새로고침해주세요.');
+            return;
+        }
+
+        const dataValue = totalElement.getAttribute('data-value');
+        console.log('결제요청 금액:', dataValue);
+
 		const merchantUid = 'order_' + new Date().getTime(); // 주문번호 생성
 
 		// 주문 정보 수집
@@ -389,7 +410,7 @@
 				document.getElementById('req-select').value,
 			// 결제 정보
 			paymentMethod: document.querySelector('.pay-btn.selected').textContent,
-			totalAmount: parseInt(document.getElementById('total').getAttribute('data-value')),
+			totalAmount: parseInt(dataValue || '0'),
 			// 상품 정보
 			cartItemIds: Array.from(document.querySelectorAll('.product-row')).map(row => 
 				row.getAttribute('data-cart-item-id')
@@ -403,7 +424,7 @@
 			pay_method: "card",
 			merchant_uid: merchantUid,
 			name: "ShoeBox",
-			amount: document.getElementsByClassName('total')[0].innerText.replace(/,/g, ''),
+			amount: parseInt(dataValue || '0'),
 			buyer_email: document.getElementById('buyerEmail').value,
 			buyer_name: document.getElementById('buyerName').value,
 			buyer_tel: document.getElementById('buyerPhone').value
@@ -418,7 +439,7 @@
 					body: JSON.stringify({
 						imp_uid: rsp.imp_uid,
 						merchant_uid: merchantUid,
-						amount: rsp.paid_amount,
+						amount: parseInt(rsp.paid_amount),
 						orderData: orderData
 					})
 				})
