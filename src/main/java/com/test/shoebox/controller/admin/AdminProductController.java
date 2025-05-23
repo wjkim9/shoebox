@@ -33,6 +33,7 @@ public class AdminProductController {
     private final BrandRepository brandRepository;
     private final CategoriesRepository categoriesRepository;
     private final ProductGroupRepository productGroupRepository;
+    private final ProductService.ProductFormService productFormService;
 
 
     @GetMapping("/add")
@@ -85,6 +86,7 @@ public class AdminProductController {
 
         return "admin/product/detail"; // templates/product/detail.html
     }
+
 
 
 
@@ -217,9 +219,56 @@ public class AdminProductController {
 
         return "admin/product/list";
     }
+    /*@GetMapping("/admin/product/edit/{id}")
+    public String editProduct(@PathVariable Long id, Model model) {
+        ProductDTO product = productService.getProductById(id);
+        List<Map<String, Object>> brands = brandService.getAllBrands();
+        List<Map<String, Object>> categories = categoryService.getAllCategories();
+        List<Map<String, Object>> groups = productGroupService.getAllProductGroups();
+        List<String> availableSizes = productStockService.getAvailableSizesByProductId(id);
+        List<ProductStockDTO> stocks = productStockService.getStocksByProductId(id);
 
-    // ✅ 상품 수정 폼
-      @GetMapping("/edit/{id}")
+        model.addAttribute("product", product);
+        model.addAttribute("brands", brands);
+        model.addAttribute("categories", categories);
+        model.addAttribute("groups", groups);
+        model.addAttribute("availableSizes", availableSizes);
+        model.addAttribute("stocks", stocks);
+        return "admin/product-edit";
+    }
+*/
+
+
+    @GetMapping("/edit/{id}")
+    public String editProduct(@PathVariable Long id, Model model) {
+    Product product = productService.getProductById(id);
+    model.addAttribute("product", product);
+
+    // 추가적으로 필요한 브랜드, 카테고리, 그룹 등
+    model.addAttribute("brands", productFormService.getAllBrands());
+    model.addAttribute("categories", productFormService.getAllCategories());
+    model.addAttribute("groups", productFormService.getAllGroups());
+    model.addAttribute("sizes", productFormService.getAvailableSizes(id));
+    model.addAttribute("stocks", productFormService.getStocks(id));
+
+    return "admin/product/edit";
+    }
+
+
+
+    @PostMapping("/update")
+    public String updateProduct(@ModelAttribute ProductDTO dto, RedirectAttributes redirectAttributes) {
+        productService.updateProduct(dto);
+        redirectAttributes.addFlashAttribute("successMessage", "상품이 성공적으로 수정되었습니다.");
+        return "redirect:/admin/product/list";  // 상품 목록 페이지로 이동
+    }
+    
+
+}
+
+
+// ✅ 상품 수정 폼
+     /* @GetMapping("/edit/{id}")
       public String showEditForm(@PathVariable Long id, Model model) {
       ProductDTO dummy = ProductDTO.builder()
               .productId(id)
@@ -256,8 +305,8 @@ public class AdminProductController {
       model.addAttribute("groups", groupList);
 
       return "admin/product/edit";
-  }
-}
+  }*/
+
 
 /*
 
