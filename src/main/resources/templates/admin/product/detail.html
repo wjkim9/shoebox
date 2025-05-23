@@ -7,200 +7,143 @@
     <title>상품 상세보기</title>
     <link rel="stylesheet" th:href="@{/admin/css/product-list.css}" />
 
+    <style>
+        /* 공통 스타일 */
+        .form-display {
+            padding: 0.6rem;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
 
-<style>
-    /* 기본 스타일 */
-    .form-display {
-        padding: 0.8rem;
-        background-color: #ffffff;
-        border: 1px solid #e1e5eb;
-        border-radius: 0 4px 4px 4px;
-        min-height: 40px;
-        display: flex;
-        align-items: center;
-        font-weight: 500;
-        margin-bottom: 15px;
-    }
+        .label-text {
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 4px;
+            display: inline-block;
+            color: #333;
+        }
 
-    .size-stock-row.header {
-        font-weight: bold;
-        padding: 0.5rem;
-        border-radius: 4px;
-        margin-bottom: 0.5rem;
-    }
+        .form-group {
+            margin-bottom: 16px;
+        }
 
-    /* 사이즈/재고 헤더의 라벨을 위한 특별 스타일 */
-    #sizeStockContainer .label-text {
-        margin-bottom: 0;
-    }
+        .panel {
+            margin-bottom: 24px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+        }
 
-    #sizeStockContainer .size-stock-row:not(.header) {
-        margin-top: -1px; /* 헤더와 콘텐츠 사이 간격 제거 */
-    }
+        .panel-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid #ddd;
+            background-color: #f1f1f1;
+        }
 
-    /* 이미지 미리보기 스타일 조정 */
-    .image-preview {
-        border: 1px solid #e1e5eb;
-        border-radius: 0 4px 4px 4px;
-        padding: 10px;
-        background-color: #fff;
-        margin-top: -1px;
-    }
+        .panel-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
 
-    .additional-images-preview {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: -1px;
-        border: 1px solid #e1e5eb;
-        border-radius: 0 4px 4px 4px;
-        padding: 10px;
-        background-color: #fff;
-    }
+        .panel-body {
+            padding: 16px;
+        }
 
-    .additional-image-item {
-        border: 1px solid #e1e5eb;
-        border-radius: 4px;
-        padding: 8px;
-        background-color: #fff;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
+        .size-stock-header,
+        .size-stock-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
 
-    /* 라벨 스타일 - 상세보기 느낌으로 변경 */
-    .label-container {
-        margin-bottom: 6px;
-    }
+        .size-stock-column {
+            flex: 1;
+        }
 
-    .label-text {
-        font-weight: 600;
-        font-size: 14px;
-        background-color: #f8f9fa;
-        padding: 5px 10px;
-        border-radius: 4px 4px 0 0;
-        border: 1px solid #e1e5eb;
-        border-bottom: none;
-        color: #495057;
-        display: inline-block;
-    }
+        .image-preview img,
+        .additional-image-item img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 4px;
+            background-color: #fff;
+        }
 
-    /* 카테고리별 라벨 스타일 */
-    /* 상품 정보 그룹 */
-    .product-name .label-text,
-    .brand .label-text,
-    .category .label-text,
-    .product-group .label-text {
-        border-top: 2px solid #4263eb;
-    }
+        .image-preview,
+        .additional-images-preview {
+            padding: 8px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
 
-    /* 가격 정보 그룹 */
-    .price .label-text,
-    .discount .label-text {
-        border-top: 2px solid #40c057;
-    }
+        .additional-images-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
 
-    /* 고객 및 날짜 그룹 */
-    .gender .label-text,
-    .date .label-text {
-        border-top: 2px solid #7950f2;
-    }
+        .additional-image-item {
+            width: 150px;
+        }
 
-    /* 재고 그룹 */
-    .size .label-text,
-    .stock .label-text {
-        border-top: 2px solid #fd7e14;
-    }
+        .form-actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+        }
 
-    /* 이미지 그룹 */
-    .main-image .label-text,
-    .additional-image .label-text {
-        border-top: 2px solid #e03131;
-    }
+        .btn {
+            padding: 8px 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            text-decoration: none;
+            color: #333;
+            background-color: #f7f7f7;
+        }
 
-    /* 성별 태그 디자인 - 더 선명하고 통일된 색상 */
-    .gender-tag {
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 13px;
-        font-weight: 600;
-        color: #fff;
-    }
+        .btn:hover {
+            background-color: #eaeaea;
+        }
 
-    .gender-tag.men { background-color: #1864ab; }
-    .gender-tag.women { background-color: #ae3ec9; }
-    .gender-tag.unisex { background-color: #5c940d; }
-    .gender-tag.kids { background-color: #e67700; }
+        .btn-primary {
+            background-color: #4c6ef5;
+            color: white;
+            border-color: #4c6ef5;
+        }
 
-    /* 사이즈 값 스타일 */
-    .size-value {
-        font-weight: 600;
-        color: #495057;
-        justify-content: center;
-    }
+        .btn-primary:hover {
+            background-color: #3b5bdb;
+        }
 
-    /* 패널 개선 - 상세보기 느낌으로 */
-    .panel {
-        margin-bottom: 25px;
-        border-radius: 6px;
-        overflow: hidden;
-        border: 1px solid #e9ecef;
-    }
+        .btn-cancel {
+            background-color: #f1f3f5;
+            color: #495057;
+        }
 
-    .panel-header {
-        background-color: #f8f9fa;
-        padding: 12px 20px;
-        border-bottom: 1px solid #e9ecef;
-    }
+        .btn-cancel:hover {
+            background-color: #dee2e6;
+        }
 
-    .panel-header h3 {
-        margin: 0;
-        font-size: 18px;
-        color: #343a40;
-        position: relative;
-        padding-left: 15px;
-    }
+        /* 성별 텍스트 간단화 */
+        .gender-tag {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+    </style>
 
-    .panel-header h3:before {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 5px;
-        height: 18px;
-        background-color: #4263eb;
-    }
-
-    .panel-body {
-        padding: 20px;
-        background-color: #fff;
-    }
-
-    /* 전체 폼 간격 조정 */
-    .form-group {
-        margin-bottom: 16px;
-    }
-    /* 헤더 전용 스타일 */
-    .size-stock-header {
-        display: flex;
-        background-color: #f1f3f5;
-        border: 1px solid #e1e5eb;
-        padding: 10px;
-        border-radius: 4px;
-        font-weight: bold;
-        margin-bottom: 8px;
-        text-align: center;
-    }
-
-    .size-stock-row {
-        display: flex;
-        margin-bottom: 10px;
-    }
-
-    .size-stock-column {
-        flex: 1;
-    }
-
-</style>
 </head>
 <body>
 <section layout:fragment="content" th:fragment="content">
@@ -208,7 +151,7 @@
         <div class="page-header">
             <h2>상품 상세보기</h2>
             <div>
-                <a th:href="@{/admin/product/products}" class="btn btn-outline">
+                <a th:href="@{/admin/product/list}" class="btn btn-outline">
                     <i class="fas fa-list"></i> 상품 목록
                 </a>
                 <a th:href="@{/admin/product/edit/{id}(id=${product.productId})}" class="btn btn-primary">
@@ -359,7 +302,7 @@
             <a th:href="@{/admin/product/edit/{id}(id=${product.productId})}" class="btn btn-primary">
                 <i class="fas fa-edit"></i> 수정하기
             </a>
-            <a th:href="@{/admin/product/products}" class="btn btn-cancel">
+            <a th:href="@{/admin/product/list}" class="btn btn-cancel">
                 <i class="fas fa-arrow-left"></i> 목록으로
             </a>
         </div>
