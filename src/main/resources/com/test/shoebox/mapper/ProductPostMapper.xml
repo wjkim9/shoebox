@@ -68,14 +68,14 @@
 		from ProductStock ps
 			join ProductStockOrder pso on pso.productstock_id = ps.productstock_id
 				join OrderReview odr on pso.productstockorder_id = odr.productstockorder_id
-					join OrderReviewImage ori on ori.orderreview_id = odr.orderreview_id
+					left join OrderReviewImage ori on ori.orderreview_id = odr.orderreview_id
 						join Orders od on od.orders_id = pso.orders_id
 							join Members m on m.members_id = od.members_id
 								where ps.product_id = #{productId}
 	</select>
 	
 	<select id="getAvgRating" parameterType="String" resultType="String">
-		select nvl(avg(odr.rating), 0) as rating from ProductStock ps
+		select round(nvl(avg(odr.rating), 0), 1) as rating from ProductStock ps
 			join ProductStockOrder pso on ps.productstock_id = pso.productstock_id
 				join OrderReview odr on odr.productstockorder_id = pso.productstockorder_id
 					where ps.product_id = #{productId}
