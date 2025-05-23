@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.test.shoebox.dto.CouponDTO;
 import com.test.shoebox.dto.IssuedCouponDTO;
+import com.test.shoebox.repository.MembersRepository;
 import com.test.shoebox.service.payment.CouponService;
 import com.test.shoebox.service.payment.PaymentService;
 import jakarta.servlet.http.HttpSession;
@@ -33,6 +34,8 @@ public class MypageController {
     private final HttpSession session;
     private final PaymentService paymentService;
     private final CartItemService cartItemService;
+    private final MembersRepository membersRepository;
+
 
     @GetMapping("/api/coupons")
     @ResponseBody
@@ -62,6 +65,15 @@ public class MypageController {
             // 임시로 테스트용 회원 ID 사용
             Long testMemberId = 1L;  // 테스트용 회원 ID
 
+            // 회원 정보를 모델에 추가
+            Members member = membersRepository.findById(testMemberId).orElse(null);
+            if (member != null) {
+                model.addAttribute("member", member);
+            } else {
+                // 회원이 없는 경우 기본값 제공
+                model.addAttribute("member", Map.of("point", 0));
+            }
+
             // 연관 엔티티를 함께 로드하는 메서드 사용
             List<CartItem> cartItems = cartItemRepository.findByMembersIdWithProductAndImages(testMemberId);
             if (cartItems == null) {
@@ -75,7 +87,8 @@ public class MypageController {
                 .toList();
 
             // PaymentService를 사용하여 금액 계산
-            Map<String, Object> amounts = paymentService.calculateOrderAmounts(cartItemIds, null, 0, false);
+            int usePoint = member != null ? member.getPoint() : 0;
+            Map<String, Object> amounts = paymentService.calculateOrderAmounts(cartItemIds, null, usePoint, true);
             
             model.addAttribute("totalAmount", amounts.get("totalAmount"));
             model.addAttribute("totalDiscountAmount", amounts.get("totalDiscountAmount"));
@@ -89,6 +102,7 @@ public class MypageController {
             model.addAttribute("totalAmount", 0);
             model.addAttribute("totalDiscountAmount", 0);
             model.addAttribute("finalAmount", 0);
+            model.addAttribute("member", Map.of("point", 0)); // 기본 회원 정보 추가
             return "mypage/cart";
         }
     }

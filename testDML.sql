@@ -429,9 +429,29 @@ select * from CARTITEM;
 select * from MEMBERGRADE;
 
 
+
 delete from MEMBERGRADE where MEMBERGRADE_ID = 1;
 
 commit;
 
 
+INSERT INTO Product (
+    product_id, product_name, product_price,
+    discount_rate, target_customer_type,
+    product_register_date, brand_id,
+    categories_id, productgroup_id
+) VALUES (
+             PRODUCT_SEQ.nextval, '테스트', 50,
+             0, 'UNISEX',
+             SYSDATE, 1, 1, 1
+         );
 
+INSERT INTO ProductStock (productstock_id, shoe_size, stock_quantity, product_id)
+VALUES (11, '250', 10, 11);
+
+INSERT INTO CartItem VALUES (
+                                cartitem_seq.NEXTVAL, 1,
+                                11, 1  -- member1이 productstock2를 1개 담음
+                            );
+
+commit;

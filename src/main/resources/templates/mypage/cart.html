@@ -198,7 +198,6 @@
 					<col style="width: 90px;">
 					<col style="width: auto;">
 					<col style="width: 110px;">
-					<col style="width: 90px;">
 					<col style="width: 110px;">
 					<col style="width: 120px;">
 				</colgroup>
@@ -208,7 +207,6 @@
 						<th>상품정보</th>
 						<th>상품명</th>
 						<th>수량</th>
-						<th>적립</th>
 						<th>상품금액</th>
 						<th>비고</th>
 					</tr>
@@ -244,8 +242,6 @@
 							<button type="button" class="cart-qty-btn plus">+</button>
 						</div>
 					</td>
-					<!-- 상품 당 적립 포인트 -->
-					<td class="cart-point">0P</td>
 					<td>
 						<div class="cart-price item-price" th:text="${#numbers.formatInteger(item.productStock.product.productPrice * item.quantity, 3, 'COMMA') + '원'}"
          th:data-price="${item.productStock.product.productPrice * item.quantity}"></div>
@@ -275,9 +271,9 @@
 								</div>
 								<div class="point-usage-inputs">
 									<label for="use-allpoint-check">모든 포인트 사용</label>
-									<input type="checkbox" id="use-allpoint-check">
+									<input type="checkbox" id="use-allpoint-check" checked>
 									<label for="use-point">사용 포인트</label>
-									<input type="number" id="use-point" value="0">
+									<input type="number" id="use-point" th:value="${member instanceof T(java.util.Map) ? member.point : member.getPoint()}">
 									<label for="use-point">point</label>
 								</div>
 							</div>
@@ -319,7 +315,7 @@
 				</div>
 				<div class="cart-summary-detail-col">
 					<span class="cart-summary-detail-label">추가 배송비</span>
-					<span class="cart-summary-detail-value">0원</span>
+					<span class="cart-summary-detail-value" id ="deliveryFee">0원</span>
 				</div>
 				<div class="cart-summary-detail-col">
 					<span class="cart-summary-detail-label">총 할인금액</span>
@@ -431,6 +427,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+
+
     // 금액 계산 함수
     async function calculateAmounts(appliedCoupons = null, usePoint = 0, useAllPoint = false) {
         try {
@@ -443,6 +441,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('productAmount').textContent = '0원';
                 document.getElementById('detailDiscountAmount').textContent = '0원';
                 document.getElementById('detailFinalAmount').textContent = '0원';
+				document.getElementById('deliveryFee').textContent = '0원';
+				document.getElementById('pointAmount').textContent = '0P';
                 return;
             }
 
@@ -482,7 +482,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const amounts = await response.json();
-            
+
+
+			if (amounts.totalAmount < 10000 ) {
+				document.getElementById('deliveryFee').textContent = '3000원';
+			}
+
+			if (amounts.finalAmount > 0 ) {
+
+				const points = Math.floor(amounts.finalAmount * 0.5 / 100);
+				document.getElementById('pointAmount').textContent = points.toLocaleString() + 'P';
+			}
+
+
             // 금액 업데이트
             document.getElementById('totalAmount').textContent = amounts.totalAmount.toLocaleString() + '원';
             document.getElementById('totalDiscountAmount').textContent = amounts.totalDiscountAmount.toLocaleString() + '원';
@@ -628,20 +640,48 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 포인트 사용 이벤트 처리
-    const pointInput = document.getElementById('use-point');
     const useAllPointCheck = document.getElementById('use-allpoint-check');
-
-    if (pointInput) {
-        pointInput.addEventListener('input', async function() {
-            const usePoint = parseInt(this.value) || 0;
-            await calculateAmounts(null, usePoint, useAllPointCheck.checked);
-        });
-    }
 
     if (useAllPointCheck) {
         useAllPointCheck.addEventListener('change', async function() {
-            const usePoint = parseInt(pointInput.value) || 0;
-            await calculateAmounts(null, usePoint, this.checked);
+            const pointInput = document.getElementById('use-point');
+            if (this.checked) {
+                // 체크되면 회원의 전체 포인트를 표시
+                const memberPoint = parseInt(pointInput.getAttribute('data-member-point')) || 0;
+                pointInput.value = memberPoint;
+            } else {
+                // 체크 해제되면 0으로 설정
+                pointInput.value = 0;
+            }
+            await calculateAmounts(null, parseInt(pointInput.value) || 0, this.checked);
+        });
+    }
+
+    // 포인트 입력 이벤트 처리
+    const pointInput = document.getElementById('use-point');
+    if (pointInput) {
+        // 회원의 전체 포인트를 data 속성에 저장
+        const memberPoint = parseInt(pointInput.value) || 0;
+        pointInput.setAttribute('data-member-point', memberPoint);
+        // 최대값 설정
+        pointInput.setAttribute('max', memberPoint);
+
+        pointInput.addEventListener('input', async function() {
+            let usePoint = parseInt(this.value) || 0;
+            const maxPoint = parseInt(this.getAttribute('max')) || 0;
+            
+            // 입력값이 최대값을 초과하면 최대값으로 설정
+            if (usePoint > maxPoint) {
+                usePoint = maxPoint;
+                this.value = maxPoint;
+            }
+            // 입력값이 0보다 작으면 0으로 설정
+            if (usePoint < 0) {
+                usePoint = 0;
+                this.value = 0;
+            }
+            
+            await calculateAmounts(null, usePoint, useAllPointCheck.checked);
         });
     }
 
@@ -652,8 +692,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 초기 금액 계산
-    calculateAmounts();
+    // 초기 금액 계산 (포인트 포함)
+    if (pointInput && useAllPointCheck) {
+        const initialPoint = parseInt(pointInput.value) || 0;
+        calculateAmounts(null, initialPoint, useAllPointCheck.checked);
+    } else {
+        calculateAmounts();
+    }
 });
 
 function goToOrder() {
@@ -673,7 +718,9 @@ function goToOrder() {
     // 포인트 사용 정보
     const usePointInput = document.getElementById('use-point');
     const useAllPointCheck = document.getElementById('use-allpoint-check');
-    
+
+
+
     if (usePointInput) {
         const pointValue = parseInt(usePointInput.value) || 0;
         queryString += `&usePoint=${pointValue}`;

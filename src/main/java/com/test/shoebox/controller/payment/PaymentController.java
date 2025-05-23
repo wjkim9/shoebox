@@ -53,7 +53,8 @@ public class PaymentController {
         model.addAttribute("member", Map.of(
             "name", currentMember.getName(),
             "phone", currentMember.getContact(),
-            "email", currentMember.getEmail()
+            "email", currentMember.getEmail(),
+                "point", currentMember.getPoint()
         ));
 
         // 기본 배송지 정보를 모델에 추가
@@ -116,6 +117,35 @@ public class PaymentController {
             } catch (Exception e) {
                 log.error("결제 상태 조회 중 오류 발생", e);
                 return ResponseEntity.badRequest().body("결제 상태 조회 중 오류가 발생했습니다: " + e.getMessage());
+            }
+        }
+
+        @PostMapping("/verify")
+        public ResponseEntity<?> verifyPayment(@RequestBody Map<String, Object> request) {
+            try {
+                String impUid = (String) request.get("imp_uid");
+                String merchantUid = (String) request.get("merchant_uid");
+                BigDecimal amount = new BigDecimal(request.get("amount").toString());
+                Map<String, Object> orderData = (Map<String, Object>) request.get("orderData");
+
+                // 결제 검증
+                Payment payment = paymentService.verifyPayment(impUid, merchantUid, amount);
+                
+                // 결제 금액 검증
+                if (payment.getAmount().compareTo(amount) != 0) {
+                    throw new RuntimeException("결제 금액이 일치하지 않습니다.");
+                }
+
+                // 주문 처리
+                paymentService.processOrderCompletion(impUid, merchantUid, amount, orderData);
+
+                return ResponseEntity.ok(Map.of("status", "success"));
+            } catch (Exception e) {
+                log.error("결제 검증 중 오류 발생", e);
+                return ResponseEntity.badRequest().body(Map.of(
+                    "status", "error",
+                    "message", e.getMessage()
+                ));
             }
         }
 

@@ -4,11 +4,9 @@ import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
-import com.test.shoebox.entity.CartItem;
-import com.test.shoebox.entity.MemberGrade;
-import com.test.shoebox.repository.CartItemRepository;
+import com.test.shoebox.entity.*;
+import com.test.shoebox.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.test.shoebox.repository.MemberGradeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +28,12 @@ public class PaymentService {
 
     private final CartItemRepository cartItemRepository;
     private final MemberGradeRepository memberGradeRepository;
+    private final ProductStockRepository productStockRepository;
+    private final OrdersRepository ordersRepository;
+    private final ProductStockOrderRepository productStockOrderRepository;
+    private final IssuedCouponRepository issuedCouponRepository;
+    private final MembersRepository membersRepository;
+    private final PointTransactionRepository pointTransactionRepository;
 
     @Value("${imp.api.key}")
     private String apiKey;
@@ -47,6 +51,9 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public Map<String, Object> calculateOrderAmounts(List<Long> cartItemIds, String appliedCoupons, int usePoint, boolean useAllPoint) {
         List<CartItem> selectedItems = cartItemRepository.findAllById(cartItemIds);
+
+        // 사용할 포인트 금액 계산
+        final int usePointAmount = usePoint > 0 ? usePoint : 0;
 
         // 총 주문 금액 계산 (수량 고려)
         int totalAmount = selectedItems.stream()
@@ -111,20 +118,14 @@ public class PaymentService {
                         log.error("쿠폰 할인 계산 중 오류 발생", e);
                     }
                 }
-
-                // 사용 포인트 있으면 확인
-                int usePointAmount = 0;
-                if (usePoint > 0) {
-                    usePointAmount = usePoint;
-                }
                 
-                // 총 할인 금액 계산
-                return productDiscountAmount + couponDiscountAmount + memberDiscountAmount + usePointAmount;
+                // 총 할인 금액 계산 (포인트 제외)
+                return productDiscountAmount + couponDiscountAmount + memberDiscountAmount;
             })
             .sum();
         
         // 결제 예정 금액 계산 (포인트 할인 포함)
-        int finalAmount = totalAmount - totalDiscountAmount;
+        int finalAmount = totalAmount - totalDiscountAmount - usePointAmount;
 
         // CartItem을 Map으로 변환
         List<Map<String, Object>> selectedItemsMap = selectedItems.stream()
@@ -186,5 +187,95 @@ public class PaymentService {
             log.error("결제 상태 조회 중 오류 발생", e);
             throw new RuntimeException("결제 상태 조회 중 오류가 발생했습니다.", e);
         }
+    }
+
+    @Transactional
+    public void processOrderCompletion(String impUid, String merchantUid, BigDecimal amount, Map<String, Object> orderData) {
+        try {
+            // 1. 주문 정보 생성
+            Orders order = createOrder(orderData);
+            ordersRepository.save(order);
+
+            // 2. 상품 재고 감소 및 주문 상품 정보 저장
+            List<Long> cartItemIds = (List<Long>) orderData.get("cartItemIds");
+            for (Long cartItemId : cartItemIds) {
+                CartItem cartItem = cartItemRepository.findById(cartItemId)
+                    .orElseThrow(() -> new RuntimeException("장바구니 상품을 찾을 수 없습니다."));
+                
+                // 재고 감소
+                ProductStock productStock = cartItem.getProductStock();
+                productStock.setStockQuantity(productStock.getStockQuantity() - cartItem.getQuantity());
+                productStockRepository.save(productStock);
+
+                // 주문 상품 정보 저장
+                ProductStockOrder productStockOrder = ProductStockOrder.builder()
+                    .orders(order)
+                    .productStock(productStock)
+                    .quantity(cartItem.getQuantity())
+                    .orderPrice(cartItem.getProductStock().getProduct().getProductPrice())
+                    .build();
+                productStockOrderRepository.save(productStockOrder);
+            }
+
+            // 3. 사용한 쿠폰 삭제
+            Map<String, Object> appliedCoupons = (Map<String, Object>) orderData.get("appliedCoupons");
+            if (appliedCoupons != null) {
+                for (Object couponInfo : appliedCoupons.values()) {
+                    List<String> couponIds = (List<String>) ((Map<String, Object>) couponInfo).get("couponIds");
+                    for (String couponId : couponIds) {
+                        issuedCouponRepository.deleteById(Long.parseLong(couponId));
+                    }
+                }
+            }
+
+            // 4. 포인트 차감
+            Integer usePoint = (Integer) orderData.get("usePoint");
+            if (usePoint != null && usePoint > 0) {
+                Members member = membersRepository.findById((Long) orderData.get("membersId"))
+                    .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+                
+                member.setPoint(member.getPoint() - usePoint);
+                membersRepository.save(member);
+
+                // 포인트 사용 내역 기록
+                PointTransaction pointTransaction = PointTransaction.builder()
+                    .members(member)
+                    .transactionType("USE")
+                    .transactionPoint(-usePoint)
+                    .reason("주문 결제")
+                    .build();
+                pointTransactionRepository.save(pointTransaction);
+            }
+
+            // 5. 장바구니에서 주문한 상품 삭제
+            cartItemRepository.deleteAllById(cartItemIds);
+
+        } catch (Exception e) {
+            log.error("주문 처리 중 오류 발생", e);
+            throw new RuntimeException("주문 처리 중 오류가 발생했습니다.");
+        }
+    }
+
+    private Orders createOrder(Map<String, Object> orderData) {
+        Members member = membersRepository.findById((Long) orderData.get("membersId"))
+            .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다."));
+
+        return Orders.builder()
+            .ordersStatus(0) // 주문 상태: 결제 완료
+            .paymentAmount((Integer) orderData.get("totalAmount"))
+            .paymentPoint((Integer) orderData.get("usePoint"))
+            .shippingFee(0) // 무료 배송
+            .receiverName((String) orderData.get("receiverName"))
+            .receiverEmail((String) orderData.get("receiverEmail"))
+            .receiverContact((String) orderData.get("receiverPhone"))
+            .paymentMethod((String) orderData.get("paymentMethod"))
+            .paymentInfo((String) orderData.get("merchantUid"))
+            .destinationZipCode(Integer.parseInt((String) orderData.get("zipcode")))
+            .destinationRoadAddress((String) orderData.get("address"))
+            .destinationJibunAddress((String) orderData.get("address")) // 도로명 주소와 동일하게 설정
+            .destinationDetailAddress((String) orderData.get("detailAddress"))
+            .destinationReference((String) orderData.get("deliveryRequest"))
+            .members(member)
+            .build();
     }
 }

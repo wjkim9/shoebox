@@ -143,7 +143,7 @@
 						<span class="address-label">배송지 선택</span>
 						<div class="address-options">
 							<input type="radio" name="addrtype" id="addr1" class="addr-radio" checked> 
-							<label for="addr1" class="addr-label">기본배송지</label> 
+							<label for="addr1" class="addr-label" >기본배송지</label>
 							<input type="radio" name="addrtype" id="addr2" class="addr-radio"> 
 							<label for="addr2" class="addr-label">최근배송지</label> 
 							<input type="radio" name="addrtype" id="addr3" class="addr-radio"> 
@@ -154,19 +154,19 @@
 					<!-- 기본 배송지 정보 -->
 					<div id="defaultAddress" class="address-info">
 						<div class="form-row">
-							<label for="receiverName" class="required-label">이름</label>
-							<input type="text" id="receiverName" th:value="${defaultAddress.name}" placeholder="이름을 입력하세요.">
+							<label for="receiverName" class="required-label" >이름</label>
+							<input type="text" id="receiverName" th:value="${defaultAddress.name}" placeholder="이름을 입력하세요." readonly>
 						</div>
 						<div class="form-row">
 							<label for="receiverPhone" class="required-label">휴대폰번호</label>
-							<input type="tel" id="receiverPhone" th:value="${defaultAddress.phone}" placeholder="전화번호를 입력하세요.">
+							<input type="tel" id="receiverPhone" th:value="${defaultAddress.phone}" placeholder="전화번호를 입력하세요." readonly>
 						</div>
 						<div class="form-row">
 							<label for="zipcode" class="required-label">주소</label>
 							<div style="flex: 1;">
 								<div class="address-row">
 									<input type="text" class="zipcode-input" id="zipcode" th:value="${defaultAddress.zipcode}" placeholder="우편번호" readonly>
-									<button type="button" class="zipcode-btn" id="searchZipBtn">우편번호 찾기</button>
+									<button type="button" class="zipcode-btn" id="searchZipBtn" onclick="address()">우편번호 찾기</button>
 								</div>
 							</div>
 						</div>
@@ -184,18 +184,18 @@
 					<div id="recentAddress" class="address-info" style="display: none;">
 						<div class="form-row">
 							<label for="recentReceiverName" class="required-label">이름</label>
-							<input type="text" id="recentReceiverName" placeholder="이름을 입력하세요.">
+							<input type="text" id="recentReceiverName" placeholder="이름을 입력하세요." readonly>
 						</div>
 						<div class="form-row">
 							<label for="recentReceiverPhone" class="required-label">휴대폰번호</label>
-							<input type="tel" id="recentReceiverPhone" placeholder="전화번호를 입력하세요.">
+							<input type="tel" id="recentReceiverPhone" placeholder="전화번호를 입력하세요." readonly>
 						</div>
 						<div class="form-row">
 							<label for="recentZipcode" class="required-label">주소</label>
 							<div style="flex: 1;">
 								<div class="address-row">
 									<input type="text" class="zipcode-input" id="recentZipcode" placeholder="우편번호" readonly>
-									<button type="button" class="zipcode-btn" id="recentSearchZipBtn">우편번호 찾기</button>
+									<button type="button" class="zipcode-btn" id="recentSearchZipBtn" onclick="address()">우편번호 찾기</button>
 								</div>
 							</div>
 						</div>
@@ -213,18 +213,18 @@
 					<div id="newAddress" class="address-info" style="display: none;">
 						<div class="form-row">
 							<label for="newReceiverName" class="required-label">이름</label>
-							<input type="text" id="newReceiverName" placeholder="이름을 입력하세요.">
+							<input type="text" id="newReceiverName" th:value="${defaultAddress.name}" placeholder="이름을 입력하세요.">
 						</div>
 						<div class="form-row">
 							<label for="newReceiverPhone" class="required-label">휴대폰번호</label>
-							<input type="tel" id="newReceiverPhone" placeholder="전화번호를 입력하세요.">
+							<input type="tel" id="newReceiverPhone" th:value="${defaultAddress.phone}" placeholder="전화번호를 입력하세요.">
 						</div>
 						<div class="form-row">
 							<label for="newZipcode" class="required-label">주소</label>
 							<div style="flex: 1;">
 								<div class="address-row">
 									<input type="text" class="zipcode-input" id="newZipcode" placeholder="우편번호" readonly>
-									<button type="button" class="zipcode-btn" id="newSearchZipBtn">우편번호 찾기</button>
+									<button type="button" class="zipcode-btn" id="newSearchZipBtn" onclick="address()">우편번호 찾기</button>
 								</div>
 							</div>
 						</div>
@@ -271,8 +271,9 @@
 									<option value="연락">배송 전에 연락주세요.</option>
 									<option value="직접수령">직접 수령하겠습니다.</option>
 									<option value="직접입력">직접입력</option>
-								</select> <input type="text" class="req-input" id="req-input"
-									placeholder="요청사항을 입력하세요." disabled>
+								</select>
+								<input type="text" class="req-input" id="req-input"
+									placeholder="요청사항을 입력하세요.">
 							</div>
 						</div>
 					</div>
@@ -363,46 +364,103 @@
 
 	// 결제 구현
 	var IMP = window.IMP;
-		IMP.init('imp62156183'); // 아임포트 테스트 계정 식별코드
+	IMP.init('imp62156183'); // 아임포트 테스트 계정 식별코드
 
 	function requestPay() {
 		const merchantUid = 'order_' + new Date().getTime(); // 주문번호 생성
 
-		IMP.request_pay({
-		pg: "html5_inicis.INIpayTest",  // 이니시스 테스트 모드
-		pay_method: "card",
-		merchant_uid: merchantUid,
-		name: "ShoeBox",
-		amount: document.getElementsByClassName('total')[0].innerText.replace(/,/g, ''),
-		buyer_email: document.getElementById('buyerEmail').value,
-		buyer_name: document.getElementById('buyerName').value,
-		buyer_tel: document.getElementById('buyerPhone').value
-	}, function (rsp) {
-		if (rsp.success) {
-			// 결제 성공 시 백엔드 검증 요청
-			fetch(`/api/v1/payments/verify/${rsp.imp_uid}?merchant_uid=${merchantUid}&amount=${rsp.paid_amount}`)
-					.then(response => response.json())
-					.then(data => {
-						// 응답 구조가 달라졌으므로 이에 맞게 처리
-						if (data.status === 'paid' || data.status === 'ready') {
-							alert('결제가 완료되었습니다.');
-							// 결제 완료 후 결제 완료 창
-							window.location.href='/payment/payment_completed';
-						} else {
-							alert('결제 검증에 실패하였습니다.');
-							// 결제 실패 시 장바구니로 돌아가기
-							window.location.href='/payment/orderlist';
-						}
-					})
+		// 주문 정보 수집
+		const orderData = {
+			merchantUid: merchantUid,
+			// 주문자 정보
+			buyerName: document.getElementById('buyerName').value,
+			buyerPhone: document.getElementById('buyerPhone').value,
+			buyerEmail: document.getElementById('buyerEmail').value,
+			// 배송지 정보
+			selectedAddrType: document.querySelector('input[name="addrtype"]:checked').id,
+			receiverName: document.getElementById('receiverName').value,
+			receiverPhone: document.getElementById('receiverPhone').value,
+			zipcode: document.getElementById('zipcode').value,
+			address: document.querySelector('#defaultAddress input[placeholder="기본주소"]').value,
+			detailAddress: document.querySelector('#defaultAddress input[placeholder="상세주소 입력"]').value,
+			// 배송 요청사항
+			deliveryRequest: document.getElementById('req-select').value === '직접입력' ? 
+				document.getElementById('req-input').value : 
+				document.getElementById('req-select').value,
+			// 결제 정보
+			paymentMethod: document.querySelector('.pay-btn.selected').textContent,
+			totalAmount: parseInt(document.getElementById('total').getAttribute('data-value')),
+			// 상품 정보
+			cartItemIds: Array.from(document.querySelectorAll('.product-row')).map(row => 
+				row.getAttribute('data-cart-item-id')
+			),
+			// 쿠폰 정보
+			appliedCoupons: getAppliedCoupons()
+		};
 
-					.catch(error => {
-				console.error('결제 검증 중 오류 발생:', error);
-				alert('결제 검증 중 오류가 발생했습니다.');
-			});
-		} else {
-			alert(`결제에 실패하였습니다. 에러 메시지: ${rsp.error_msg}`);
-		}
-	});
+		IMP.request_pay({
+			pg: "html5_inicis.INIpayTest",
+			pay_method: "card",
+			merchant_uid: merchantUid,
+			name: "ShoeBox",
+			amount: document.getElementsByClassName('total')[0].innerText.replace(/,/g, ''),
+			buyer_email: document.getElementById('buyerEmail').value,
+			buyer_name: document.getElementById('buyerName').value,
+			buyer_tel: document.getElementById('buyerPhone').value
+		}, function (rsp) {
+			if (rsp.success) {
+				// 결제 성공 시 백엔드 검증 및 주문 처리 요청
+				fetch('/api/v1/payments/verify', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						imp_uid: rsp.imp_uid,
+						merchant_uid: merchantUid,
+						amount: rsp.paid_amount,
+						orderData: orderData
+					})
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.status === 'success') {
+						alert('결제가 완료되었습니다.');
+						window.location.href = '/payment/payment_completed';
+					} else {
+						alert('주문 처리 중 오류가 발생했습니다.');
+						window.location.href = '/payment/orderlist';
+					}
+				})
+				.catch(error => {
+					console.error('주문 처리 중 오류 발생:', error);
+					alert('주문 처리 중 오류가 발생했습니다.');
+					window.location.href = '/payment/orderlist';
+				});
+			} else {
+				alert(`결제에 실패하였습니다. 에러 메시지: ${rsp.error_msg}`);
+			}
+		});
+	}
+
+	// 적용된 쿠폰 정보 수집 함수
+	function getAppliedCoupons() {
+		const coupons = {};
+		document.querySelectorAll('.product-row').forEach(row => {
+			const cartItemId = row.getAttribute('data-cart-item-id');
+			const couponBtn = row.querySelector('.cart-coupon-btn');
+			if (couponBtn) {
+				const couponIds = couponBtn.getAttribute('data-coupon-id');
+				const discountRates = couponBtn.getAttribute('data-coupon-discount-rate');
+				if (couponIds && discountRates) {
+					coupons[cartItemId] = {
+						couponIds: couponIds.split(','),
+						discountRates: discountRates.split(',')
+					};
+				}
+			}
+		});
+		return coupons;
 	}
 
 	// 주소 api 관련
@@ -438,18 +496,31 @@
 					if(extraAddr !== ''){
 						extraAddr = ' (' + extraAddr + ')';
 					}
-					// 조합된 참고항목을 해당 필드에 넣는다.
-					document.getElementById("sample6_extraAddress").value = extraAddr;
-				
+				}
+
+				// 현재 선택된 배송지 타입에 따라 적절한 필드에 값을 넣는다
+				const selectedAddrType = document.querySelector('input[name="addrtype"]:checked').id;
+				let zipcodeField, addressField, detailAddressField;
+
+				if (selectedAddrType === 'addr1') {
+					zipcodeField = document.getElementById('zipcode');
+					addressField = document.querySelector('#defaultAddress input[placeholder="기본주소"]');
+					detailAddressField = document.querySelector('#defaultAddress input[placeholder="상세주소 입력"]');
+				} else if (selectedAddrType === 'addr2') {
+					zipcodeField = document.getElementById('recentZipcode');
+					addressField = document.querySelector('#recentAddress input[placeholder="기본주소"]');
+					detailAddressField = document.querySelector('#recentAddress input[placeholder="상세주소 입력"]');
 				} else {
-					document.getElementById("sample6_extraAddress").value = '';
+					zipcodeField = document.getElementById('newZipcode');
+					addressField = document.querySelector('#newAddress input[placeholder="기본주소"]');
+					detailAddressField = document.querySelector('#newAddress input[placeholder="상세주소 입력"]');
 				}
 
 				// 우편번호와 주소 정보를 해당 필드에 넣는다.
-				document.getElementById('sample6_postcode').value = data.zonecode;
-				document.getElementById("sample6_address").value = addr;
+				zipcodeField.value = data.zonecode;
+				addressField.value = addr + extraAddr;
 				// 커서를 상세주소 필드로 이동한다.
-				document.getElementById("sample6_detailAddress").focus();
+				detailAddressField.focus();
 			}
 		}).open();
 	}
