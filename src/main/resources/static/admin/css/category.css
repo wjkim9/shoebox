@@ -118,6 +118,15 @@ body {
 }
 
 /* 수정/삭제 버튼 스타일 */
+.brand-category-list .move-btn {
+  background: var(--primary-light);
+  width: 180px;
+  color: #fff;
+}
+.brand-category-list .move-btn:hover {
+  background: var(--primary-dark);
+}
+
 .brand-category-list .edit-btn {
   background: var(--primary-color);
   color: #fff;

@@ -20,8 +20,8 @@
                 <img th:src="${cat.picName != null} ? @{/admin/images/{img}(img=${cat.picName})} : 'https://via.placeholder.com/100x50?text=Logo'">
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <span class="brand-name" th:text="${cat.categoriesName}"></span>
+                <button type="button" class="move-btn" onclick="window.location.href='/main/category'">쇼핑몰 카테고리 이동</button>
                 <button type="button" class="edit-btn" th:attr="data-id=${cat.categoriesId}">수정</button>
-                
                 <button type="button" class="delete-btn" th:attr="data-id=${cat.categoriesId}">삭제</button>
             </li>
         </ul>

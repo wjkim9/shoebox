@@ -45,28 +45,54 @@ public class AdminCategoryController {
 
 	@PostMapping("/upload")
 	@ResponseBody
-	public String uploadFile(
-	    @RequestParam("file") MultipartFile file,
-	    @RequestParam(value = "categoriesId", required = false) Long categoriesId
-	) throws IOException {
-	    String uploadDir = "src/main/resources/static/admin/images";
-	    Path dirPath = Paths.get(uploadDir);
-	    if (!Files.exists(dirPath)) {
-	        Files.createDirectories(dirPath);
-	    }
-	    String fileName;
-	    if (categoriesId != null) {
-	        fileName = categoriesId + "_" + file.getOriginalFilename();
-	    } else {
-	        fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-	    }
-	    Path savePath = dirPath.resolve(fileName);
-	    Files.copy(file.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
-	    System.out.println("location:" + savePath);
-	    return fileName;
+	public String uploadFile(@RequestParam("file") MultipartFile file,
+			@RequestParam(value = "categoriesId", required = false) Long categoriesId) throws IOException {
+		String uploadDir = "src/main/resources/static/admin/images";
+		Path dirPath = Paths.get(uploadDir);
+		if (!Files.exists(dirPath)) {
+			Files.createDirectories(dirPath);
+		}
+		String fileName;
+		if (categoriesId != null) {
+			fileName = categoriesId + "_" + file.getOriginalFilename();
+		} else {
+			fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+		}
+		Path savePath = dirPath.resolve(fileName);
+		Files.copy(file.getInputStream(), savePath, StandardCopyOption.REPLACE_EXISTING);
+		System.out.println("location:" + savePath);
+		return fileName;
 	}
 
+	@PostMapping("/update")
+	@ResponseBody
+	public String updateCategory(@RequestParam("id") Long id, @RequestParam("categoriesName") String categoriesName,
+			@RequestParam(value = "picName", required = false) String picName) {
+		Categories category = categoriesService.findById(id).orElseThrow(() -> new IllegalArgumentException("카테고리 없음"));
+		category.setCategoriesName(categoriesName);
 
+		// 이미지가 수정되지 않았으면 기존 이미지 파일명 유지
+		if (picName != null && !picName.trim().isEmpty()) {
+			category.setPicName(picName);
+		}
+		// else: 기존 picName 유지
+
+		categoriesService.save(category);
+		return "success";
+	}
+
+	@DeleteMapping("/delete/{id}")
+	@ResponseBody
+	public String deleteCategory(@PathVariable("id") Long id) {
+		try {
+			categoriesService.deleteById(id);
+			return "success";
+		} catch (EmptyResultDataAccessException e) {
+			return "not_found";
+		} catch (Exception e) {
+			return "fail";
+		}
+	}
 
 	@PostMapping("/save")
 	public String saveCategory(@RequestParam("categoriesName") String categoriesName,
@@ -77,42 +103,4 @@ public class AdminCategoryController {
 		categoriesService.save(category);
 		return "redirect:/admin/category/brandcategory";
 	}
-	
-	@PostMapping("/update")
-	@ResponseBody
-	public String updateCategory(
-	    @RequestParam("id") Long id,
-	    @RequestParam("categoriesName") String categoriesName,
-	    @RequestParam(value = "picName", required = false) String picName
-	) {
-	    Categories category = categoriesService.findById(id)
-	        .orElseThrow(() -> new IllegalArgumentException("카테고리 없음"));
-	    category.setCategoriesName(categoriesName);
-
-	    // 이미지가 수정되지 않았으면 기존 이미지 파일명 유지
-	    if (picName != null && !picName.trim().isEmpty()) {
-	        category.setPicName(picName);
-	    }
-	    // else: 기존 picName 유지
-
-	    categoriesService.save(category);
-	    return "success";
-	}
-
-
-
-
-	@DeleteMapping("/delete/{id}")
-	@ResponseBody
-	public String deleteCategory(@PathVariable("id") Long id) {
-	    try {
-	        categoriesService.deleteById(id);
-	        return "success";
-	    } catch (EmptyResultDataAccessException e) {
-	        return "not_found";
-	    } catch (Exception e) {
-	        return "fail";
-	    }
-	}
-
 }
