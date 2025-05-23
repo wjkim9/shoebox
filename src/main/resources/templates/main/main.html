@@ -3,24 +3,42 @@
 	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head>
-<link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
 <meta charset="UTF-8">
 <title>Sheobox</title>
-<style>
-</style>
+<!-- jQuery 먼저 로드 -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
+<link rel="stylesheet" th:href="@{/member/css/shoebox_2.css}">
+<th:block th:replace="main/fragments/main-common :: style"></th:block>
+<th:block th:replace="main/fragments/launches :: style"></th:block>
+<th:block th:replace="main/fragments/curation :: style"></th:block>
+<th:block th:replace="main/fragments/new-items :: style"></th:block>
+<th:block th:replace="main/fragments/recommended-brands :: style"></th:block>
 </head>
 <body>
 	
 	
 	<th:block th:replace="~{inc/header.html :: header}"></th:block>
-	<div id="main_box">
-	<h1>메인화면</h1>
-	</div>
-	
+
+
+	<!-- LAUNCHES -->
+	<th:block th:replace="main/fragments/launches :: content"></th:block>
+
+	<!-- CURATION -->
+	<th:block th:replace="main/fragments/curation :: content"></th:block>
+
+	<!-- 신상템 -->
+	<th:block th:replace="main/fragments/new-items :: content"></th:block>
+
+	<!-- 추천 브랜드 -->
+	<th:block th:replace="main/fragments/recommended-brands :: content"></th:block>
+
 	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
-	<script>
-		
-	</script>
+
+<script th:replace="main/fragments/launches :: script"></script>
+<script th:replace="main/fragments/curation :: script"></script>
+<script th:replace="main/fragments/recommended-brands :: script"></script>
+
 </body>
 </html>
 

@@ -4,20 +4,53 @@
     <style th:fragment="style">
         /* 추천 브랜드 섹션 */
         .recommended-brands {
-            background: #f8f8f8;
-            padding: 40px 0;
+            position: relative;
             margin: 0;
             max-width: none;
+            margin-bottom: 100px;  /* footer와의 간격 */
+        }
+
+        .recommended-brands::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 350px;
+            background: url('/common/images/sample4.jpg') no-repeat center;
+            background-size: cover;
+        }
+
+        .recommended-brands::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
             position: relative;
+            padding-top: 40px;
+            margin-bottom: 20px;
+            z-index: 2;
         }
 
         .brand-navigation {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px;
-            padding: 0;
+            padding: 0 60px;
             position: relative;
+            z-index: 2;
+            margin-bottom: 60px;
         }
 
         .brand-names {
@@ -39,47 +72,92 @@
             padding: 5px 15px;
             cursor: pointer;
             white-space: nowrap;
-            color: #666;
+            color: #fff;
             font-size: 14px;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+        .brand-nav-item:hover {
+            opacity: 1;
         }
 
         .brand-nav-item.active {
-            color: #000;
+            color: #fff;
             font-weight: bold;
+            opacity: 1;
         }
 
         .nav-prev, .nav-next {
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255,255,255,0.8);
-            border: none;
-            width: 40px;
-            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 16px;
             z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: #fff;
         }
 
-        .nav-prev { left: 20px; }
-        .nav-next { right: 20px; }
+        .nav-prev:hover, .nav-next:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .nav-prev { left: 10px; }
+        .nav-next { right: 10px; }
+
+        .brand-content {
+            position: relative;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 10px;
+            margin-top: -60px;
+            z-index: 12;
+            min-height: 400px;  /* 최소 높이 설정 */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 30px;
+        }
 
         .brand-products {
             display: flex;
             gap: 20px;
-            padding: 0 20px;
-            max-width: 1200px;
             margin: 0 auto;
-            overflow-x: auto;
+            position: relative;
+            justify-content: center;
+            min-height: 200px;  /* 최소 높이 설정 */
+            flex-wrap: wrap;
         }
 
         .product-item {
-            flex: 0 0 auto;
-            width: calc(25% - 15px);
+            flex: 0 0 calc(25% - 15px);
+            min-height: 300px;  /* 최소 높이 설정 */
             background: white;
             border-radius: 0;
             overflow: hidden;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .product-item:hover {
+            transform: translateY(-5px);
         }
 
         .product-item img {
@@ -90,6 +168,7 @@
 
         .product-info {
             padding: 15px;
+            background: white;
         }
 
         .product-info .name {
@@ -100,128 +179,203 @@
 
         .price-info {
             margin: 5px 0;
-        }
-
-
-        .product-tags {
-            display: flex;
-            gap: 5px;
-            margin-top: 8px;
-        }
-
-        .tag {
-            display: inline-block;
-            padding: 3px 8px;
-            font-size: 12px;
-            border: 1px solid #ddd;
-            border-radius: 2px;
-            color: #666;
-        }
-
-        .brand-logo {
-            width: 200px;
-            margin: 0 auto 20px;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 24px;
+            color: #333;
             font-weight: bold;
-            margin-bottom: 20px;
+        }
+
+        .brand-products-container {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            min-height: 300px;  /* 최소 높이 설정 */
+        }
+
+        .brand-products-container.active {
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
         }
     </style>
 </head>
 <body>
-    <section th:fragment="content" class="recommended-brands">
+    <section th:fragment="content" class="recommended-brands" >
         <h2 class="section-title">추천 브랜드</h2>
         <div class="brand-navigation">
             <button class="nav-prev">&lt;</button>
             <div class="brand-names">
-                <span class="brand-nav-item">NIKE</span>
-                <span class="brand-nav-item">ADIDAS</span>
-                <span class="brand-nav-item">NEW BALANCE</span>
-                <span class="brand-nav-item">VANS</span>
-                <span class="brand-nav-item active">SKECHERS</span>
-                <span class="brand-nav-item">CONVERSE</span>
-                <span class="brand-nav-item">ARC'TERYX</span>
-                <span class="brand-nav-item">MLBEVO</span>
-                <span class="brand-nav-item">STEFANOROSSI</span>
+                <span class="brand-nav-item active" data-brand="nike">NIKE</span>
+                <span class="brand-nav-item" data-brand="adidas">ADIDAS</span>
+                <span class="brand-nav-item" data-brand="newbalance">NEW BALANCE</span>
+                <span class="brand-nav-item" data-brand="vans">VANS</span>
+                <span class="brand-nav-item" data-brand="skechers">SKECHERS</span>
+                <span class="brand-nav-item" data-brand="converse">CONVERSE</span>
+                <span class="brand-nav-item" data-brand="arcteryx">ARC'TERYX</span>
+                <span class="brand-nav-item" data-brand="mlbevo">MLBEVO</span>
+                <span class="brand-nav-item" data-brand="stefanorossi">STEFANOROSSI</span>
             </div>
             <button class="nav-next">&gt;</button>
         </div>
         <div class="brand-content">
-            <img class="brand-logo" src="/common/images/23732_1712905511772.jpg" alt="SKECHERS">
-            <div class="brand-products">
-                <div class="product-item">
-                    <img src="/common/images/23732_1712905511772.jpg" alt="스케쳐스 샌들">
-                    <div class="product-info">
-                        <div class="name">맥스 쿠셔닝 S-V.2</div>
-                        <div class="price-info">
-                            <span class="price">69,000원</span>
-                        </div>
-                        <div class="product-tags">
-                            <span class="tag">쿠폰</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="product-item">
-                    <img src="/common/images/23732_1712905511772.jpg" alt="스케쳐스 샌들">
-                    <div class="product-info">
-                        <div class="name">맥스 쿠셔닝 엣지</div>
-                        <div class="price-info">
-                            <span class="price">59,000원</span>
-                        </div>
-                        <div class="product-tags">
-                            <span class="tag">쿠폰</span>
+            <!-- NIKE -->
+            <div class="brand-products-container active" data-brand="nike">
+                <div class="brand-name">NIKE</div>
+                
+                <div class="brand-products">
+                    <div class="product-item" onclick="window.location.href='/main/detailpage'">
+                        <img src="/common/images/nike/COURT SHOT (5).jpg" alt="나이키 운동화">
+                        <div class="product-info">
+                            <div class="name">나이키 에어맥스 97</div>
+                            <div class="price-info">
+                                <span class="price">219,000원</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="product-item">
-                    <img src="/common/images/23732_1712905511772.jpg" alt="스케쳐스 운동화">
-                    <div class="product-info">
-                        <div class="name">고 워크 조이</div>
-                        <div class="price-info">
-                            <span class="price">89,000원</span>
-                        </div>
-                        <div class="product-tags">
-                            <span class="tag">쿠폰</span>
+                    <div class="product-item" onclick="window.location.href='/main/detailpage'">
+                        <img src="/common/images/nike/NIKE AIR MAX EXCEE 365 (3).jpg" alt="나이키 운동화">
+                        <div class="product-info">
+                            <div class="name">나이키 덩크 로우</div>
+                            <div class="price-info">
+                                <span class="price">139,000원</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="product-item">
-                    <img src="/common/images/23732_1712905511772.jpg" alt="스케쳐스 운동화">
-                    <div class="product-info">
-                        <div class="name">맥스 쿠셔닝 프로</div>
-                        <div class="price-info">
-                            <span class="price">159,000원</span>
+                    <div class="product-item" onclick="window.location.href='/main/detailpage'">
+                        <img src="/common/images/23732_1712905511772.jpg" alt="나이키 운동화">
+                        <div class="product-info">
+                            <div class="name">나이키 에어포스 1</div>
+                            <div class="price-info">
+                                <span class="price">159,000원</span>
+                            </div>
                         </div>
-                        <div class="product-tags">
-                            <span class="tag">쿠폰</span>
+                    </div>
+                    <div class="product-item" onclick="window.location.href='/main/detailpage'">
+                        <img src="/common/images/nike/NIKE AIR MAX NUAXIS (2).jpg" alt="나이키 운동화">
+                        <div class="product-info">
+                            <div class="name">나이키 조던 1</div>
+                            <div class="price-info">
+                                <span class="price">229,000원</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- ADIDAS -->
+            <div class="brand-products-container" data-brand="adidas">
+                <div class="brand-name">ADIDAS</div>
+                <div class="brand-products">
+                
+                    <div class="product-item" onclick="window.location.href='/main/detailpage'">
+                        <img src="/common/images/23732_1712905511772.jpg" alt="아디다스 운동화">
+                        <div class="product-info">
+                            <div class="name">아디다스 삼바</div>
+                            <div class="price-info">
+                                <span class="price">139,000원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-item" onclick="window.location.href='/main/detailpage'">
+                        <img src="/common/images/23732_1712905511772.jpg" alt="아디다스 운동화">
+                        <div class="product-info">
+                            <div class="name">아디다스 가젤</div>
+                            <div class="price-info">
+                                <span class="price">129,000원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-item"onclick="window.location.href='/main/detailpage'">
+                        <img src="/common/images/23732_1712905511772.jpg" alt="아디다스 운동화">
+                        <div class="product-info">
+                            <div class="name">아디다스 슈퍼스타</div>
+                            <div class="price-info">
+                                <span class="price">119,000원</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-item" onclick="window.location.href='/main/detailpage'">
+                        <img src="/common/images/23732_1712905511772.jpg" alt="아디다스 운동화">
+                        <div class="product-info">
+                            <div class="name">아디다스 스탠스미스</div>
+                            <div class="price-info">
+                                <span class="price">109,000원</span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- 다른 브랜드들의 컨테이너도 비슷한 구조로 추가(수정 할 때 불편할까봐 추가 X) -->
+
         </div>
     </section>
 
     <script th:fragment="script">
-        // 추천 브랜드 네비게이션
-        $('.brand-nav-item').click(function() {
-            $('.brand-nav-item').removeClass('active');
-            $(this).addClass('active');
-        });
+        $(document).ready(function() {
+            const brandItems = $('.brand-nav-item');
+            let currentBrandIndex = 0;
 
-        // 브랜드 네비게이션 스크롤
-        $('.nav-prev').click(function() {
-            $('.brand-names').animate({
-                scrollLeft: '-=100'
-            }, 300);
-        });
+            // 브랜드 네비게이션
+            function updateBrand(index) {
+                // 인덱스 순환
+                if (index < 0) {
+                    index = brandItems.length - 1;
+                } else if (index >= brandItems.length) {
+                    index = 0;
+                }
+                currentBrandIndex = index;
 
-        $('.nav-next').click(function() {
-            $('.brand-names').animate({
-                scrollLeft: '+=100'
-            }, 300);
+                // 현재 브랜드 활성화
+                const currentBrand = brandItems.eq(currentBrandIndex);
+                brandItems.removeClass('active');
+                currentBrand.addClass('active');
+
+                // 해당 브랜드의 상품 컨테이너 표시
+                const targetBrand = currentBrand.data('brand');
+                $('.brand-products-container').removeClass('active');
+                $(`.brand-products-container[data-brand="${targetBrand}"]`).addClass('active');
+            }
+
+            // 브랜드 클릭 이벤트
+            $('.brand-nav-item').click(function() {
+                const clickedIndex = brandItems.index(this);
+                updateBrand(clickedIndex);
+            });
+
+            // 브랜드 자동 순환
+            function startBrandRotation() {
+                return setInterval(function() {
+                    updateBrand(currentBrandIndex + 1);
+                }, 3000);
+            }
+
+            let brandInterval = startBrandRotation();
+
+            // 마우스 오버시 자동 순환 멈춤
+            $('.brand-navigation, .brand-products-container').hover(
+                function() {
+                    clearInterval(brandInterval);
+                },
+                function() {
+                    brandInterval = startBrandRotation();
+                }
+            );
+
+            // 브랜드 네비게이션 스크롤
+            const brandNames = $('.brand-names');
+            const scrollAmount = 200;
+
+            $('.nav-prev').on('click', function(e) {
+                e.preventDefault();
+                updateBrand(currentBrandIndex - 1);
+            });
+
+            $('.nav-next').on('click', function(e) {
+                e.preventDefault();
+                updateBrand(currentBrandIndex + 1);
+            });
+
+            // 초기 브랜드 설정
+            updateBrand(0);
         });
     </script>
 </body>

@@ -16,7 +16,6 @@ public class AdminHomepageController {
     /** 리뷰 관리 페이지 */
     @GetMapping("/review")
     public String reviewManagement(Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
-        // TODO: Model에 리뷰 리스트, 페이징 정보 등 추가
         List<Map<String, Object>> reviews = new ArrayList<>();
 
         // 첫 번째 리뷰

@@ -1,0 +1,239 @@
+:root {
+  --primary-color: #4361ee;
+  --primary-light: #4895ef;
+  --primary-dark: #3f37c9;
+  --danger-color: #e63946;
+  --success-color: #38b000;
+  --warning-color: #ffb703;
+  --text-color: #333;
+  --text-light: #555;
+  --text-lighter: #777;
+  --background-color: #f8f9fa;
+  --border-color: #e0e0e0;
+  --border-radius: 8px;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --transition: all 0.2s ease;
+  --header-height: 60px;
+}
+
+/* 기본 스타일 */
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+/* 레이아웃 컨테이너 */
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 페이지 헤더 */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.page-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* 카테고리 추가 버튼 */
+.category_addbtn {
+  width: 150px;
+  height: 40px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--primary-color);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-right: 20px;
+  transition: background 0.2s;
+}
+.category_addbtn:hover {
+  background: var(--primary-dark);
+}
+
+/* 브랜드 리스트 */
+.brand-list-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+}
+
+.brand-category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.brand-category-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f7f8fa;
+  border-radius: 7px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  font-size: 1.1rem;
+  width: 1180px;
+  border-bottom: 1px solid var(--border-color);
+}
+.brand-category-list li img{
+	width: 50px;
+}
+
+.brand-name {
+  flex: 1;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-right: 16px;
+}
+
+/* 리스트 내 버튼 공통 */
+.brand-category-list button {
+  margin-left: 8px;
+  width: 100px;
+  padding: 6px 14px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+/* 수정/삭제 버튼 스타일 */
+.brand-category-list .move-btn {
+  background: var(--primary-light);
+  width: 180px;
+  color: #fff;
+}
+.brand-category-list .move-btn:hover {
+  background: var(--primary-dark);
+}
+
+.brand-category-list .edit-btn {
+  background: var(--primary-color);
+  color: #fff;
+}
+.brand-category-list .edit-btn:hover {
+  background: var(--primary-light);
+}
+.brand-category-list .delete-btn {
+  background: var(--danger-color);
+  color: #fff;
+}
+.brand-category-list .delete-btn:hover {
+  background: #d32f2f;
+}
+
+/* 모달 스타일 */
+.modal-bg {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.35);
+  justify-content: center;
+  align-items: center;
+}
+.modal-bg.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 10px;
+  padding: 32px 28px 24px 28px;
+  width: 450px;
+  max-height: 700px;
+  min-width: 340px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.13);
+}
+
+/* 폼 스타일 */
+#editBrandForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#editBrandForm label {
+  width: 100%;
+  margin-bottom: 16px;
+  font-size: 1rem;
+}
+
+#editBrandForm input[type="file"]{
+	 margin-left: 8px;
+  padding: 6px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+}
+
+#editBrandForm input[type="text"],
+#editBrandForm select {
+  margin-left: 8px;
+  padding: 6px;
+  border: 1px solid #bbb;
+  border-radius: 5px;
+  width: 300px;
+}
+
+/* 버튼 영역 */
+.form-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  width: 100%;
+}
+
+#editBrandForm button[type="submit"],
+#editBrandForm button[type="button"] {
+  width: 100px;
+  padding: 8px 18px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#editBrandForm button[type="submit"] {
+  background: var(--primary-color);
+  color: #fff;
+}
+#editBrandForm button[type="submit"]:hover {
+  background: var(--primary-dark);
+}
+#editBrandForm button[type="button"] {
+  background: #eee;
+  color: #333;
+}
+
+/* 이미지 미리보기 */
+#brandImgPreview {
+  display: block;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  max-width: 150px;
+}

@@ -24,23 +24,20 @@ import lombok.Setter;
 @Builder
 public class Categories {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_seq_generator")
-    @SequenceGenerator(name = "categories_seq_generator", sequenceName = "categories_seq", allocationSize = 1)
-    @Column(name = "categories_id")
-    private Long categoriesId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "categories_seq_generator")
+	@SequenceGenerator(name = "categories_seq_generator", sequenceName = "categories_seq", allocationSize = 1)
+	@Column(name = "categories_id")
+	private Long categoriesId;
 
-    @Column(name = "categories_name", nullable = false, length = 100)
-    private String categoriesName;
+	@Column(name = "categories_name", nullable = false, length = 100)
+	private String categoriesName;
 
-    @Column(name = "pic_name", length = 200)
-    private String picName;
+	@Column(name = "pic_name", length = 200)
+	private String picName;
 
-    public CategoriesDTO toDTO() {
-        return CategoriesDTO.builder()
-                .categoriesId(this.categoriesId)
-                .categoriesName(this.categoriesName)
-                .picName(this.picName)
-                .build();
-    }
+	public CategoriesDTO toDTO() {
+		return CategoriesDTO.builder().categoriesId(this.categoriesId).categoriesName(this.categoriesName)
+				.picName(this.picName).build();
+	}
 }
