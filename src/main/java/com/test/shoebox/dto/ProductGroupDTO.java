@@ -21,6 +21,7 @@ public class ProductGroupDTO {
     public ProductGroup toEntity() {
         return ProductGroup.builder()
                 .productGroupId(this.productGroupId)
+                .productGroupName(this.productGroupName)
                 .build();
     }
 }
