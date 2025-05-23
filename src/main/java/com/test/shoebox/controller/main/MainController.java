@@ -80,12 +80,15 @@ public class MainController {
 
 	@GetMapping("/")
 	public String main(Model model) {
+		
+		int offset = 0;
+		int fetchSize = 8;
 
 		//메인 배너
 		List<MainBanner> banner = mainBannerRepository.findAllByOrderBySortOrder();
 		
 		//당월 신상템
-		List<ProductImage> newProductList = listProductService.getNewProductList(LocalDateTime.now());
+		List<ProductImage> newProductList = listProductService.getNewProductList(LocalDateTime.now(), offset, fetchSize);
 		
 		//큐레이션
 		// 
@@ -94,7 +97,7 @@ public class MainController {
 		//추천 브랜드
 		//임시 브랜드 설정
 		String brandName[] = {"Nike", "FILA", "Converse", "Adidas", "CROCS", "Discovery", "New balance", "asics"};
-		int fetchSize = 8;
+		
 		
 		List<Map<String, Object>> rcmdPrdtList = new ArrayList<>();
 		
@@ -105,7 +108,7 @@ public class MainController {
 				Map<String, Object> itemList = new HashMap<>();
 				
 				itemList.put("brandName", brand.get().getBrandName());
-				itemList.put("productList", listProductService.getRecommendProductList(brand.get(), fetchSize));
+				itemList.put("productList", listProductService.getRecommendProductList(brand.get(), offset, fetchSize));
 				
 				rcmdPrdtList.add(itemList);
 			}
@@ -143,7 +146,8 @@ public class MainController {
 		@RequestParam(value = "search", required = false, defaultValue = "0") Integer search,
 		@RequestParam(value = "searchWord", required = false) String searchWord,
 		@RequestParam(value = "menu", required = false) String menu,
-		@RequestParam(value = "filter", required = false) Integer filter
+		@RequestParam(value = "filter", required = false) Integer filter,
+		@RequestParam(value = "newItem", required = false) Integer newItem
 		
 	) {
 		
@@ -179,7 +183,7 @@ public class MainController {
 			pageRequest = PageRequest.of(pageable.getPageNumber(), 20, Sort.by(Direction.DESC, "postDate"));
 		}
 		
-		
+		Optional<Integer> optNewItem = Optional.ofNullable(newItem);
 		
 		
 		//필터로 보여줄 항목
@@ -252,7 +256,7 @@ public class MainController {
 		
 		
 		//상품목록
-		Page<ProductListDTO> productList = listProductService.getProductList(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord);
+		Page<ProductListDTO> productList = listProductService.getProductList(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord, optNewItem);
 		
 		for(int i=0; i<productList.getTotalPages(); i++) {
 			sb.append(sbForQueryString.toString().formatted(i, sbForSort, i+1));
@@ -301,6 +305,8 @@ public class MainController {
 		
 		//메뉴 진입 경로
 		model.addAttribute("menu", menu);
+		
+		model.addAttribute("newItem", newItem);
 		
 		//페이지네이션
 		model.addAttribute("sb", sb);

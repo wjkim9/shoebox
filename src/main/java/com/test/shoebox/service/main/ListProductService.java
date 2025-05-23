@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -39,20 +40,20 @@ public class ListProductService {
 
 
 	//당월 신상품
-	public List<ProductImage> getNewProductList(LocalDateTime now) {
+	public List<ProductImage> getNewProductList(LocalDateTime now, Integer offset, Integer fetchSize) {
 		
 		LocalDateTime startTime = now.with(firstDayOfMonth()).with(LocalTime.MIN); // 당월 1일 00:00:00
 		LocalDateTime endTime = now.with(lastDayOfMonth()).with(LocalTime.MAX); // 당월 마지막날 23:59:59
 		
-		List<ProductImage> newProductImageList = customRepository.findProductByDatetime(startTime, endTime);
+		List<ProductImage> newProductImageList = customRepository.findProductByDatetime(startTime, endTime, offset, fetchSize);
 		
 		return newProductImageList;
 	}
 	
 	//추천 브랜드 상품(인기상품 -> 조회수)
-	public List<ProductImage> getRecommendProductList(Brand brand, Integer maxFetch) {
+	public List<ProductImage> getRecommendProductList(Brand brand, Integer offset, Integer maxFetch) {
 		
-		List<ProductImage> rcmdPrdtList = customRepository.findByProductImageByBrand(brand, maxFetch);
+		List<ProductImage> rcmdPrdtList = customRepository.findByProductImageByBrand(brand, offset ,maxFetch);
 		
 		return rcmdPrdtList;
 	}
@@ -60,7 +61,7 @@ public class ListProductService {
 	
 	//상품 목록
 	public Page<ProductListDTO> getProductList(PageRequest pageRequest, String targetCustomerType, Long categoriesId,
-			Long brandId, Integer startPrice, Integer endPrice, Integer search, String searchWord) {
+			Long brandId, Integer startPrice, Integer endPrice, Integer search, String searchWord, Optional<Integer> newItem) {
 		
 		String orderProperty = "";
 		
@@ -77,7 +78,7 @@ public class ListProductService {
 			
 			if(orderProperty.equals("quantity")) {
 				
-				tuple = customRepository.findProductImageByBest(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord);
+				tuple = customRepository.findProductImageByBest(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord, newItem);
 				
 				for(Tuple item : tuple.getContent()) {
 					ProductListDTO dto = new ProductListDTO();
@@ -94,7 +95,7 @@ public class ListProductService {
 				}
 				
 			} else {
-				tuple = customRepository.findProductImageByReviewCount(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord);
+				tuple = customRepository.findProductImageByReviewCount(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord, newItem);
 				
 				for(Tuple item : tuple.getContent()) {
 					ProductListDTO dto = new ProductListDTO();
@@ -118,7 +119,7 @@ public class ListProductService {
 			
 			
 		} else {
-			Page<ProductImage> page = customRepository.findProductPage(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord);
+			Page<ProductImage> page = customRepository.findProductPage(pageRequest, targetCustomerType, categoriesId, brandId, startPrice, endPrice, search, searchWord, newItem);
 			
 			dtoList = new ArrayList<>();
 			
