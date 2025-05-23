@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{admin/admin_layout}">
+<head>
+</head>
+<body>
+
+	<!-- 실제로 삽입되는 부분 -->
+	<section layout:fragment="content" th:fragment="content">
+		<!-- 페이지 전용 CSS -->
+		<link rel="stylesheet" th:href="@{/admin/css/category.css}" />
+
+		<div class="admin-container" style="margin-top: var(--header-height);">
+			<div class="page-header">
+				<h2>신발 종류 카테고리</h2>
+		    </div>
+		</div>
+
+				<!-- 페이지 전용 JS -->
+				<script th:src="@{/admin/js/page-specific.js}"></script>
+	</section>
+
+</body>
+</html>

@@ -29,6 +29,7 @@ public class ProductGroup {
     @SequenceGenerator(name = "productgroup_seq_generator", sequenceName = "productgroup_seq", allocationSize = 1)
     @Column(name = "productgroup_id")
     private Long productGroupId;
+    private String productGroupName;
 
     public ProductGroupDTO toDTO() {
         return ProductGroupDTO.builder()
