@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout.html}">
+	 <body>
+	  <main layout:fragment="content">
+		<link rel="stylesheet" th:href="@{/admin/css/member-detail.css}"/>
+	      <div class="detail-container" style="margin-top: var(--header-height);">
+			
+	          <div class="page-header">
+	              <h2>회원 상세 정보</h2>
+	          </div>
+
+	          <!-- 기본 정보 -->
+	          <div class="detail-section">
+	              <h3 class="section-title">기본 정보</h3>
+	              <table class="info-table">
+	                  <tr>
+	                      <th>회원번호</th>
+	                      <td th:text="${memberDetail.memberInfo.membersId}">1</td>
+	                      <th>아이디</th>
+	                      <td th:text="${memberDetail.memberInfo.accountName}">user123</td>
+	                  </tr>
+	                  <tr>
+	                      <th>이름</th>
+	                      <td th:text="${memberDetail.memberInfo.name}">홍길동</td>
+	                      <th>닉네임</th>
+	                      <td th:text="${memberDetail.memberInfo.nickname}">길동이</td>
+	                  </tr>
+	                  <tr>
+	                      <th>이메일</th>
+	                      <td th:text="${memberDetail.memberInfo.email}">test@example.com</td>
+	                      <th>연락처</th>
+	                      <td th:text="${memberDetail.memberInfo.contact}">010-1234-5678</td>
+	                  </tr>
+	                  <tr>
+	                      <th>발 사이즈</th>
+						  <td th:text="${memberDetail.memberInfo.footSize != null ? #numbers.formatInteger(memberDetail.memberInfo.footSize, 1, 'NONE') : '-'}">250</td>
+
+	                      <th>포인트</th>
+	                      <td th:text="${memberDetail.memberInfo.point}">1000</td>
+	                  </tr>
+	                  <tr>
+	                      <th>가입일</th>
+	                      <td th:text="${#temporals.format(memberDetail.memberInfo.joinDatetime, 'yyyy-MM-dd HH:mm')}">2024-05-19</td>
+	                      <th>회원상태</th>
+	                      <td>
+	                          <span th:class="'status-badge ' + (${memberDetail.memberInfo.isDeleted} == 0 ? 'status-payment_complete' : 'status-canceled')"
+	                                th:text="${memberDetail.memberInfo.isDeleted == 0 ? '정상' : '탈퇴'}">정상</span>
+	                      </td>
+	                  </tr>
+	                  <tr>
+	                      <th>회원등급</th>
+	                      <td th:text="${memberDetail.memberInfo.gradeName}">Bronze</td>
+	                      <th></th>
+	                      <td></td>
+	                  </tr>
+	              </table>
+	          </div>
+
+	          <!-- 배송지 정보 -->
+	          <div class="detail-section">
+	              <h3 class="section-title">배송지 정보</h3>
+	              <div th:if="${memberDetail.addresses.isEmpty()}" class="no-data">
+	                  주소 정보가 없습니다.
+	              </div>
+	              <div th:unless="${memberDetail.addresses.isEmpty()}">
+	                  <table class="data-table">
+	                      <thead>
+	                          <tr>
+	                              <th>우편번호</th>
+	                              <th>도로명주소</th>
+	                              <th>상세주소</th>
+	                              <th>참고항목</th>
+	                          </tr>
+	                      </thead>
+	                      <tbody>
+	                          <tr th:each="address : ${memberDetail.addresses}">
+	                              <td th:text="${address.zipCode}">12345</td>
+	                              <td th:text="${address.roadAddress}">서울시 강남구 테헤란로 123</td>
+	                              <td th:text="${address.detailAddress}">456호</td>
+	                              <td th:text="${address.addressReference}">빌딩 뒤</td>
+	                          </tr>
+	                      </tbody>
+	                  </table>
+	              </div>
+	          </div>
+
+	          <!-- 포인트 거래내역 -->
+	          <div class="detail-section">
+	              <h3 class="section-title">포인트 거래내역</h3>
+	              <div th:if="${memberDetail.pointTransactions.isEmpty()}" class="no-data">
+	                  포인트 거래내역이 없습니다.
+	              </div>
+	              <div th:unless="${memberDetail.pointTransactions.isEmpty()}">
+	                  <table class="data-table">
+	                      <thead>
+	                          <tr>
+	                              <th>거래유형</th>
+	                              <th>포인트</th>
+	                              <th>사유</th>
+	                              <th>거래일시</th>
+	                          </tr>
+	                      </thead>
+	                      <tbody>
+	                          <tr th:each="transaction : ${memberDetail.pointTransactions}">
+	                              <td th:text="${transaction.transactionType}">적립</td>
+	                              <td th:text="${transaction.transactionPoint}">1000</td>
+	                              <td th:text="${transaction.reason}">구매 적립</td>
+	                              <td th:text="${#temporals.format(transaction.transactionDatetime, 'yyyy-MM-dd HH:mm')}">2024-05-19 14:30</td>
+	                          </tr>
+	                      </tbody>
+	                  </table>
+	              </div>
+	          </div>
+
+	          <!-- 쿠폰 정보 -->
+	          <div class="detail-section">
+	              <h3 class="section-title">보유 쿠폰</h3>
+	              <div th:if="${memberDetail.issuedCoupons.isEmpty()}" class="no-data">
+	                  보유중인 쿠폰이 없습니다.
+	              </div>
+	              <div th:unless="${memberDetail.issuedCoupons.isEmpty()}">
+	                  <table class="data-table">
+	                      <thead>
+	                          <tr>
+	                              <th>쿠폰명</th>
+	                              <th>할인률</th>
+	                              <th>최소주문금액</th>
+	                              <th>최대할인금액</th>
+	                              <th>발급일시</th>
+	                              <th>만료일시</th>
+	                          </tr>
+	                      </thead>
+	                      <tbody>
+	                          <tr th:each="coupon : ${memberDetail.issuedCoupons}">
+	                              <td th:text="${coupon.couponName}">신규가입 쿠폰</td>
+	                              <td th:text="${coupon.discountRate + '%'}">10%</td>
+	                              <td th:text="${coupon.minPrice != null ? coupon.minPrice + '원' : '-'}">10000원</td>
+	                              <td th:text="${coupon.maxDiscountPrice != null ? coupon.maxDiscountPrice + '원' : '-'}">5000원</td>
+	                              <td th:text="${#temporals.format(coupon.issueDatetime, 'yyyy-MM-dd HH:mm')}">2024-05-19 14:30</td>
+	                              <td th:text="${#temporals.format(coupon.expireDatetime, 'yyyy-MM-dd HH:mm')}">2024-06-19 14:30</td>
+	                          </tr>
+	                      </tbody>
+	                  </table>
+	              </div>
+	          </div>
+
+	          <!-- 채팅 내역 -->
+	          <!--<div class="detail-section">
+	              <h3 class="section-title">상담 채팅</h3>
+	              <div th:if="${memberDetail.chatMessages.isEmpty()}" class="no-data">
+	                  상담채팅이 없습니다.
+	              </div>
+	              <div th:unless="${memberDetail.chatMessages.isEmpty()}">
+	                  <table class="data-table">
+	                      <thead>
+	                          <tr>
+	                              <th>내용</th>
+	                              <th>작성자</th>
+	                              <th>발신일시</th>
+	                          </tr>
+	                      </thead>
+	                      <tbody>
+	                          <tr th:each="message : ${memberDetail.chatMessages}">
+	                              <td th:text="${message.content}">안녕하세요. 문의 드립니다.</td>
+	                              <td th:text="${message.writerClassify == 0 ? '시스템' : (message.writerClassify == 1 ? '회원' : '관리자')}">회원</td>
+	                              <td th:text="${#temporals.format(message.sendDatetime, 'yyyy-MM-dd HH:mm')}">2024-05-19 14:30</td>
+	                          </tr>
+	                      </tbody>
+	                  </table>
+	              </div>
+	          </div>-->
+			  
+			  <!-- 상담 채팅 -->
+			  <div class="detail-section">
+			    <h3 class="section-title">상담 채팅</h3>
+			    <div th:if="${memberDetail.chatMessages.isEmpty()}" class="no-data">
+			      상담채팅이 없습니다.
+			    </div>
+			    <div th:unless="${memberDetail.chatMessages.isEmpty()}">
+			      <div class="chat-box">
+			        <div th:each="message : ${memberDetail.chatMessages}"
+			             class="chat-message"
+			             th:classappend="${message.writerClassify == 2} ? ' admin' : 
+			                             (${message.writerClassify == 1} ? ' user' : ' system')">
+			          <div class="chat-bubble">
+			            <div class="chat-meta">
+			              <span th:text="${message.writerClassify == 2 ? '관리자' : (message.writerClassify == 1 ? '회원' : '시스템')}">작성자</span>
+			              <span class="chat-time" th:text="${#temporals.format(message.sendDatetime, 'yyyy-MM-dd HH:mm')}">2025-05-10 14:30</span>
+			            </div>
+			            <div class="chat-content" th:text="${message.content}">안녕하세요. 문의드립니다.</div>
+			          </div>
+			        </div>
+			      </div>
+			    </div>
+			  </div>
+
+
+
+	          <!-- 버튼 영역 -->
+	          <div class="btn-container">
+	              <a th:href="@{/admin/member/edit/{id}(id=${memberDetail.memberInfo.membersId})}" class="btn btn-primary">회원 정보 수정</a>
+	              <a th:href="@{/admin/member/member-list}" class="btn btn-secondary">목록으로</a>
+	          </div>
+	      </div>
+	  </main>
+	  </body>
+	  </html>

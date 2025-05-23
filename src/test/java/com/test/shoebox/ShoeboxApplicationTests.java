@@ -1,30 +1,26 @@
 package com.test.shoebox;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
-import java.sql.Connection;
-
-import javax.sql.DataSource;
-
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.sql.DataSource;
+import java.sql.Connection;
+
 @SpringBootTest
-public class ShoeboxApplicationTests {
-   
-   @Autowired
-   private DataSource dataSource;
-   
-   @Test
-   public void testDataSource() throws Exception {
-      
-      assertNotNull(dataSource);
-      
-      Connection conn = dataSource.getConnection();
-      
-      assertEquals(false, conn.isClosed());
-      
-   }
+class ShoeboxApplicationTests {
+
+	@Autowired
+	private DataSource dataSource;
+
+	@Test
+	void DatabaseConnectionTest() throws Exception {
+		try (Connection conn = dataSource.getConnection()) {
+			System.out.println("연결 성공! DB URL: " + conn.getMetaData().getURL());
+			Assertions.assertNotNull(conn);
+		}
+	}
+
+
 }
