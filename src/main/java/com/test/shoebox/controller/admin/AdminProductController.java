@@ -66,7 +66,7 @@ public class AdminProductController {
         redirectAttributes.addFlashAttribute("successMessage", "상품이 성공적으로 등록되었습니다.");
 
         // 상세 페이지로 리다이렉트
-        return "redirect:/admin/product/detail" + savedProduct.getProductId();
+        return "redirect:/admin/product/detail/" + savedProduct.getProductId();
     }
 
     @GetMapping("/product/detail/{id}")

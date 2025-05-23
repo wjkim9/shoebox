@@ -33,13 +33,13 @@ public class AdminCategoryController {
 	private CategoriesService categoriesService;
 
 	@GetMapping("/brandcategory")
-	public String brandcategory(Model model,
-			@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+	public String brandcategory(Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
 		List<Categories> categories = categoriesService.findAll();
 		model.addAttribute("categories", categories);
 		if ("XMLHttpRequest".equals(requestedWith)) {
 			return "admin/category/brandcategory :: content";
 		}
+
 		return "admin/category/brandcategory";
 	}
 

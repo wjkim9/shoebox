@@ -208,7 +208,7 @@
         <div class="page-header">
             <h2>상품 상세보기</h2>
             <div>
-                <a th:href="@{/admin/product/products}" class="btn btn-outline">
+                <a th:href="@{/admin/product/list}" class="btn btn-outline">
                     <i class="fas fa-list"></i> 상품 목록
                 </a>
                 <a th:href="@{/admin/product/edit/{id}(id=${product.productId})}" class="btn btn-primary">
@@ -359,7 +359,7 @@
             <a th:href="@{/admin/product/edit/{id}(id=${product.productId})}" class="btn btn-primary">
                 <i class="fas fa-edit"></i> 수정하기
             </a>
-            <a th:href="@{/admin/product/products}" class="btn btn-cancel">
+            <a th:href="@{/admin/product/list}" class="btn btn-cancel">
                 <i class="fas fa-arrow-left"></i> 목록으로
             </a>
         </div>
