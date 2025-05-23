@@ -28,6 +28,8 @@ public class IssuedCouponDTO {
 
     private Long membersId;
     
+    private CouponDTO coupon;
+
     public IssuedCoupon toEntity(Members members, Coupon coupon) {
         return IssuedCoupon.builder()
                 .issuedCouponId(this.issuedCouponId)

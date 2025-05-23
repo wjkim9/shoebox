@@ -7,6 +7,52 @@
 <link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
 <link rel="stylesheet" th:href="@{/member/css/shoebox_2.css}">
 <style>
+	/* 크롬, 사파리, 엣지, 오페라 */
+	input[type=number]::-webkit-inner-spin-button,
+	input[type=number]::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+
+	/* 파이어폭스 */
+	input[type=number] {
+		-moz-appearance: textfield;
+	}
+
+	#use-point {
+		margin-right: 10px;
+		width: 100px;
+		height: 30px;
+		border: 1px solid #ccc;
+		border-radius: 3px;
+		text-align: right;
+		font-size: 14px;
+		font-weight: 700;
+		color: #444;
+	}
+
+	.address-select-row {
+		display: flex;
+		align-items: center;
+		margin-bottom: 20px;
+	}
+	.address-label {
+		width: 100px;
+		font-weight: 500;
+		margin-right: 10px;
+	}
+	.address-options {
+		display: flex;
+		align-items: center;
+		gap: 15px;
+		padding-left: 100px;
+	}
+	.addr-radio {
+		margin-right: 3px;
+	}
+	.addr-label {
+		font-weight: normal;
+	}
 </style>
 </head>
 <body>
@@ -21,6 +67,8 @@
 		<div style="font-size: 1.5em; font-weight: 700;">주문서작성/결제</div>
 		<!-- 2. 주문리스트 -->
 		<div style="font-size: 1.15em ; position: relative; top: 35px; font-weight: 700;">주문
+
+
 			리스트</div>
 		<button class="order-edit-btn" onclick="window.location.href='/mypage/cart'">주문정보수정</button>
 		<div class="product-list">
@@ -30,39 +78,44 @@
 				<div style="width: 60px; text-align: center;">수량</div>
 				<div style="width: 110px; text-align: right;">상품금액</div>
 				<div style="width: 80px; text-align: center;">배송비</div>
-
 			</div>
-			<div class="product-row">
+			<!-- 3. 구매 상품 가격 및 정보 리스트 -->
+			<div class="product-row" th:each="item : ${selectedItems}">
 				<img class="product-img"
-					src="https://codingapple1.github.io/shop/shoes1.jpg" alt="나이키">
-				<div class="product-info">
-					<div class="product-name">나이키 NIKE MOTIVA</div>
-					<div class="product-desc">260/1개</div>
-				</div>
-				<div class="product-qty">1개</div>
-				<div class="product-price">77,000원</div>
-				<div class="product-ship">무료배송</div>
-			</div>
-			<div class="product-row">
+					th:if="${not #lists.isEmpty(item.productStock.product.productImages)}"
+					th:src="@{'/common/images/' + ${item.productStock.product.productImages[0].fileName}}"
+					alt="product-image">
 				<img class="product-img"
-					src="https://codingapple1.github.io/shop/shoes2.jpg" alt="아디다스">
+					th:unless="${not #lists.isEmpty(item.productStock.product.productImages)}"
+					src="/common/images/default.png"
+					alt="default-image">
 				<div class="product-info">
-					<div class="product-name">아디다스 VL COURT BASE</div>
-					<div class="product-desc">250/1개</div>
+					<div class="product-name" th:text="${item.productStock.product.productName}"></div>
+					<div class="product-desc" th:text="${item.productStock.shoeSize + '/' + item.quantity + '개'}"></div>
 				</div>
-				<div class="product-qty">1개</div>
-				<div class="product-price">69,000원</div>
+				<div class="product-qty" th:text="${item.quantity + '개'}"></div>
+				<div class="product-price" th:text="${#numbers.formatInteger(item.quantity * item.productStock.product.productPrice, 3, 'COMMA') + '원'}"></div>
 				<div class="product-ship">무료배송</div>
 			</div>
 			<!-- 4. 결제 정보 센터 정렬 -->
 			<div class="summary-row">
-				<span class="summary-item"> 주문금액 <b>198,000원</b>
-				</span> <img src="/member/images/substract.png" class="summary-icon"
-					style="position: relative; top: 2px;" alt="substract"> <span
-					class="summary-item"> 총 할인금액 <b>52,000원</b>
-				</span> <img src="/member/images/equal.png" class="summary-icon" alt="equal"
+				<span class="summary-item"> 주문금액 <b id="total-product-price" th:text="${totalAmount != 0 ? #numbers.formatInteger(totalAmount, 3, 'COMMA') + '원' : '0원'}"
+													th:attr="data-value=${totalAmount != null ? totalAmount : 0}"></b>
+				</span>
+				<img src="/member/images/substract.png" class="summary-icon"
+					style="position: relative; top: 2px;" alt="substract">
+				<span
+					class="summary-item"> 총 할인금액<b id="discount"
+												   th:text="${totalDiscountAmount != 0 ? #numbers.formatInteger(totalDiscountAmount, 3, 'COMMA') + '원' : '0원'}"
+												   th:attr="data-value=${totalDiscountAmount != null ? totalDiscountAmount : 0}">
+</b>
+				</span>
+				<img src="/member/images/equal.png" class="summary-icon" alt="equal"
 					style="position: relative; top: 2px;"> <span
-					class="summary-item total"> 결제예정금액 <b class="total">146,000원</b>
+					class="summary-item total"> 결제예정금액 <b id="total" class="total"
+					th:text="${finalAmount != 0 ? #numbers.formatInteger(finalAmount, 3, 'COMMA') + '원' : '0원'}"
+					th:attr="data-value=${finalAmount != null ? finalAmount : 0}">
+				 </b>
 				</span>
 			</div>
 
@@ -70,56 +123,145 @@
 				<div class="customer-form">
 					<div class="form-title">주문 고객정보</div>
 					<div class="section-divider"></div>
+					<!-- 주문 고객 정보 -->
 					<div class="form-row">
-						<label for="name" class="required-label">이름</label> <input
-							type="text" id="name" placeholder="이름을 입력하세요." required>
+						<label for="buyerName" class="required-label">이름</label>
+						<input type="text" id="buyerName" th:value="${member.name}" placeholder="이름을 입력하세요." required>
 					</div>
 					<div class="form-row">
-						<label for="phone" class="required-label">휴대폰번호</label> <input
-							type="tel" id="phone" placeholder="전화번호를 입력하세요." required>
+						<label for="buyerPhone" class="required-label">휴대폰번호</label>
+						<input type="tel" id="buyerPhone" th:value="${member.phone}" placeholder="전화번호를 입력하세요." required>
 					</div>
 					<div class="form-row">
-						<label for="email" class="required-label">이메일</label> <input
-							type="text" id="email" placeholder="이메일 주소를 입력하세요." required>
+						<label for="buyerEmail" class="required-label">이메일</label>
+						<input type="text" id="buyerEmail" th:value="${member.email}" placeholder="이메일 주소를 입력하세요." required>
 					</div>
 					<div class="form-title" style="margin-top: 24px;">배송 정보</div>
 					<div class="section-divider"></div>
 					<!-- 5. 배송지 선택 체크박스(라디오) -->
 					<div class="address-select-row">
-						<label for="addselect">배송지 선택</label>
-						<input type="radio" name="addrtype" id="addr1" class="addr-radio" checked> 
-						<label for="addr1" class="addr-label">기본배송지</label> 
-						<input type="radio" name="addrtype" id="addr2" class="addr-radio"> 
-						<label for="addr2" class="addr-label">최근배송지</label> 
-						<input type="radio" name="addrtype" id="addr3" class="addr-radio"> 
-						<label for="addr3" class="addr-label">신규입력</label>
-					</div>
-					<div class="form-row">
-						<label for="name" class="required-label">이름</label> <input
-							type="text" id="name" placeholder="이름을 입력하세요.">
-					</div>
-					<div class="form-row">
-						<label for="phone" class="required-label">휴대폰번호</label> <input
-							type="tel" id="phone" placeholder="전화번호를 입력하세요.">
-					</div>
-					<div class="form-row">
-						<label for="zipcode" class="required-label">주소</label>
-						<div style="flex: 1;">
-							<div class="address-row">
-								<input type="text" class="zipcode-input" id="zipcode"
-									placeholder="우편번호" readonly>
-								<button type="button" class="zipcode-btn" id="searchZipBtn">우편번호
-									찾기</button>
-							</div>
-							<!-- 필요하다면 아래에 주소, 상세주소 input 추가 -->
+						<span class="address-label">배송지 선택</span>
+						<div class="address-options">
+							<input type="radio" name="addrtype" id="addr1" class="addr-radio" checked> 
+							<label for="addr1" class="addr-label">기본배송지</label> 
+							<input type="radio" name="addrtype" id="addr2" class="addr-radio"> 
+							<label for="addr2" class="addr-label">최근배송지</label> 
+							<input type="radio" name="addrtype" id="addr3" class="addr-radio"> 
+							<label for="addr3" class="addr-label">신규입력</label>
 						</div>
 					</div>
-					<div class="form-row">
-						<label></label> <input type="text" placeholder="상세주소 입력" required>
+
+					<!-- 기본 배송지 정보 -->
+					<div id="defaultAddress" class="address-info">
+						<div class="form-row">
+							<label for="receiverName" class="required-label">이름</label>
+							<input type="text" id="receiverName" th:value="${defaultAddress.name}" placeholder="이름을 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="receiverPhone" class="required-label">휴대폰번호</label>
+							<input type="tel" id="receiverPhone" th:value="${defaultAddress.phone}" placeholder="전화번호를 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="zipcode" class="required-label">주소</label>
+							<div style="flex: 1;">
+								<div class="address-row">
+									<input type="text" class="zipcode-input" id="zipcode" th:value="${defaultAddress.zipcode}" placeholder="우편번호" readonly>
+									<button type="button" class="zipcode-btn" id="searchZipBtn">우편번호 찾기</button>
+								</div>
+							</div>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" th:value="${defaultAddress.address}" placeholder="기본주소" readonly>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" th:value="${defaultAddress.detailAddress}" placeholder="상세주소 입력" required>
+						</div>
 					</div>
+
+					<!-- 최근 배송지 정보 -->
+					<div id="recentAddress" class="address-info" style="display: none;">
+						<div class="form-row">
+							<label for="recentReceiverName" class="required-label">이름</label>
+							<input type="text" id="recentReceiverName" placeholder="이름을 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="recentReceiverPhone" class="required-label">휴대폰번호</label>
+							<input type="tel" id="recentReceiverPhone" placeholder="전화번호를 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="recentZipcode" class="required-label">주소</label>
+							<div style="flex: 1;">
+								<div class="address-row">
+									<input type="text" class="zipcode-input" id="recentZipcode" placeholder="우편번호" readonly>
+									<button type="button" class="zipcode-btn" id="recentSearchZipBtn">우편번호 찾기</button>
+								</div>
+							</div>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" placeholder="기본주소" readonly>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" placeholder="상세주소 입력" required>
+						</div>
+					</div>
+
+					<!-- 신규 입력 -->
+					<div id="newAddress" class="address-info" style="display: none;">
+						<div class="form-row">
+							<label for="newReceiverName" class="required-label">이름</label>
+							<input type="text" id="newReceiverName" placeholder="이름을 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="newReceiverPhone" class="required-label">휴대폰번호</label>
+							<input type="tel" id="newReceiverPhone" placeholder="전화번호를 입력하세요.">
+						</div>
+						<div class="form-row">
+							<label for="newZipcode" class="required-label">주소</label>
+							<div style="flex: 1;">
+								<div class="address-row">
+									<input type="text" class="zipcode-input" id="newZipcode" placeholder="우편번호" readonly>
+									<button type="button" class="zipcode-btn" id="newSearchZipBtn">우편번호 찾기</button>
+								</div>
+							</div>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" placeholder="기본주소" readonly>
+						</div>
+						<div class="form-row">
+							<label></label>
+							<input type="text" placeholder="상세주소 입력" required>
+						</div>
+					</div>
+
+					<script>
+						// 배송지 선택에 따른 폼 표시/숨김 처리
+						document.querySelectorAll('input[name="addrtype"]').forEach(radio => {
+							radio.addEventListener('change', function() {
+								// 모든 배송지 정보 숨기기
+								document.querySelectorAll('.address-info').forEach(div => {
+									div.style.display = 'none';
+								});
+								
+								// 선택된 배송지 정보 표시
+								if (this.id === 'addr1') {
+									document.getElementById('defaultAddress').style.display = 'block';
+								} else if (this.id === 'addr2') {
+									document.getElementById('recentAddress').style.display = 'block';
+								} else if (this.id === 'addr3') {
+									document.getElementById('newAddress').style.display = 'block';
+								}
+							});
+						});
+					</script>
+
 					<!-- 6. 배송요청사항 -->
 					<div class="form-row">
-						<label for="req">배송요청사항</label>
+						<label for="req-select">배송요청사항</label>
 						<div style="flex: 1;">
 							<div class="req-row">
 								<select class="req-select" id="req-select">
@@ -168,6 +310,8 @@
 		<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
 </body>
 
+<!-- 주소 api -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <!-- jQuery -->
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <!-- iamport.payment.js -->
@@ -217,7 +361,6 @@
 });
 
 
-
 	// 결제 구현
 	var IMP = window.IMP;
 		IMP.init('imp62156183'); // 아임포트 테스트 계정 식별코드
@@ -229,29 +372,30 @@
 		pg: "html5_inicis.INIpayTest",  // 이니시스 테스트 모드
 		pay_method: "card",
 		merchant_uid: merchantUid,
-		name: "테스트 상품",
-		amount: 500,
-		buyer_email: "test@test.com",
-		buyer_name: "테스트",
-		buyer_tel: "010-1234-5678"
+		name: "ShoeBox",
+		amount: document.getElementsByClassName('total')[0].innerText.replace(/,/g, ''),
+		buyer_email: document.getElementById('buyerEmail').value,
+		buyer_name: document.getElementById('buyerName').value,
+		buyer_tel: document.getElementById('buyerPhone').value
 	}, function (rsp) {
 		if (rsp.success) {
 			// 결제 성공 시 백엔드 검증 요청
 			fetch(`/api/v1/payments/verify/${rsp.imp_uid}?merchant_uid=${merchantUid}&amount=${rsp.paid_amount}`)
-			.then(response => response.json())
-			.then(data => {
-				if (data.status === 'paid') {
-					alert('결제가 완료되었습니다.');
-					// 결제 완료 후 결제 완료 창
-					window.location.href='/payment/payment_completed';
-				} else {
-					alert('결제 검증에 실패하였습니다.');
-					// 결제 실패 시 장바구니로 돌아가기
-					window.location.href='/payment/orderlist';
-					
-				}
-			})
-			.catch(error => {
+					.then(response => response.json())
+					.then(data => {
+						// 응답 구조가 달라졌으므로 이에 맞게 처리
+						if (data.status === 'paid' || data.status === 'ready') {
+							alert('결제가 완료되었습니다.');
+							// 결제 완료 후 결제 완료 창
+							window.location.href='/payment/payment_completed';
+						} else {
+							alert('결제 검증에 실패하였습니다.');
+							// 결제 실패 시 장바구니로 돌아가기
+							window.location.href='/payment/orderlist';
+						}
+					})
+
+					.catch(error => {
 				console.error('결제 검증 중 오류 발생:', error);
 				alert('결제 검증 중 오류가 발생했습니다.');
 			});
@@ -261,6 +405,55 @@
 	});
 	}
 
-  </script>
+	// 주소 api 관련
+	function address() {
+		new daum.Postcode({
+			oncomplete: function(data) {
+				// 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+				// 각 주소의 노출 규칙에 따라 주소를 조합한다.
+				// 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+				var addr = ''; // 주소 변수
+				var extraAddr = ''; // 참고항목 변수
+
+				//사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+				if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+					addr = data.roadAddress;
+				} else { // 사용자가 지번 주소를 선택했을 경우(J)
+					addr = data.jibunAddress;
+				}
+
+				// 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+				if(data.userSelectedType === 'R'){
+					// 법정동명이 있을 경우 추가한다. (법정리는 제외)
+					// 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+					if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+						extraAddr += data.bname;
+					}
+					// 건물명이 있고, 공동주택일 경우 추가한다.
+					if(data.buildingName !== '' && data.apartment === 'Y'){
+						extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+					}
+					// 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+					if(extraAddr !== ''){
+						extraAddr = ' (' + extraAddr + ')';
+					}
+					// 조합된 참고항목을 해당 필드에 넣는다.
+					document.getElementById("sample6_extraAddress").value = extraAddr;
+				
+				} else {
+					document.getElementById("sample6_extraAddress").value = '';
+				}
+
+				// 우편번호와 주소 정보를 해당 필드에 넣는다.
+				document.getElementById('sample6_postcode').value = data.zonecode;
+				document.getElementById("sample6_address").value = addr;
+				// 커서를 상세주소 필드로 이동한다.
+				document.getElementById("sample6_detailAddress").focus();
+			}
+		}).open();
+	}
+
+</script>
 
 </html>

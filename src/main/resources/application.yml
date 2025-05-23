@@ -54,7 +54,7 @@ spring:
 imp:
   api:
     key: ${IMP_API_KEY:2533415357437111}
-    secretkey: ${IMP_API_SECRET:Bj6n7XUXmEl7lEY0NdaUhL8WliAf2q88Zva1dcNGXY7w5SiKzxbSZ7OiyQeXNR8fRZgD10DnpZrP9zsT}
+    secret: ${IMP_API_SECRET:Bj6n7XUXmEl7lEY0NdaUhL8WliAf2q88Zva1dcNGXY7w5SiKzxbSZ7OiyQeXNR8fRZgD10DnpZrP9zsT}
 
 # MyBatis 설정
 mybatis:

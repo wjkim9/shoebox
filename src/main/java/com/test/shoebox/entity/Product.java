@@ -76,6 +76,10 @@ public class Product {
     private List<ProductStock> productStock = new ArrayList<>();
     
 
+    @OneToMany(mappedBy = "product")
+    private List<ProductImage> productImages;
+
+
     public ProductDTO toDTO() {
         return ProductDTO.builder()
                 .productId(this.productId)
@@ -98,4 +102,3 @@ public class Product {
     }
 
 }
-
