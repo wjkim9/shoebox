@@ -119,6 +119,7 @@
       <div class="panel-header">
         <h3>상품 목록</h3>
         <div class="order-count">
+   <!--<span th:text="'총 ' + ${products.size()} + '개'">총 0개</span>-->
           <span th:text="'총 ' + ${#lists.size(products)} + '개'">총 0개</span>
           <select class="form-select" id="sortOption" name="sort" style="margin-left: 15px;">
             <option value="createdAt_desc" th:selected="${param.sort == 'createdAt_desc'}">최신순</option>
@@ -133,7 +134,12 @@
         <table class="order-table">
           <thead>
           <tr>
-
+            <th>
+              <label class="checkbox-label">
+                <input type="checkbox" id="selectAll">
+                <span class="checkmark"></span>
+              </label>
+            </th>
             <!--<th>이미지</th>-->
             <th>상품명</th>
             <th>브랜드</th>
@@ -151,8 +157,13 @@
           </tr>
 
           <tr th:each="product : ${products}" th:id="'product-' + ${product.productId}">
-
-
+            <td>
+              <label class="checkbox-label">
+                <input type="checkbox" class="product-checkbox" th:value="${product.productId}">
+                <span class="checkmark"></span>
+              </label>
+            </td>
+            ...
 
 
 
@@ -174,7 +185,7 @@
             <td class="price-info">
               <span th:text="${#numbers.formatInteger(product.productPrice, 0, 'COMMA')} + '원'"></span>
 
-
+              <
               <div class="text-light" th:if="${product.discountRate > 0}" th:text="${product.discountRate + '% 할인'}">10% 할인</div>
             </td>
             <td>
@@ -196,11 +207,14 @@
             <a th:href="@{'/admin/product/edit/' + ${product.productId}}" class="btn btn-icon btn-outline">
               <i class="fas fa-edit"></i>
             </a>
-
+            <button type="button" class="btn btn-icon btn-outline delete-product-btn"
+                    th:data-id="${product.productId}" th:data-name="${product.productName}">
+              <i class="fas fa-trash-alt"></i>
+            </button>
           </tr>
 
 
-          </td>
+            </td>
           </tr>
           </tbody>
         </table>
@@ -302,57 +316,58 @@
     </div>
   </div>-->
 
-      <!-- 상품 삭제 모달 -->
-      <div id="deleteModal" class="modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4>상품 삭제</h4>
-            <span class="close-modal">&times;</span>
-          </div>
-          <div class="modal-body">
-            <p>다음 상품을 정말 삭제하시겠습니까?</p>
-            <p id="deleteProductName" class="selected-orders-info"></p>
-            <div class="modal-actions">
-              <button type="button" id="confirmDelete" class="btn btn-primary">삭제</button>
-              <button type="button" id="cancelDelete" class="btn btn-cancel close-modal-btn">취소</button>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- 상품 삭제 모달 -->
 
-      <!-- 상태 일괄 변경 모달 -->
-      <div id="batchStatusModal" class="modal">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h4>상품 상태 일괄 변경</h4>
-            <span class="close-modal">&times;</span>
-          </div>
-          <div class="modal-body">
-            <form id="batchStatusForm">
-              <div class="form-group">
-                <label for="batchProductStatus">변경할 상태</label>
-                <select class="form-select" id="batchProductStatus" name="status" required>
-                  <option value="">상태 선택</option>
-                  <option value="ACTIVE">판매중</option>
-                  <option value="SOLD_OUT">품절</option>
-                  <option value="HIDDEN">숨김</option>
-                  <option value="DISCONTINUED">판매중지</option>
-                </select>
-              </div>
-              <div class="selected-orders-info">
-                <p>선택된 상품: <span id="selectedProductCount">0</span>개</p>
-              </div>
-              <div class="modal-actions">
-                <button type="submit" class="btn btn-primary">변경</button>
-                <button type="button" class="btn btn-cancel close-modal-btn">취소</button>
-              </div>
-            </form>
-          </div>
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>상품 삭제</h4>
+        <span class="close-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <p>다음 상품을 정말 삭제하시겠습니까?</p>
+        <p id="deleteProductName" class="selected-orders-info"></p>
+        <div class="modal-actions">
+          <button type="button" id="confirmDelete" class="btn btn-primary">삭제</button>
+          <button type="button" id="cancelDelete" class="btn btn-cancel close-modal-btn">취소</button>
         </div>
+        
       </div>
     </div>
   </div>
-    <script th:src="@{/admin/js/product-list.js}"></script>
+
+  <!-- 상태 일괄 변경 모달 -->
+  <div id="batchStatusModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>상품 상태 일괄 변경</h4>
+        <span class="close-modal">&times;</span>
+      </div>
+      <div class="modal-body">
+        <form id="batchStatusForm">
+          <div class="form-group">
+            <label for="batchProductStatus">변경할 상태</label>
+            <select class="form-select" id="batchProductStatus" name="status" required>
+              <option value="">상태 선택</option>
+              <option value="ACTIVE">판매중</option>
+              <option value="SOLD_OUT">품절</option>
+              <option value="HIDDEN">숨김</option>
+              <option value="DISCONTINUED">판매중지</option>
+            </select>
+          </div>
+          <div class="selected-orders-info">
+            <p>선택된 상품: <span id="selectedProductCount">0</span>개</p>
+          </div>
+          <div class="modal-actions">
+            <button type="submit" class="btn btn-primary">변경</button>
+            <button type="button" class="btn btn-cancel close-modal-btn">취소</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+      </div>
+      <script th:src="@{/admin/js/product-list.js}"></script>
 </section>
 
 
