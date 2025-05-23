@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.test.shoebox.dto.BrandDTO;
-import com.test.shoebox.dto.CartItemDTO;
 import com.test.shoebox.dto.CategoriesDTO;
 import com.test.shoebox.dto.DetailMap;
 import com.test.shoebox.dto.MYOrderReviewMapDTO;
@@ -87,7 +87,7 @@ public class DetailController {
 		List<ProductImageDTO> productImageDTOList = new ArrayList<>();
 
 		for (ProductImage pi : productImageList) {
-			System.out.println(pi.getFileName());
+			//System.out.println(pi.getFileName());
 
 			ProductImageDTO dto = pi.toDTO();
 
@@ -126,7 +126,7 @@ public class DetailController {
 
 			ProductStockDTO dto = ps.toDTO();
 
-			System.out.println("사이즈: " + dto.getShoeSize() + " _ 수량 " + dto.getStockQuantity());
+			//System.out.println("사이즈: " + dto.getShoeSize() + " _ 수량 " + dto.getStockQuantity());
 			
 			productStockDTOList.add(dto);
 		}
@@ -175,7 +175,7 @@ public class DetailController {
 	    List<OrderItemDTO> items = orderForm.getItems();
 
 	    for (OrderItemDTO item : items) {
-	        System.out.println("상품: " + item.getProductStockId() + ", 수량: " + item.getQty());
+	        //System.out.println("상품: " + item.getProductStockId() + ", 수량: " + item.getQty());
 	    }
 
 	    model.addAttribute("items", items);
@@ -211,8 +211,16 @@ public class DetailController {
 	    		entity.setMembers(members);
 	    		entity.setProductStock(productStock);
 	    		
-	    		cartItemRepository.save(entity);
+	    		Optional<CartItem> existing = cartItemRepository.findByMembersAndProductStock(members, productStock);
 	    		
+	    		if (existing.isPresent()) {
+	    			existing.get().setQuantity(existing.get().getQuantity() + item.getQty());
+	    			cartItemRepository.save(existing.get());
+	    			
+	    		} else {
+	    			
+	    			cartItemRepository.save(entity);
+	    		}
 		    }
 
 	        result.put("success", true);

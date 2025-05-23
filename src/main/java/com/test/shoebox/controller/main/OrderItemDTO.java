@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class OrderItemDTO {
     private Long productStockId;
-    private int qty;
+    private Integer qty;
 }
