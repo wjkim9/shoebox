@@ -19,8 +19,6 @@ public interface ProductStockRepository extends JpaRepository<ProductStock, Long
 
 
 
-
-
         // 사이즈 중복 없이 조회
         @Query("SELECT DISTINCT ps.shoeSize FROM ProductStock ps WHERE ps.product.productId = :productId")
         List<String> findDistinctSizesByProductId(@Param("productId") Long productId);

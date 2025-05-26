@@ -33,6 +33,8 @@ public class ProductService {
     @Autowired
     CategoriesRepository categoriesRepositories;
 
+    private Object fileUploadUtil;
+
     @Transactional
     public void addProduct(ProductDTO dto) {
         Brand brand = brandRepository.findById(dto.getBrandId())
@@ -58,7 +60,7 @@ public class ProductService {
             productStockRepository.save(stock);
         }
 
-      /*  // 3. 이미지 저장
+       // 3. 이미지 저장
         String mainFile = fileUploadUtil.upload(dto.getMainImage());
         productImageRepository.save(new ProductImage(mainFile, 0, product));
 
@@ -67,8 +69,31 @@ public class ProductService {
                 String fileName = fileUploadUtil.upload(dto.getAdditionalImages().get(i));
                 productImageRepository.save(new ProductImage(fileName, i + 1, product));
             }
-        }*/
+        }
+
     }
+    @Transactional
+    public void saveProductWithImages(ProductFormDTO dto) {
+        // 1. Product 저장
+        Product product = productRepository.save(Product.builder()
+                .productName(dto.getProductName())
+                .brand(brandRepository.findById(dto.getBrandId()).orElseThrow())
+                .category(categoryRepository.findById(dto.getCategoryId()).orElseThrow())
+                .productPrice(dto.getProductPrice())
+                .build());
+
+        // 2. ProductImage 저장
+        List<ProductImage> imageEntities = dto.getProductImages().stream()
+                .map(imageDto -> ProductImage.builder()
+                        .fileName(imageDto.getFileName())
+                        .sortOrder(imageDto.getSortOrder())
+                        .product(product) // 연관관계 주입
+                        .build())
+                .collect(Collectors.toList());
+
+        productImageRepository.saveAll(imageEntities);
+    }
+
 
 
     @Transactional

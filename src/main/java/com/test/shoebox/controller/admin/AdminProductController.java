@@ -88,42 +88,6 @@ public class AdminProductController {
     }
 
 
-
-
-    /*@GetMapping("/admin/product/detail/{id}")
-    public String detailProduct(@PathVariable Long id, Model model) {
-        Product product = productService.getProductById(id); // 에러 해결됨
-        model.addAttribute("product", product);
-        return "admin/product/detail";
-    }
-    @GetMapping("/detail/{id}")
-    public String productDetail(@PathVariable("id") Long id, Model model) {
-        ProductDTO product = productService.getProductById(id).toDTO();
-        model.addAttribute("product", product);
-        return "admin/product/detail"; // templates/admin/product/detail.html
-    }
-    @GetMapping("/detail/{id}")
-    public String productDetail(@PathVariable Long id, Model model) {
-        ProductDTO product = productService.getProductById(id).toDTO();
-
-        // ✅ 누락 가능성 있는 부분
-        BrandDTO brand = brandService.getBrandById(product.getBrandId());
-        CategoryDTO category = categoryService.getCategoryById(product.getCategoryId());
-        ProductGroupDTO group = groupService.getGroupById(product.getProductGroupId());
-
-        model.addAttribute("product", product);
-        model.addAttribute("brand", brand);
-        model.addAttribute("category", category);
-        model.addAttribute("productGroup", group); // ✅ 필수
-
-        return "admin/product/detail";
-    }
-*/
-
-
-
-
-
         @GetMapping("/detail/{id}")
         public String productDetail(@PathVariable Long id, Model model) {
             ProductDTO productDTO = productService.getProductById(id).toDTO();
