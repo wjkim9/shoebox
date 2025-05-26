@@ -203,7 +203,9 @@
         <div class="brand-navigation">
             <button class="nav-prev">&lt;</button>
             <div class="brand-names">
-                <span class="brand-nav-item active" data-brand="nike">NIKE</span>
+                <span th:if="${status.count == 1}" th:each="brand, status : ${rcmdPrdtList}" th:text="${brand.brandName}" th:attr="data-brand=${brand.brandName}" class="brand-nav-item active" data-brand="nike">NIKE</span>
+                <span th:unless="${status.count == 1}" th:each="brand, status : ${rcmdPrdtList}" th:text="${brand.brandName}" th:attr="data-brand=${brand.brandName}" class="brand-nav-item" data-brand="nike">NIKE</span>
+                <!-- 
                 <span class="brand-nav-item" data-brand="adidas">ADIDAS</span>
                 <span class="brand-nav-item" data-brand="newbalance">NEW BALANCE</span>
                 <span class="brand-nav-item" data-brand="vans">VANS</span>
@@ -212,55 +214,45 @@
                 <span class="brand-nav-item" data-brand="arcteryx">ARC'TERYX</span>
                 <span class="brand-nav-item" data-brand="mlbevo">MLBEVO</span>
                 <span class="brand-nav-item" data-brand="stefanorossi">STEFANOROSSI</span>
+                 -->
             </div>
             <button class="nav-next">&gt;</button>
         </div>
         <div class="brand-content">
             <!-- NIKE -->
-            <div class="brand-products-container active" data-brand="nike">
-                <div class="brand-name">NIKE</div>
-                
-                <div class="brand-products">
-                    <div class="product-item" onclick="window.location.href='/main/detailpage'">
-                        <img src="/common/images/nike/COURT SHOT (5).jpg" alt="나이키 운동화">
-                        <div class="product-info">
-                            <div class="name">나이키 에어맥스 97</div>
-                            <div class="price-info">
-                                <span class="price">219,000원</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-item" onclick="window.location.href='/main/detailpage'">
-                        <img src="/common/images/nike/NIKE AIR MAX EXCEE 365 (3).jpg" alt="나이키 운동화">
-                        <div class="product-info">
-                            <div class="name">나이키 덩크 로우</div>
-                            <div class="price-info">
-                                <span class="price">139,000원</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-item" onclick="window.location.href='/main/detailpage'">
-                        <img src="/common/images/23732_1712905511772.jpg" alt="나이키 운동화">
-                        <div class="product-info">
-                            <div class="name">나이키 에어포스 1</div>
-                            <div class="price-info">
-                                <span class="price">159,000원</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="product-item" onclick="window.location.href='/main/detailpage'">
-                        <img src="/common/images/nike/NIKE AIR MAX NUAXIS (2).jpg" alt="나이키 운동화">
-                        <div class="product-info">
-                            <div class="name">나이키 조던 1</div>
-                            <div class="price-info">
-                                <span class="price">229,000원</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            <th:block th:each="itemList, status : ${rcmdPrdtList}">
+	            <div th:if="${status.count == 1}" th:attr="data-brand=${itemList.brandName}" class="brand-products-container active" data-brand="nike">
+	                <div th:text="${itemList.brandName}" class="brand-name">NIKE</div>
+	                <div class="brand-products">
+	                    <div th:each="item : ${itemList.productList}" th:onclick="'window.location.href=&quot;/main/detailpage?productPostId=' + ${item.product.productPost.get(0).productPostId} + '&quot;'" class="product-item" onclick="window.location.href='/main/detailpage'">
+	                        <img th:src="'/common/images/product/' + ${item.fileName}" th:alt="${item.product.productName}" src="/common/images/23732_1712905511772.jpg" alt="나이키 운동화">
+	                        <div class="product-info">
+	                            <div th:text="${item.product.productName}" class="name">나이키 에어맥스 97</div>
+	                            <div class="price-info">
+	                                <span th:text="${#numbers.formatInteger(item.product.productPrice, 0, 'COMMA')} + '원'" class="price">219,000원</span>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+	            <div th:unless="${status.count == 1}" th:attr="data-brand=${itemList.brandName}" class="brand-products-container" data-brand="nike">
+	                <div th:text="${itemList.brandName}" class="brand-name">NIKE</div>
+	                <div class="brand-products">
+	                    <div th:each="item : ${itemList.productList}"  th:onclick="'window.location.href=&quot;/main/detailpage?productPostId=' + ${item.product.productPost.get(0).productPostId} + '&quot;'" class="product-item"  onclick="window.location.href='/main/detailpage'">
+	                        <img th:src="'/common/images/product/' + ${item.fileName}" th:alt="${item.product.productName}" src="/common/images/23732_1712905511772.jpg" alt="나이키 운동화">
+	                        <div class="product-info">
+	                            <div th:text="${item.product.productName}" class="name">나이키 에어맥스 97</div>
+	                            <div class="price-info">
+	                                <span th:text="${#numbers.formatInteger(item.product.productPrice, 0, 'COMMA')} + '원'" class="price">219,000원</span>
+	                            </div>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+			</th:block>
+			
             <!-- ADIDAS -->
+            <!-- 
             <div class="brand-products-container" data-brand="adidas">
                 <div class="brand-name">ADIDAS</div>
                 <div class="brand-products">
@@ -304,6 +296,7 @@
                     </div>
                 </div>
             </div>
+             -->
             <!-- 다른 브랜드들의 컨테이너도 비슷한 구조로 추가(수정 할 때 불편할까봐 추가 X) -->
 
         </div>
@@ -341,11 +334,19 @@
                 updateBrand(clickedIndex);
             });
 
+			/*
             // 브랜드 자동 순환
             function startBrandRotation() {
                 return setInterval(function() {
                     updateBrand(currentBrandIndex + 1);
                 }, 3000);
+            }
+            */
+            // 브랜드 자동 순환
+            function startBrandRotation() {
+                return setInterval(function() {
+                    updateBrand(currentBrandIndex + 1);
+                }, 5000);
             }
 
             let brandInterval = startBrandRotation();

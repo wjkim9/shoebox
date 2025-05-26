@@ -161,6 +161,22 @@
         <div class="launches-slider">
             <button class="slider-prev" aria-label="이전 슬라이드">&lt;</button>
             <div class="slider-container">
+            	<th:block th:each="item, status : ${banner}">
+	            	<div th:if="${status.count == status.size}" class="slide prev">
+	                    <img th:src="'/common/images/banner/' + ${item.fileName}" th:alt="'배너' + ${status.count}" src="/common/images/sample1.jpg" alt="나이키 신발">
+	                </div>
+	                <div th:if="${status.count == 1}" class="slide active">
+	                    <img th:src="'/common/images/banner/' + ${item.fileName}" th:alt="'배너' + ${status.count}" src="/common/images/sample2.jpg" alt="나이키 신발">
+	                </div>
+	                <div th:if="${status.count == 2}" class="slide next">
+	                    <img th:src="'/common/images/banner/' + ${item.fileName}" th:alt="'배너' + ${status.count}" src="/common/images/sample3.jpg" alt="나이키 신발">
+	                </div>
+	                <div th:unless="${status.count == status.size or status.count == 1 or status.count == 2}" class="slide">
+	                    <img th:src="'/common/images/banner/' + ${item.fileName}" th:alt="'배너' + ${status.count}" src="/common/images/sample4.jpg" alt="나이키 신발">
+	                </div>
+                
+            	</th:block>
+            	<!-- 
                 <div class="slide prev">
                     <img src="/common/images/nike.png" alt="나이키 신발">
                 </div>
@@ -179,22 +195,28 @@
                 <div class="slide">
                     <img src="/common/images/newbalance.png" alt="뉴발란스 신발">
                 </div>
+                 
                 <div class="slide prev">
                     <img src="/common/images/nike.png" alt="나이키 신발">
                 </div>
                 <div class="slide">
                     <img src="/common/images/컨버스.png" alt="컨버스 신발">
                 </div>
+                -->
                 
             </div>
             <button class="slider-next" aria-label="다음 슬라이드">&gt;</button>
             <div class="slider-indicators">
-                <span class="indicator active"></span>
+            	<th:block  th:each="num : ${#numbers.sequence(1, banner.size)}">
+            	<span th:if="${num == 1}" class="indicator active"></span>
+            	<span th:unless="${num == 1}" class="indicator"></span>
+            	</th:block>
+                <!-- <span class="indicator active"></span>
                 <span class="indicator"></span>
                 <span class="indicator"></span>
                 <span class="indicator"></span>
                 <span class="indicator"></span>
-                <span class="indicator"></span>
+                <span class="indicator"></span> -->
             </div>
         </div>
     </section>

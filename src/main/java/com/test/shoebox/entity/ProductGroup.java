@@ -30,7 +30,7 @@ public class ProductGroup {
     @Column(name = "productgroup_id")
     private Long productGroupId;
 
-    @Column(name = "product_group_name")
+    @Column(name = "product_group_name", nullable = false)
     private String productGroupName;
 
     public ProductGroupDTO toDTO() {
@@ -40,6 +40,3 @@ public class ProductGroup {
                 .build();
     }
 }
-
-
-
