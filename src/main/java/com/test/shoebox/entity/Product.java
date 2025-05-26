@@ -1,6 +1,7 @@
 package com.test.shoebox.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.test.shoebox.dto.ProductDTO;
 
@@ -11,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -62,6 +64,10 @@ public class Product {
     @JoinColumn(name = "productgroup_id", nullable = false)
     private ProductGroup productGroup;
 
+    @OneToMany(mappedBy = "product")
+    private List<ProductImage> productImages;
+
+
     public ProductDTO toDTO() {
         return ProductDTO.builder()
                 .productId(this.productId)
@@ -84,4 +90,3 @@ public class Product {
     }
 
 }
-

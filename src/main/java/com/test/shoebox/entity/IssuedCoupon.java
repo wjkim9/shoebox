@@ -56,6 +56,7 @@ public class IssuedCoupon {
                 .expireDatetime(this.expireDatetime)
                 .membersId(this.members.getMembersId())
                 .couponId(this.coupon.getCouponId())
+                .coupon(this.coupon.toDTO())
                 .build();
     }
     
