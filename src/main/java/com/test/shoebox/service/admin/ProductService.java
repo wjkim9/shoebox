@@ -5,6 +5,7 @@ import com.test.shoebox.entity.*;
 import com.test.shoebox.repository.*;
 //import com.test.shoebox.util.FileUploadUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,11 +23,15 @@ public class ProductService {
     private final ProductStockRepository productStockRepository;
     private final ProductImageRepository productImageRepository;
     private final BrandRepository brandRepository;
+
     private final CategoriesRepository categoriesRepository;
     private final ProductGroupRepository productGroupRepository;
     private final ProductRepositoryImpl productRepositoryImpl;
+    private final ProductGroupRepository groupRepository;
 
     // private final FileUploadUtil fileUploadUtil;
+    @Autowired
+    CategoriesRepository categoriesRepositories;
 
     @Transactional
     public void addProduct(ProductDTO dto) {
@@ -219,6 +224,39 @@ public class ProductService {
         }).toList();
     }
 
+    public ProductDTO findProductDTOById(Long id) {
+        return null;
+    }
+
+    @Transactional
+    public void updateProduct(ProductDTO dto) {
+        Product product = productRepository.findById(dto.getProductId())
+                .orElseThrow(() -> new RuntimeException("상품이 존재하지 않음"));
+
+        // 필드 값 갱신
+        product.setProductName(dto.getProductName());
+        product.setProductPrice(dto.getProductPrice());
+        product.setDiscountRate(dto.getDiscountRate());
+        product.setTargetCustomerType(dto.getTargetCustomerType());
+        product.setProductRegisterDate(dto.getProductRegisterDate());
+
+        // 관계 엔티티 설정
+        Brand brand = brandRepository.findById(dto.getBrandId()).orElse(null);
+        Categories categories = categoriesRepository.findById(dto.getCategoriesId()).orElse(null);
+        ProductGroup group = productGroupRepository.findById(dto.getProductGroupId()).orElse(null);
+
+        product.setBrand(brand);
+        product.setCategories(categories);
+        product.setProductGroup(group);
+
+        //  저장
+        productRepository.save(product);
+    }
+    public void deleteProductById(Long productId) {
+        productRepository.deleteById(productId);
+    }
+
+
 
 /*
     @Transactional(readOnly = true)
@@ -283,4 +321,37 @@ public class ProductService {
         }
 
     }*/
+
+
+    // ProductFormService.java
+    @Service
+    @RequiredArgsConstructor
+    public class ProductFormService {
+
+
+        private final BrandRepository brandRepository;
+        private final CategoriesRepository categoriesRepository;
+        private final ProductGroupRepository productGroupRepository;
+        private final ProductStockRepository productStockRepository;
+
+        public List<Brand> getAllBrands() {
+            return brandRepository.findAll();
+        }
+
+        public List<Categories> getAllCategories() {
+            return categoriesRepository.findAll();
+        }
+
+        public List<ProductGroup> getAllGroups() {
+            return productGroupRepository.findAll();
+        }
+
+        public List<String> getAvailableSizes(Long productId) {
+            return productStockRepository.findDistinctSizesByProductId(productId);
+        }
+
+        public List<ProductStock> getStocks(Long productId) {
+            return productStockRepository.findByProduct_ProductId(productId);
+        }
+    }
 }

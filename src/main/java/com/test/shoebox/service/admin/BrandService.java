@@ -12,19 +12,20 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class BrandService {
+
     private final BrandRepository brandRepository;
 
-    public BrandDTO getById(Long id) {
-        Brand entity = brandRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("브랜드 없음"));
-        return entity.toDTO();
-    }
+    public List<BrandDTO> getAllBrands() {
+        List<Brand> brands = brandRepository.findAll();
 
-    public List<BrandDTO> getAll() {
-        return brandRepository.findAll().stream()
-                .map(Brand::toDTO)
+        return brands.stream()
+                .map(brand -> new BrandDTO(brand.getBrandId(), brand.getBrandName()))
                 .collect(Collectors.toList());
     }
+
+    public BrandDTO getById(Long id) {
+        Brand brand = brandRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("브랜드를 찾을 수 없습니다. ID: " + id));
+        return new BrandDTO(brand.getBrandId(), brand.getBrandName());
+    }
 }
-
-
