@@ -39,6 +39,7 @@ public class AdminProductController {
     @GetMapping("/add")
     public String showAddProductForm(Model model) {
         List<BrandDTO> brands = brandRepository.findAllBrandDTO();
+
         List<CategoriesDTO> categories = categoriesRepository.findAllCategoriesDTO();
         List<ProductGroupDTO> productGroups = productGroupRepository.findAllGroupDTO();
 

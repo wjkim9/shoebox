@@ -4,11 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.test.shoebox.entity.Brand;
-import com.test.shoebox.entity.Categories;
-import com.test.shoebox.entity.Product;
-import com.test.shoebox.entity.ProductGroup;
+import com.test.shoebox.entity.*;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -55,7 +54,6 @@ public class ProductDTO {
 
     private MultipartFile mainImage;              // 폼에서 name="mainImage"
     private List<MultipartFile> additionalImages; // 폼에서 name="additionalImages"
-
 
 
     public Product toEntity(Brand brand, Categories categories, ProductGroup productGroup) {

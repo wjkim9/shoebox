@@ -347,11 +347,11 @@ public class ProductService {
         }
 
         public List<String> getAvailableSizes(Long productId) {
-            return productStockRepository.findDistinctSizesByProductId(productId);
+            return productStockRepository.findDistinctSizesByProductId((productId));
         }
 
         public List<ProductStock> getStocks(Long productId) {
-            return productStockRepository.findByProduct_ProductId(productId);
+            return productStockRepository.findByProduct_ProductId((productId));
         }
     }
 }

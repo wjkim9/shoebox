@@ -74,7 +74,10 @@ public class Product {
     
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductStock> productStock = new ArrayList<>();
-    
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductImage> productImages;
+
 
     public ProductDTO toDTO() {
         return ProductDTO.builder()

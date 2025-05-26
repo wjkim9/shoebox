@@ -131,7 +131,8 @@ public class MembersService {
                 (String) result[5],
                 toDouble(result[6]),
                 result[7] != null ? toInt(result[7]) : null,
-                result[8] != null ? toInt(result[8]) : null
+                result[8] != null ? toInt(result[8]) : null,
+                    null
             )).collect(Collectors.toList());
 
      // 5. 채팅 정보 조회

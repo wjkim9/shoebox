@@ -28,6 +28,14 @@ public class IssuedCouponDTO {
 
     private Long membersId;
     
+
+    
+    // 쿠폰 정보 (조인용)
+    private String couponName;
+    private Double discountRate;
+    private Integer minPrice;
+    private Integer maxDiscountPrice;
+
     private CouponDTO coupon;
 
     public IssuedCoupon toEntity(Members members, Coupon coupon) {
@@ -39,10 +47,4 @@ public class IssuedCouponDTO {
                 .coupon(coupon)
                 .build();
     }
-    
-    // 쿠폰 정보 (조인용)
-    private String couponName;
-    private Double discountRate;
-    private Integer minPrice;
-    private Integer maxDiscountPrice;
 }

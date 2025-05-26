@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IssuedCouponRepository extends JpaRepository<IssuedCoupon, Long> {
@@ -19,5 +20,13 @@ public interface IssuedCouponRepository extends JpaRepository<IssuedCoupon, Long
 		       "ORDER BY ic.expire_datetime ASC", 
 		       nativeQuery = true)
 		List<Object[]> findValidCouponsByMembersId(@Param("membersId") Long membersId);
+
+
+	List<IssuedCoupon> findByMembers_MembersIdAndExpireDatetimeAfter(
+			Long membersId,
+			LocalDateTime now
+	);
+
+
 
 }
