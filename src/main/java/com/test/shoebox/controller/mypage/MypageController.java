@@ -9,15 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/mypage")
 public class MypageController {
 	
-	@GetMapping("/mypage")
-	public String mypage(Model model) {
+	@GetMapping("/")
+	public String index(Model model) {
 		
-		return "mypage/mypage";
-	}
-	@GetMapping("/cart")
-	public String cart(Model model) {
-		
-		return "mypage/cart";
+		return "mypage/index";
 	}
 	
 }

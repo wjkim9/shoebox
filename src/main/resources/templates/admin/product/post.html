@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+
+</head>
+<body>
+<!-- content 프래그먼트 -->
+<section layout:fragment="content" th:fragment="content">
+  <link rel="stylesheet" th:href="@{/admin/css/product-form.css}"/>
+  <div class="admin-container" style="margin-top: var(--header-height);">
+    <div class="page-header">
+      <h2>상품 등록</h2>
+      <div>
+        <a th:href="@{/admin/products/list}" class="btn btn-outline">
+          <i class="fas fa-list"></i> 상품 목록
+        </a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h3>기본 정보</h3>
+      </div>
+      <div class="panel-body">
+        <form id="productForm" th:action="@{/admin/products/save}" method="post" enctype="multipart/form-data">
+          <input type="hidden" id="productId" name="productId" th:value="${product != null ? product.productId : ''}">
+
+          <div class="form-row">
+            <div class="form-column">
+              <div class="form-group">
+                <label for="productName">상품명 <span class="required">*</span></label>
+                <input type="text" class="form-input" id="productName" name="productName"
+                       th:value="${product != null ? product.productName : ''}"
+                       placeholder="상품명 입력" required>
+              </div>
+            </div>
+            <div class="form-column">
+              <div class="form-group">
+                <label for="productCode">상품 코드 <span class="required">*</span></label>
+                <input type="text" class="form-input" id="productCode" name="productCode"
+                       th:value="${product != null ? product.productCode : ''}"
+                       placeholder="상품 코드 입력" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-column">
+              <div class="form-group">
+                <label for="category">카테고리 <span class="required">*</span></label>
+                <select class="form-select" id="category" name="categoryId" required>
+                  <option value="">카테고리 선택</option>
+                  <option value="1" th:selected="${product != null && product.categoryId == 1}">운동화</option>
+                  <option value="2" th:selected="${product != null && product.categoryId == 2}">구두</option>
+                  <option value="3" th:selected="${product != null && product.categoryId == 3}">스니커즈</option>
+                  <option value="4" th:selected="${product != null && product.categoryId == 4}">부츠</option>
+                  <option value="5" th:selected="${product != null && product.categoryId == 5}">샌들</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-column">
+              <div class="form-group">
+                <label for="brand">브랜드 <span class="required">*</span></label>
+                <select class="form-select" id="brand" name="brandId" required>
+                  <option value="">브랜드 선택</option>
+                  <option value="1" th:selected="${product != null && product.brandId == 1}">나이키</option>
+                  <option value="2" th:selected="${product != null && product.brandId == 2}">아디다스</option>
+                  <option value="3" th:selected="${product != null && product.brandId == 3}">뉴발란스</option>
+                  <option value="4" th:selected="${product != null && product.brandId == 4}">컨버스</option>
+                  <option value="5" th:selected="${product != null && product.brandId == 5}">반스</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-column">
+              <div class="form-group">
+                <label for="originalPrice">정가 <span class="required">*</span></label>
+                <div class="input-with-suffix">
+                  <input type="number" class="form-input" id="originalPrice" name="originalPrice"
+                         th:value="${product != null ? product.originalPrice : ''}"
+                         placeholder="정가 입력" required>
+                  <span class="input-suffix">원</span>
+                </div>
+              </div>
+            </div>
+            <div class="form-column">
+              <div class="form-group">
+                <label for="salePrice">판매가 <span class="required">*</span></label>
+                <div class="input-with-suffix">
+                  <input type="number" class="form-input" id="salePrice" name="salePrice"
+                         th:value="${product != null ? product.salePrice : ''}"
+                         placeholder="판매가 입력" required>
+                  <span class="input-suffix">원</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="shortDescription">간단 설명</label>
+            <textarea class="form-input" id="shortDescription" name="shortDescription" rows="2"
+                      placeholder="상품 간단 설명 입력"
+                      th:text="${product != null ? product.shortDescription : ''}"></textarea>
+          </div>
+
+          <div class="panel-header">
+            <h3>재고 정보</h3>
+          </div>
+
+          <div class="inventory-section">
+            <table class="inventory-table">
+              <thead>
+              <tr>
+                <th>사이즈</th>
+                <th>재고수량</th>
+                <th>관리</th>
+              </tr>
+              </thead>
+              <tbody id="inventoryTableBody">
+              <tr th:each="size, stat : ${sizes}" th:if="${sizes != null}">
+                <td>
+                  <input type="text" class="form-input size-input"
+                         th:name="'inventories[' + ${stat.index} + '].size'"
+                         th:value="${size.size}" readonly>
+                </td>
+                <td>
+                  <input type="number" class="form-input quantity-input"
+                         th:name="'inventories[' + ${stat.index} + '].quantity'"
+                         th:value="${size.quantity}" min="0">
+                </td>
+                <td>
+                  <button type="button" class="btn btn-icon btn-outline remove-size">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr class="no-size-row" th:if="${sizes == null or sizes.isEmpty()}">
+                <td colspan="3" class="no-data">추가된 사이즈가 없습니다.</td>
+              </tr>
+              </tbody>
+            </table>
+
+            <div class="add-size-section">
+              <div class="form-row">
+                <div class="form-column">
+                  <input type="text" id="newSize" class="form-input" placeholder="사이즈 입력 (예: 250)">
+                </div>
+                <div class="form-column">
+                  <input type="number" id="newQuantity" class="form-input" placeholder="수량 입력" min="0">
+                </div>
+                <div class="form-column" style="flex: 0.5;">
+                  <button type="button" id="addSizeBtn" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> 추가
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-header">
+            <h3>상품 이미지</h3>
+          </div>
+
+          <div class="image-upload-section">
+            <div class="image-preview-container">
+              <div id="mainImagePreview" class="image-preview main-image">
+                <div class="upload-placeholder" th:if="${product == null || product.mainImage == null}">
+                  <i class="fas fa-image"></i>
+                  <span>메인 이미지</span>
+                </div>
+                <img th:if="${product != null && product.mainImage != null}" th:src="${product.mainImage}" alt="메인 이미지">
+                <button type="button" class="remove-image-btn" th:if="${product != null && product.mainImage != null}">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              <div class="sub-images-container">
+                <div class="image-preview sub-image" th:each="i : ${#numbers.sequence(1, 4)}">
+                  <div class="upload-placeholder" th:if="${product == null || product.subImages == null || i > product.subImages.size()}">
+                    <i class="fas fa-image"></i>
+                    <span>추가 이미지</span>
+                  </div>
+                  <img th:if="${product != null && product.subImages != null && i <= product.subImages.size()}"
+                       th:src="${product.subImages[i-1]}" alt="추가 이미지">
+                  <button type="button" class="remove-image-btn"
+                          th:if="${product != null && product.subImages != null && i <= product.subImages.size()}">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="file-upload-container">
+              <input type="file" id="mainImageFile" name="mainImageFile" accept="image/*" style="display: none;">
+              <button type="button" id="mainImageUploadBtn" class="btn btn-outline">
+                <i class="fas fa-upload"></i> 메인 이미지 업로드
+              </button>
+
+              <input type="file" id="subImageFiles" name="subImageFiles" multiple accept="image/*" style="display: none;">
+              <button type="button" id="subImagesUploadBtn" class="btn btn-outline">
+                <i class="fas fa-upload"></i> 추가 이미지 업로드
+              </button>
+            </div>
+          </div>
+
+          <div class="panel-header">
+            <h3>상세 설명</h3>
+          </div>
+
+          <div class="form-group">
+                        <textarea id="detailDescription" name="detailDescription" class="form-input editor"
+                                  th:text="${product != null ? product.detailDescription : ''}"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save"></i> 저장
+            </button>
+            <a th:href="@{/admin/products/list}" class="btn btn-cancel">
+              <i class="fas fa-times"></i> 취소
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script th:src="@{/admin/js/product-form.js}"></script>
+  <script>
+    // 에디터 초기화 (CKEditor 또는 다른 에디터를 사용할 경우)
+    document.addEventListener('DOMContentLoaded', function() {
+      if (typeof ClassicEditor !== 'undefined') {
+        ClassicEditor
+                .create(document.querySelector('#detailDescription'))
+                .catch(error => {
+                  console.error(error);
+                });
+      }
+    });
+    /**
+     * 상품 등록/수정 페이지 JavaScript
+     */
+    console.log("product-form.js 로딩됨");
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // DOM 요소 참조
+      const productForm = document.getElementById('productForm');
+      const inventoryTableBody = document.getElementById('inventoryTableBody');
+      const newSizeInput = document.getElementById('newSize');
+      const newQuantityInput = document.getElementById('newQuantity');
+      const addSizeBtn = document.getElementById('addSizeBtn');
+      const mainImageUploadBtn = document.getElementById('mainImageUploadBtn');
+      const mainImageFile = document.getElementById('mainImageFile');
+      const subImagesUploadBtn = document.getElementById('subImagesUploadBtn');
+      const subImageFiles = document.getElementById('subImageFiles');
+      const mainImagePreview = document.getElementById('mainImagePreview');
+
+      // 사이즈 카운터 (동적 입력 필드 추가시 사용)
+      let sizeCounter = document.querySelectorAll('.size-input').length;
+
+      // 판매가 자동 계산 이벤트
+      const originalPriceInput = document.getElementById('originalPrice');
+      const salePriceInput = document.getElementById('salePrice');
+
+      if (originalPriceInput && salePriceInput) {
+        originalPriceInput.addEventListener('input', function() {
+          // 기본적으로 정가의 90%를 판매가로 설정 (선택적)
+          if (this.value && !salePriceInput.value) {
+            const suggestedPrice = Math.floor(parseInt(this.value) * 0.9);
+            salePriceInput.value = suggestedPrice;
+          }
+        });
+      }
+
+      // 사이즈 추가 기능
+      if (addSizeBtn) {
+        addSizeBtn.addEventListener('click', function() {
+          const size = newSizeInput.value.trim();
+          const quantity = newQuantityInput.value.trim();
+
+          if (!size) {
+            alert('사이즈를 입력해주세요.');
+            newSizeInput.focus();
+            return;
+          }
+
+          if (!quantity || parseInt(quantity) < 0) {
+            alert('올바른 수량을 입력해주세요.');
+            newQuantityInput.focus();
+            return;
+          }
+
+          // 이미 존재하는 사이즈인지 확인
+          const existingSizes = Array.from(document.querySelectorAll('.size-input')).map(input => input.value);
+          if (existingSizes.includes(size)) {
+            alert('이미 추가된 사이즈입니다.');
+            newSizeInput.focus();
+            return;
+          }
+
+          // 'no-size-row' 제거
+          const noSizeRow = document.querySelector('.no-size-row');
+          if (noSizeRow) {
+            noSizeRow.remove();
+          }
+
+          // 새 사이즈 행 추가
+          const newRow = document.createElement('tr');
+          newRow.innerHTML = `
+                <td>
+                    <input type="text" class="form-input size-input"
+                           name="inventories[${sizeCounter}].size"
+                           value="${size}" readonly>
+                </td>
+                <td>
+                    <input type="number" class="form-input quantity-input"
+                           name="inventories[${sizeCounter}].quantity"
+                           value="${quantity}" min="0">
+                </td>
+                <td>
+                    <button type="button" class="btn btn-icon btn-outline remove-size">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+
+          inventoryTableBody.appendChild(newRow);
+          sizeCounter++;
+
+          // 입력 필드 초기화
+          newSizeInput.value = '';
+          newQuantityInput.value = '';
+          newSizeInput.focus();
+
+          // 삭제 버튼에 이벤트 연결
+          attachRemoveSizeEvents();
+        });
+      }
+
+      // 사이즈 행 삭제 이벤트 연결
+      function attachRemoveSizeEvents() {
+        const removeSizeButtons = document.querySelectorAll('.remove-size');
+        removeSizeButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            const row = this.closest('tr');
+            row.remove();
+
+            // 인덱스 재조정
+            updateInventoryIndices();
+
+            // 모든 사이즈가 삭제된 경우 안내 행 추가
+            if (inventoryTableBody.querySelectorAll('tr').length === 0) {
+              const noSizeRow = document.createElement('tr');
+              noSizeRow.className = 'no-size-row';
+              noSizeRow.innerHTML = '<td colspan="3" class="no-data">추가된 사이즈가 없습니다.</td>';
+              inventoryTableBody.appendChild(noSizeRow);
+            }
+          });
+        });
+      }
+
+      // 사이즈 행 인덱스 재조정
+      function updateInventoryIndices() {
+        const rows = inventoryTableBody.querySelectorAll('tr:not(.no-size-row)');
+        rows.forEach((row, index) => {
+          const sizeInput = row.querySelector('.size-input');
+          const quantityInput = row.querySelector('.quantity-input');
+
+          if (sizeInput) {
+            sizeInput.name = `inventories[${index}].size`;
+          }
+
+          if (quantityInput) {
+            quantityInput.name = `inventories[${index}].quantity`;
+          }
+        });
+
+        // sizeCounter 업데이트
+        sizeCounter = rows.length;
+      }
+
+      // 메인 이미지 업로드 기능
+      if (mainImageUploadBtn && mainImageFile) {
+        mainImageUploadBtn.addEventListener('click', function() {
+          mainImageFile.click();
+        });
+
+        mainImageFile.addEventListener('change', function() {
+          if (this.files && this.files[0]) {
+            const file = this.files[0];
+
+            // 파일 확장자 검사
+            const validExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+            const fileExt = file.name.split('.').pop().toLowerCase();
+
+            if (!validExtensions.includes(fileExt)) {
+              alert('이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)');
+              this.value = '';
+              return;
+            }
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+              // 기존 내용 삭제
+              mainImagePreview.innerHTML = '';
+
+              // 이미지 태그 생성 및 소스 설정
+              const img = document.createElement('img');
+              img.src = e.target.result;
+              img.alt = '메인 이미지';
+
+              // 삭제 버튼 추가
+              const removeBtn = document.createElement('button');
+              removeBtn.type = 'button';
+              removeBtn.className = 'remove-image-btn';
+              removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+
+              // 삭제 버튼 클릭 이벤트
+              removeBtn.addEventListener('click', function() {
+                mainImageFile.value = '';
+                mainImagePreview.innerHTML = `
+                            <div class="upload-placeholder">
+                                <i class="fas fa-image"></i>
+                                <span>메인 이미지</span>
+                            </div>
+                        `;
+              });
+
+              // 이미지와 삭제 버튼을 미리보기 영역에 추가
+              mainImagePreview.appendChild(img);
+              mainImagePreview.appendChild(removeBtn);
+            };
+
+            reader.readAsDataURL(file);
+          }
+        });
+      }
+
+      // 추가 이미지 업로드 기능
+      if (subImagesUploadBtn && subImageFiles) {
+        subImagesUploadBtn.addEventListener('click', function() {
+          subImageFiles.click();
+        });
+
+        subImageFiles.addEventListener('change', function() {
+          if (this.files && this.files.length > 0) {
+            // 최대 4개 이미지 제한
+            if (this.files.length > 4) {
+              alert('추가 이미지는 최대 4개까지 등록 가능합니다.');
+              this.value = '';
+              return;
+            }
+
+            // 파일 확장자 검사
+            const validExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+            let invalidFile = false;
+
+            for (let i = 0; i < this.files.length; i++) {
+              const fileExt = this.files[i].name.split('.').pop().toLowerCase();
+              if (!validExtensions.includes(fileExt)) {
+                invalidFile = true;
+                break;
+              }
+            }
+
+            if (invalidFile) {
+              alert('이미지 파일만 업로드 가능합니다. (jpg, jpeg, png, gif)');
+              this.value = '';
+              return;
+            }
+
+            // 이미지 미리보기 영역 참조
+            const subImagesContainer = document.querySelector('.sub-images-container');
+
+            // 기존 이미지 초기화
+            subImagesContainer.innerHTML = '';
+
+            // 파일 각각에 대한 미리보기 생성
+            for (let i = 0; i < this.files.length; i++) {
+              const file = this.files[i];
+              const reader = new FileReader();
+
+              reader.onload = function(e) {
+                // 미리보기 요소 생성
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'image-preview sub-image';
+
+                // 이미지 태그 생성
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = '추가 이미지';
+
+                // 삭제 버튼
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'remove-image-btn';
+                removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+                removeBtn.setAttribute('data-index', i);
+
+                // 삭제 버튼 클릭 이벤트 (개별 이미지 삭제)
+                removeBtn.addEventListener('click', function() {
+                  // 현재 이미지 제거
+                  this.closest('.image-preview').remove();
+
+                  // 파일 입력 값 초기화 (전체 다시 선택 필요)
+                  subImageFiles.value = '';
+
+                  // 나머지 추가 이미지 미리보기 채우기
+                  while (subImagesContainer.children.length < 4) {
+                    const emptyPreview = document.createElement('div');
+                    emptyPreview.className = 'image-preview sub-image';
+                    emptyPreview.innerHTML = `
+                                    <div class="upload-placeholder">
+                                        <i class="fas fa-image"></i>
+                                        <span>추가 이미지</span>
+                                    </div>
+                                `;
+                    subImagesContainer.appendChild(emptyPreview);
+                  }
+                });
+
+                // 미리보기에 요소 추가
+                previewDiv.appendChild(img);
+                previewDiv.appendChild(removeBtn);
+                subImagesContainer.appendChild(previewDiv);
+              };
+
+              reader.readAsDataURL(file);
+            }
+
+            // 남은 슬롯 채우기 (총 4개까지)
+            const remainingSlots = 4 - this.files.length;
+            for (let i = 0; i < remainingSlots; i++) {
+              const emptyPreview = document.createElement('div');
+              emptyPreview.className = 'image-preview sub-image';
+              emptyPreview.innerHTML = `
+                        <div class="upload-placeholder">
+                            <i class="fas fa-image"></i>
+                            <span>추가 이미지</span>
+                        </div>
+                    `;
+              subImagesContainer.appendChild(emptyPreview);
+            }
+          }
+        });
+      }
+
+      // 초기 기존 삭제 버튼에 이벤트 연결
+      attachRemoveSizeEvents();
+
+      // 기존 이미지 삭제 버튼 이벤트 연결
+      const removeImageBtns = document.querySelectorAll('.remove-image-btn');
+      removeImageBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const imagePreview = this.closest('.image-preview');
+
+          // 메인 이미지인 경우
+          if (imagePreview.classList.contains('main-image')) {
+            // hidden input으로 메인 이미지 제거 정보 전달
+            const removeMainImageInput = document.createElement('input');
+            removeMainImageInput.type = 'hidden';
+            removeMainImageInput.name = 'removeMainImage';
+            removeMainImageInput.value = 'true';
+            productForm.appendChild(removeMainImageInput);
+
+            // 미리보기 교체
+            imagePreview.innerHTML = `
+                    <div class="upload-placeholder">
+                        <i class="fas fa-image"></i>
+                        <span>메인 이미지</span>
+                    </div>
+                `;
+          }
+          // 추가 이미지인 경우
+          else if (imagePreview.classList.contains('sub-image')) {
+            // 이미지 인덱스 찾기 (이미지 순서)
+            const subImagesContainer = document.querySelector('.sub-images-container');
+            const allSubImages = Array.from(subImagesContainer.querySelectorAll('.sub-image'));
+            const imageIndex = allSubImages.indexOf(imagePreview);
+
+            // hidden input으로 제거할 이미지 인덱스 전달
+            const removeSubImageInput = document.createElement('input');
+            removeSubImageInput.type = 'hidden';
+            removeSubImageInput.name = 'removeSubImageIndices';
+            removeSubImageInput.value = imageIndex;
+            productForm.appendChild(removeSubImageInput);
+
+            // 미리보기 교체
+            imagePreview.innerHTML = `
+                    <div class="upload-placeholder">
+                        <i class="fas fa-image"></i>
+                        <span>추가 이미지</span>
+                    </div>
+                `;
+          }
+        });
+      });
+
+      // 폼 제출 전 유효성 검사
+      if (productForm) {
+        productForm.addEventListener('submit', function(e) {
+          // 필수 필드 검사
+          const requiredFields = productForm.querySelectorAll('[required]');
+          let hasError = false;
+
+          requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+              field.classList.add('error');
+              hasError = true;
+            } else {
+              field.classList.remove('error');
+            }
+          });
+
+          // 사이즈 추가 여부 확인
+          const hasSizes = inventoryTableBody.querySelectorAll('tr:not(.no-size-row)').length > 0;
+          if (!hasSizes) {
+            alert('최소 하나 이상의 사이즈를 추가해주세요.');
+            newSizeInput.focus();
+            hasError = true;
+          }
+
+          // 메인 이미지 확인 (수정 모드에서는 이미 있을 수 있음)
+          const hasMainImage = mainImageFile.files.length > 0 ||
+                  (mainImagePreview.querySelector('img') && !mainImagePreview.querySelector('.upload-placeholder'));
+
+          if (!hasMainImage) {
+            alert('메인 이미지를 업로드해주세요.');
+            hasError = true;
+          }
+
+          if (hasError) {
+            e.preventDefault();
+            return false;
+          }
+
+          return true;
+        });
+      }
+    });
+  </script>
+</section>
+</body>
+</html>
