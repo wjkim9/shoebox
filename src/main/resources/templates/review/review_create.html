@@ -1,0 +1,306 @@
+<meta charset="UTF-8">
+<html lang="ko">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+<!-- 
+
+작업 해야할것 
+
+백엔드 연동 안내(프론트 개발자 참고)
+상품 정보, 품목, 사이즈, 사진: 서버에서 받아와서 동적으로 채워야 합니다.
+
+별점, 리뷰 내용, 사진 업로드:
+
+등록 버튼 클릭 시
+
+별점, 텍스트, 사진 파일을 FormData로 묶어 서버에 POST 요청
+
+사진은 최대 3개까지 files로 전송
+
+사진 미리보기 및 삭제: 프론트에서 미리 보여주고, 삭제도 가능하게 구현됨
+
+-->
+
+<style>
+
+/* 전체 레이아웃 */
+.review_write_main {
+    width: 800px;
+    margin: 40px auto;
+    padding: 32px 24px 24px 24px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px #0001;
+}
+
+/* 상품 정보 */
+.review_write_product_info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+}
+.review_write_product_img {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    background: #f2f2f2;
+    border: 1px solid #ddd;
+}
+.review_write_product_name {
+    font-weight: bold;
+}
+.review_write_product_option {
+    color: #666;
+    margin-top: 6px;
+}
+
+/* 별점 */
+.review_write_star_wrap {
+    margin-bottom: 28px;
+}
+.review_write_star_label {
+    font-weight: bold;
+    margin-right: 12px;
+}
+.review_write_stars {
+    display: inline-flex;
+    gap: 4px;
+}
+.review_write_star {
+    font-size: 30px;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.1s;
+}
+.review_write_star.selected {
+    color: darkorange;
+}
+.review_write_star.hovered {
+    color: darkorange;
+}
+
+/* 리뷰 내용 */
+.review_write_content_wrap {
+    margin-bottom: 24px;
+}
+.review_write_content_label {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+.review_write_content_input {
+    width: 100%;
+    height: 300px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    resize: none;
+    box-sizing: border-box;
+}
+
+/* 사진 첨부 */
+.review_write_photos_wrap {
+    margin-bottom: 32px;
+}
+.review_write_photos_label {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+.review_write_photos {
+    display: flex;
+    gap: 12px;
+}
+.review_write_photo_box {
+    width: 80px;
+    height: 80px;
+    background: #f6f6f6;
+    border: 1.5px dashed #bbb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+.review_write_photo_box input[type="file"] {
+    display: none;
+}
+.review_write_photo_img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+.review_write_photo_remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d32f2f;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px #0002;
+}
+
+/* 등록 버튼 */
+.review_write_submit_btn {
+    width: 100%;
+    padding: 13px 0;
+    background: #222;
+    color: #fff;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.review_write_submit_btn:hover {
+    background: #444;
+}
+</style>
+
+<title>슈박스 리뷰 등록</title>
+
+<body>
+
+    <div class="review_write_main">
+        <!-- 상품 정보 -->
+        <div class="review_write_product_info">
+            <img class="review_write_product_img" src="https://via.placeholder.com/80x80?text=상품" alt="상품사진">
+            <div class="review_write_product_meta">
+                <div class="review_write_product_name">나이키 NIKE MOTIVA</div>
+                <div class="review_write_product_option">품목: 운동화 &nbsp; | &nbsp; 사이즈: 260</div>
+            </div>
+        </div>
+        <!-- 별점 -->
+        <div class="review_write_star_wrap">
+            <span class="review_write_star_label">별점</span>
+            <span class="review_write_stars">
+                <i class="fa-solid fa-star review_write_star" data-value="1"></i>
+                <i class="fa-solid fa-star review_write_star" data-value="2"></i>
+                <i class="fa-solid fa-star review_write_star" data-value="3"></i>
+                <i class="fa-solid fa-star review_write_star" data-value="4"></i>
+                <i class="fa-solid fa-star review_write_star" data-value="5"></i>
+              </span>
+        </div>
+        <!-- 리뷰 내용 -->
+        <div class="review_write_content_wrap">
+            <label class="review_write_content_label" for="review_write_content_input">리뷰 내용</label>
+            <textarea class="review_write_content_input" id="review_write_content_input" placeholder="리뷰 내용을 입력하세요"></textarea>
+        </div>
+        <!-- 사진 첨부 -->
+        <div class="review_write_photos_wrap">
+            <span class="review_write_photos_label">사진 첨부 (최대 3장)</span>
+            <div class="review_write_photos" id="review_write_photos">
+                <div class="review_write_photo_box add-photo">
+                    <label>
+                        <i class="fa-solid fa-plus" style="font-size:28px; color:#bbb; cursor:pointer;"></i>
+                        <input type="file" accept="image/*" multiple style="display:none;">
+                    </label>
+                </div>
+            </div>
+        </div>
+        <!-- 등록 버튼 -->
+        <button class="review_write_submit_btn">리뷰 등록</button>
+    </div>
+    
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+
+// ㅁㅁㅁ 별점 식별자 ㅁㅁㅁ
+let selectedStar = 0;
+
+// 마우스 올릴 때
+$('.review_write_star').on('mouseenter', function() {
+    const val = parseInt($(this).attr('data-value'));
+    $('.review_write_star').each(function() {
+        const starVal = parseInt($(this).attr('data-value'));
+        $(this).toggleClass('hovered', starVal <= val);
+    });
+});
+
+// 마우스 벗어날 때
+$('.review_write_stars').on('mouseleave', function() {
+    $('.review_write_star').removeClass('hovered');
+});
+
+// 클릭 시
+$('.review_write_star').on('click', function() {
+    selectedStar = parseInt($(this).attr('data-value'));
+    $('.review_write_star').each(function() {
+        const starVal = parseInt($(this).attr('data-value'));
+        $(this).toggleClass('selected', starVal <= selectedStar);
+    });
+});
+
+
+// 사진 업로드 (최대 3장)
+let photoFiles = [];
+function renderPhotos() {
+    const $photos = $('#review_write_photos');
+    $photos.find('.review_write_photo_box:not(.add-photo)').remove();
+    photoFiles.forEach((file, idx) => {
+        const url = URL.createObjectURL(file);
+        const photoBox = $(`
+            <div class="review_write_photo_box">
+                <img src="${url}" class="review_write_photo_img" alt="첨부사진">
+                <button type="button" class="review_write_photo_remove" data-idx="${idx}">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        `);
+        photoBox.insertBefore($photos.find('.add-photo'));
+    });
+    // add-photo 숨김 처리
+    if(photoFiles.length >= 3) {
+        $photos.find('.add-photo').hide();
+    } else {
+        $photos.find('.add-photo').show();
+    }
+}
+$('#review_write_photos').on('change', 'input[type="file"]', function(e) {
+    let files = Array.from(e.target.files);
+    if(photoFiles.length + files.length > 3) {
+        files = files.slice(0, 3 - photoFiles.length);
+    }
+    photoFiles = photoFiles.concat(files);
+    renderPhotos();
+    // 파일 input 초기화
+    $(this).val('');
+});
+$('#review_write_photos').on('click', '.review_write_photo_remove', function(e) {
+    const idx = $(this).data('idx');
+    photoFiles.splice(idx, 1);
+    renderPhotos();
+});
+
+// 등록 버튼 (백엔드 연동 필요)
+$('.review_write_submit_btn').on('click', function() {
+    // 별점, 내용, 사진 등 값 추출
+    const star = $('.review_write_star.selected').length;
+    const content = $('#review_write_content_input').val().trim();
+    if(star === 0) {
+        alert('별점을 선택하세요.');
+        return;
+    }
+    if(!content) {
+        alert('리뷰 내용을 입력하세요.');
+        return;
+    }
+    // photoFiles: 첨부된 이미지 파일 배열
+    // TODO: 백엔드 연동(ajax/formData 등) 구현 필요
+    alert('리뷰가 등록되었습니다.\n(실제 등록은 백엔드에서 구현)');
+});
+</script>
+</html>
