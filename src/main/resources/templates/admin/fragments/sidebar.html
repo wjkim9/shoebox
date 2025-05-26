@@ -1,0 +1,118 @@
+<!-- src/main/resources/templates/admin/fragments/sidebar.html -->
+<div th:fragment="sidebar">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="/main/" class="logo">
+                <i class="fas fa-shoe-prints"></i> 슈박스 관리자
+            </a>
+        </div>
+        <ul class="sidebar-menu">
+            <!-- 상품 관리 -->
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <div><i class="fas fa-box"></i><span> 상품 관리</span></div>
+                    <i class="fas fa-angle-down"></i>
+                </a>
+                <ul class="submenu">
+                    <li class="submenu-item">
+                        <a href="/admin/product/list" class="submenu-link">상품 리스트(조회/등록/수정/삭제/재고관리)</a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="/admin/product/discount" class="submenu-link">할인 관리</a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="/admin/product/post/register" class="submenu-link">게시물 관리</a>
+                    </li>
+                </ul>
+            </li>
+            <!-- 주문 관리 -->
+            <li class="menu-item">
+                <a href="/admin/orders/list" class="menu-link">
+                    <div><i class="fas fa-shopping-cart"></i><span> 주문 관리</span></div>
+                </a>
+            </li>
+
+
+            <!-- 홈페이지 관리 -->
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <div>
+                        <i class="fas fa-home"></i>
+                        <span>홈페이지 관리</span>
+                    </div>
+                    <i class="fas fa-angle-down"></i>
+                </a>
+                <ul class="submenu">
+                    <li class="submenu-item">
+                        <a href="/admin/homepage/review" class="submenu-link">리뷰 관리</a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="/admin/homepage/qna" class="submenu-link">Q&A 설정</a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="/admin/homepage/notice" class="submenu-link">공지사항 설정</a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="/admin/homepage/popup" class="submenu-link">팝업 공지 설정</a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="/admin/homepage/banner" class="submenu-link">배너 등록</a>
+                    </li>
+                    <li class="submenu-item">
+                        <a href="/admin/homepage/event" class="submenu-link">이벤트/프로모션 등록</a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- 카테고리 관리 -->
+            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <div>
+                        <i class="fas fa-tags"></i>
+                        <span>카테고리 관리</span>
+                    </div>
+                    <i class="fas fa-angle-down"></i>
+                </a>
+                <ul class="submenu">
+                    <li class="submenu-item">
+                        <a href="/admin/category/brandcategory" class="submenu-link">브랜드 카테고리 관리</a>
+                    </li>
+                </ul>
+            </li>
+
+            <!-- 회원 관리 -->
+<!--            <li class="menu-item">
+                <a href="#" class="menu-link">
+                    <div>
+                        <i class="fas fa-users"></i>
+                        <span>회원 관리</span>
+                    </div>
+                    <i class="fas fa-angle-down"></i>
+                </a>
+                <ul class="submenu">
+                    <li class="submenu-item">
+                        <a href="/admin/member/member-list" class="submenu-link">회원 조회 및 수정</a>
+                    </li>
+                </ul>
+            </li>-->
+			
+			<li class="menu-item">
+			         <a href="/admin/member/member-list" class="menu-link">
+			             <div><i class="fas fa-users"></i><span> 회원 관리</span></div>
+			         </a>
+			     </li>
+
+
+            <!-- 설정 -->
+            <li class="menu-item">
+                <a href="/admin/settings" class="menu-link">
+                    <div>
+                        <i class="fas fa-cog"></i>
+                        <span>관리자 설정</span>
+                    </div>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+</div>

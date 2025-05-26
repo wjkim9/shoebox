@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+
+</head>
+<body>
+<!-- content 프래그먼트 -->
+<section layout:fragment="content" th:fragment="content">
+    <link rel="stylesheet" th:href="@{/admin/css/orders-list.css}"/>
+    <div class="admin-container" style="margin-top: var(--header-height);">
+        <div class="page-header">
+            <h2>주문 관리</h2>
+            <div>
+                <button id="exportOrdersBtn" class="btn btn-outline">
+                    <i class="fas fa-file-export"></i> 엑셀 내보내기
+                </button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h3>주문 검색</h3>
+            </div>
+            <div class="panel-body">
+                <form id="searchForm" th:action="@{/admin/orders/list-search}" method="get">
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="orderDateStart">주문 기간</label>
+                                <div class="date-range-picker">
+                                    <input type="date" id="orderDateStart" name="orderDateStart" class="form-input"
+                                           th:value="${orderDateStart}" placeholder="시작일">
+                                    <input type="date" id="orderDateEnd" name="orderDateEnd" class="form-input"
+                                           th:value="${orderDateEnd}" placeholder="종료일">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="orderStatus">주문 상태</label>
+                                <select class="form-select" id="orderStatus" name="orderStatus">
+                                    <option value="">전체</option>
+                                    <option value="1" th:selected="${orderStatus == '1'}">결제 확인중</option>
+                                    <option value="2" th:selected="${orderStatus == '2'}">결제 확인완료</option>
+                                    <option value="3" th:selected="${orderStatus == '3'}">배송준비중</option>
+                                    <option value="4" th:selected="${orderStatus == '4'}">취소 대기중</option>
+                                    <option value="5" th:selected="${orderStatus == '5'}">취소 확정</option>
+                                    <option value="6" th:selected="${orderStatus == '6'}">배송중</option>
+                                    <option value="7" th:selected="${orderStatus == '7'}">배송완료</option>
+                                    <option value="8" th:selected="${orderStatus == '8'}">구매확정완료</option>
+                                    <option value="9" th:selected="${orderStatus == '9'}">반송중</option>
+                                    <option value="10" th:selected="${orderStatus == '10'}">반송완료</option>
+                                    <option value="11" th:selected="${orderStatus == '11'}">환불처리중</option>
+                                    <option value="12" th:selected="${orderStatus == '12'}">환불완료</option>
+                                </select>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="searchType">검색어 유형</label>
+                                <select class="form-select" id="searchType" name="searchType">
+                                    <option value="orderNumber" th:selected="${searchType == 'orderNumber'}">주문번호</option>
+                                    <option value="customerName" th:selected="${searchType == 'customerName'}">주문자명</option>
+                                    <option value="customerPhone" th:selected="${searchType == 'customerPhone'}">연락처</option>
+                                    <option value="productName" th:selected="${searchType == 'productName'}">상품명</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="searchKeyword">검색어</label>
+                                <input type="text" class="form-input" id="searchKeyword" name="searchKeyword"
+                                       th:value="${searchKeyword}" placeholder="검색어 입력">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="search-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> 검색
+                        </button>
+                        <button type="button" id="resetBtn" class="btn btn-outline">
+                            <i class="fas fa-redo"></i> 초기화
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header">
+                <h3>주문 목록</h3>
+                <span class="order-count"
+                      th:text="${orders != null ? '총 ' + orders.size() + '건' : '총 0건'}">총 0건</span>
+            </div>
+            <div class="table-responsive">
+                <table class="order-table">
+                    <thead>
+                    <tr>
+                        <th>주문번호</th>
+                        <th>주문일시</th>
+                        <th>주문자</th>
+                        <th>상품정보</th>
+                        <th>결제금액</th>
+                        <th>상태</th>
+                        <th>배송정보</th>
+                        <th>관리</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${orders.isEmpty()}">
+                        <td colspan="9" class="no-data">주문 내역이 없습니다.</td>
+                    </tr>
+                    <tr th:each="order : ${orders}" th:unless="${orders.isEmpty()}">
+                        <td th:text="${order.ordersId}">20240516-123456</td>
+                        <td th:text="${#temporals.format(order.ordersDate, 'yyyy-MM-dd HH:mm')}">2024-05-16 14:30</td>
+                        <td class="customer-info">
+                            <div th:text="${order.receiverName}">홍길동</div>
+                            <div class="text-light" th:text="${order.receiverContact}">010-1234-5678</div>
+                        </td>
+                        <td class="product-info">
+                            <div class="product-name"
+                                 th:text="${order.mainProductName + ' 외 ' + (order.productCount - 1) + '건'}">
+                            </div>
+                            <div class="order-option text-light"
+                                 th:text="${'사이즈: ' + order.mainProductSize}">
+                            </div>
+                        </td>
+                        <td class="price-info">
+                            <div th:text="${#numbers.formatInteger(order.paymentAmount + order.shippingFee, 0, 'COMMA') + '원'}">89,000원</div>
+                            <div class="payment-method text-light" th:text="${order.paymentMethod}">카드결제</div>
+                        </td>
+                        <td>
+        <span class="status-badge"
+              th:classappend="${'status-' + order.ordersStatus}"
+              th:text="${order.statusName}">
+        </span>
+                        </td>
+                        <td class="shipping-info">
+                            <div>대한통운</div> <!-- DTO 확장 필요 -->
+                            <div class="tracking-number">
+                                <a href="#" target="_blank">123456789012</a> <!-- DTO 확장 필요 -->
+                            </div>
+                        </td>
+                        <td>
+                            <a th:href="@{'/admin/orders/' + ${order.ordersId}}" class="btn btn-icon btn-outline">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+            <!-- 페이징 -->
+            <!--/*<div class="pagination-container" >
+                 Pagination content (commented out)
+        </div>
+    </div>
+    </div>*/-->
+
+    <!-- 송장 번호 등록 모달 -->
+    <div id="trackingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>송장 정보 등록</h4>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="trackingForm">
+                    <input type="hidden" id="orderId" name="orderId">
+                    <div class="form-group">
+                        <label for="trackingCompany">택배사</label>
+                        <select class="form-select" id="trackingCompany" name="trackingCompany" required>
+                            <option value="">택배사 선택</option>
+                            <option value="CJ대한통운">CJ대한통운</option>
+                            <option value="롯데택배">롯데택배</option>
+                            <option value="우체국택배">우체국택배</option>
+                            <option value="한진택배">한진택배</option>
+                            <option value="로젠택배">로젠택배</option>
+                            <option value="편의점택배">편의점택배</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="trackingNumber">송장번호</label>
+                        <input type="text" class="form-input" id="trackingNumber" name="trackingNumber"
+                               placeholder="송장번호 입력" required>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn-primary">등록</button>
+                        <button type="button" class="btn btn-cancel close-modal-btn">취소</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 일괄 상태 변경 모달 -->
+    <div id="batchStatusModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>주문 상태 일괄 변경</h4>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="batchStatusForm">
+                    <div class="form-group">
+                        <label for="batchOrderStatus">변경할 상태</label>
+                        <select class="form-select" id="batchOrderStatus" name="status" required>
+                            <option value="">상태 선택</option>
+                            <option value="PREPARING">상품 준비중</option>
+                            <option value="SHIPPING">배송중</option>
+                            <option value="DELIVERED">배송 완료</option>
+                            <option value="CANCELED">주문 취소</option>
+                        </select>
+                    </div>
+                    <div class="selected-orders-info">
+                        <p>선택된 주문: <span id="selectedOrderCount">0</span>건</p>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="submit" class="btn btn-primary">변경</button>
+                        <button type="button" class="btn btn-cancel close-modal-btn">취소</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/admin/js/orders-list.js}"></script>
+</section>
+
+
+</body>
+</html>

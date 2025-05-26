@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <style th:fragment="style">
+        html, body {
+            overflow-x: hidden;
+        }
+
+        .launches-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            padding: 10px 0;
+            position: relative;
+        }
+
+        .launches-slider {
+            position: relative;
+            height: 450px;
+            width: 1300px;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+            margin: 0 auto;
+            transform: translateX(-50%);
+            left: 50%;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            position: absolute;
+            width: 1300px;
+            height: 550px;
+            display: none;
+            text-align: center;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .slide img {
+            width: 1300px;
+            height: 550px;
+            object-fit: contain;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .slide.active {
+            display: block;
+            z-index: 2;
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .slide.prev {
+            display: block;
+            opacity: 0;
+            z-index: 1;
+            transform: translateX(-90%) scale(0.6);
+            left: 0;
+        }
+
+        .slide.next {
+            display: block;
+            opacity: 0;
+            z-index: 1;
+            transform: translateX(90%) scale(0.6);
+            right: 0;
+        }
+
+        .slide.prev.show, .slide.next.show {
+            opacity: 0.5;
+            transition-delay: 0.4s;
+        }
+
+        .slider-prev, .slider-next {
+            position: absolute;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.8);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 25px;
+            z-index: 10;
+        }
+
+        .slider-prev { left: 20px; }
+        .slider-next { right: 20px; }
+
+        .slider-indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 3;
+        }
+
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ddd;
+            cursor: pointer;
+        }
+
+        .indicator.active {
+            background: #333;
+        }
+
+        .section-header {
+            width: 1300px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .view-all {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .view-all:hover {
+            color: #000;
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    <section th:fragment="content" class="launches-section">
+        <div class="section-header">
+            <h1>LAUNCHES</h1>
+        </div>
+        <div class="launches-slider">
+            <button class="slider-prev" aria-label="이전 슬라이드">&lt;</button>
+            <div class="slider-container">
+                <div class="slide prev">
+                    <img src="/common/images/nike.png" alt="나이키 신발">
+                </div>
+                <div class="slide active">
+                    <img src="/common/images/adidas.png" alt="아디다스 신발">
+                </div>
+                <div class="slide next">
+                    <img src="/common/images/newbalance.png" alt="뉴발란스 신발">
+                </div>
+                <div class="slide">
+                    <img src="/common/images/컨버스.png" alt="컨버스 신발">
+                </div>
+                <div class="slide">
+                    <img src="/common/images/adidas.png" alt="아디다스 신발">
+                </div>
+                <div class="slide">
+                    <img src="/common/images/newbalance.png" alt="뉴발란스 신발">
+                </div>
+                <div class="slide prev">
+                    <img src="/common/images/nike.png" alt="나이키 신발">
+                </div>
+                <div class="slide">
+                    <img src="/common/images/컨버스.png" alt="컨버스 신발">
+                </div>
+                
+            </div>
+            <button class="slider-next" aria-label="다음 슬라이드">&gt;</button>
+            <div class="slider-indicators">
+                <span class="indicator active"></span>
+                <span class="indicator"></span>
+                <span class="indicator"></span>
+                <span class="indicator"></span>
+                <span class="indicator"></span>
+                <span class="indicator"></span>
+            </div>
+        </div>
+    </section>
+
+    <script th:fragment="script">
+        let currentSlide = 0;
+        const slides = $('.slide');
+        const totalSlides = slides.length;
+        let isAnimating = false;
+
+        function updateSlides(index) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            // 모든 슬라이드 초기화
+            slides.css('display', 'none').removeClass('active prev next show');
+            
+            // 현재 슬라이드
+            slides.eq(index).css('display', 'block').addClass('active');
+            
+            // 이전 슬라이드 (첫 번째일 때는 마지막 슬라이드가 이전으로)
+            let prevIndex = index === 0 ? totalSlides - 1 : index - 1;
+            slides.eq(prevIndex).css('display', 'block').addClass('prev');
+            setTimeout(() => {
+                slides.eq(prevIndex).addClass('show');
+            }, 50);
+            
+            // 다음 슬라이드 (마지막일 때는 첫 번째 슬라이드가 다음으로)
+            let nextIndex = index === totalSlides - 1 ? 0 : index + 1;
+            slides.eq(nextIndex).css('display', 'block').addClass('next');
+            setTimeout(() => {
+                slides.eq(nextIndex).addClass('show');
+            }, 50);
+
+            // 인디케이터 업데이트
+            $('.indicator').removeClass('active').eq(index).addClass('active');
+
+            // 애니메이션 완료 후 상태 초기화
+            setTimeout(() => {
+                isAnimating = false;
+            }, 800);
+        }
+
+        $('.slider-next').click(function() {
+            if (isAnimating) return;
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlides(currentSlide);
+        });
+
+        $('.slider-prev').click(function() {
+            if (isAnimating) return;
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateSlides(currentSlide);
+        });
+
+        $('.indicator').click(function() {
+            if (isAnimating) return;
+            currentSlide = $(this).index();
+            updateSlides(currentSlide);
+        });
+
+        // 초기 슬라이드 설정
+        updateSlides(currentSlide);
+
+        // 자동 슬라이드 (순환)
+        let autoSlideInterval = setInterval(function() {
+            if (!isAnimating) {
+                $('.slider-next').click();
+            }
+        }, 3000);
+    </script>
+</body>
+</html> 

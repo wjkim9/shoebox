@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+
+</head>
+<body>
+<section layout:fragment="content" th:fragment="content">
+    <link rel="stylesheet" th:href="@{/admin/css/homepage-qna-details.css}" />
+    <div class="admin-container" style="margin-top: var(--header-height);">
+        <!-- 페이지 헤더 -->
+        <div class="page-header">
+            <h2>문의 상세 보기</h2>
+            <a th:href="@{/admin/homepage/qna}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> 목록으로
+            </a>
+        </div>
+
+        <!-- Q&A 상세 정보 -->
+        <div class="panel">
+            <div class="panel-body">
+                <div class="form-group">
+                    <label>카테고리</label>
+                    <div th:text="${qna.category}">상품문의</div>
+                </div>
+
+                <div class="form-group">
+                    <label>제목</label>
+                    <div th:text="${qna.title}">사이즈 재입고 문의</div>
+                </div>
+
+                <div class="form-group">
+                    <label>작성자 ID</label>
+                    <div th:text="${qna.membersId}">2</div>
+                </div>
+
+                <div class="form-group">
+                    <label>작성일</label>
+                    <div th:text="${qna.writeDate}">2025-05-16 14:20</div>
+                </div>
+
+                <div class="form-group">
+                    <label>문의 내용</label>
+                    <div class="content-box" th:text="${qna.content}">
+                        260 사이즈는 언제 입고되나요?
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 답변 작성 -->
+        <div class="panel">
+            <div class="panel-header">
+                <h3>답변 작성</h3>
+            </div>
+            <div class="panel-body">
+                <form id="answerForm" th:action="@{/admin/homepage-qna/answer}" method="post">
+                    <input type="hidden" name="customerserviceId" th:value="${qna.customerserviceId}" />
+
+                    <div class="form-group">
+                        <label for="answerContent">답변 내용</label>
+                        <textarea class="form-input" id="answerContent" name="answerContent" rows="6"
+                                  placeholder="답변을 입력해주세요"
+                                  th:text="${qna.answerContent}"></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-reply"></i> 답변 등록
+                        </button>
+                        <button type="reset" class="btn btn-outline">
+                            <i class="fas fa-undo"></i> 초기화
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script th:src="@{/admin/js/homepage-qna-details.js}"></script>
+</body>
+</html>
