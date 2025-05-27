@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+    <title>상품 상세보기</title>
+    <link rel="stylesheet" th:href="@{/admin/css/product-list.css}" />
+
+
+<style>
+    /* 기본 스타일 */
+    .form-display {
+        padding: 0.8rem;
+        background-color: #ffffff;
+        border: 1px solid #e1e5eb;
+        border-radius: 0 4px 4px 4px;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+
+    .size-stock-row.header {
+        font-weight: bold;
+        padding: 0.5rem;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+    }
+
+    /* 사이즈/재고 헤더의 라벨을 위한 특별 스타일 */
+    #sizeStockContainer .label-text {
+        margin-bottom: 0;
+    }
+
+    #sizeStockContainer .size-stock-row:not(.header) {
+        margin-top: -1px; /* 헤더와 콘텐츠 사이 간격 제거 */
+    }
+
+    /* 이미지 미리보기 스타일 조정 */
+    .image-preview {
+        border: 1px solid #e1e5eb;
+        border-radius: 0 4px 4px 4px;
+        padding: 10px;
+        background-color: #fff;
+        margin-top: -1px;
+    }
+
+    .additional-images-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: -1px;
+        border: 1px solid #e1e5eb;
+        border-radius: 0 4px 4px 4px;
+        padding: 10px;
+        background-color: #fff;
+    }
+
+    .additional-image-item {
+        border: 1px solid #e1e5eb;
+        border-radius: 4px;
+        padding: 8px;
+        background-color: #fff;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    /* 라벨 스타일 - 상세보기 느낌으로 변경 */
+    .label-container {
+        margin-bottom: 6px;
+    }
+
+    .label-text {
+        font-weight: 600;
+        font-size: 14px;
+        background-color: #f8f9fa;
+        padding: 5px 10px;
+        border-radius: 4px 4px 0 0;
+        border: 1px solid #e1e5eb;
+        border-bottom: none;
+        color: #495057;
+        display: inline-block;
+    }
+
+    /* 카테고리별 라벨 스타일 */
+    /* 상품 정보 그룹 */
+    .product-name .label-text,
+    .brand .label-text,
+    .category .label-text,
+    .product-group .label-text {
+        border-top: 2px solid #4263eb;
+    }
+
+    /* 가격 정보 그룹 */
+    .price .label-text,
+    .discount .label-text {
+        border-top: 2px solid #40c057;
+    }
+
+    /* 고객 및 날짜 그룹 */
+    .gender .label-text,
+    .date .label-text {
+        border-top: 2px solid #7950f2;
+    }
+
+    /* 재고 그룹 */
+    .size .label-text,
+    .stock .label-text {
+        border-top: 2px solid #fd7e14;
+    }
+
+    /* 이미지 그룹 */
+    .main-image .label-text,
+    .additional-image .label-text {
+        border-top: 2px solid #e03131;
+    }
+
+    /* 성별 태그 디자인 - 더 선명하고 통일된 색상 */
+    .gender-tag {
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .gender-tag.men { background-color: #1864ab; }
+    .gender-tag.women { background-color: #ae3ec9; }
+    .gender-tag.unisex { background-color: #5c940d; }
+    .gender-tag.kids { background-color: #e67700; }
+
+    /* 사이즈 값 스타일 */
+    .size-value {
+        font-weight: 600;
+        color: #495057;
+        justify-content: center;
+    }
+
+    /* 패널 개선 - 상세보기 느낌으로 */
+    .panel {
+        margin-bottom: 25px;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #e9ecef;
+    }
+
+    .panel-header {
+        background-color: #f8f9fa;
+        padding: 12px 20px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .panel-header h3 {
+        margin: 0;
+        font-size: 18px;
+        color: #343a40;
+        position: relative;
+        padding-left: 15px;
+    }
+
+    .panel-header h3:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 5px;
+        height: 18px;
+        background-color: #4263eb;
+    }
+
+    .panel-body {
+        padding: 20px;
+        background-color: #fff;
+    }
+
+    /* 전체 폼 간격 조정 */
+    .form-group {
+        margin-bottom: 16px;
+    }
+    /* 헤더 전용 스타일 */
+    .size-stock-header {
+        display: flex;
+        background-color: #f1f3f5;
+        border: 1px solid #e1e5eb;
+        padding: 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+
+    .size-stock-row {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .size-stock-column {
+        flex: 1;
+    }
+
+</style>
+</head>
+<body>
+<section layout:fragment="content" th:fragment="content">
+    <div class="admin-container" style="margin-top: var(--header-height);">
+        <div class="page-header">
+            <h2>상품 상세보기</h2>
+            <div>
+                <a th:href="@{/admin/product/list}" class="btn btn-outline">
+                    <i class="fas fa-list"></i> 상품 목록
+                </a>
+                <a th:href="@{/admin/product/edit/{id}(id=${product.productId})}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> 수정
+                </a>
+            </div>
+        </div>
+
+        <!-- 기본 정보 -->
+        <div class="panel">
+            <div class="panel-header">
+                <h3>기본 정보</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-row">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <div class="label-container product-name">
+                                <label class="label-text">상품명</label>
+                            </div>
+                            <div class="form-display" th:text="${product.productName}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-container brand">
+                                <label class="label-text">브랜드</label>
+                            </div>
+                            <div class="form-display" th:text="${brand.brandName}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-container category">
+                                <label class="label-text">카테고리</label>
+                            </div>
+                            <div class="form-display" th:text="${category.categoriesName}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-container product-group">
+                                <label class="label-text">상품 그룹</label>
+                            </div>
+                            <div class="form-display" th:text="${productGroup.productGroupName}"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-column">
+                        <div class="form-group">
+                            <div class="label-container price">
+                                <label class="label-text">가격 (원)</label>
+                            </div>
+                            <div class="form-display" th:text="${product.productPrice + '원'}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-container discount">
+                                <label class="label-text">할인율 (%)</label>
+                            </div>
+                            <div class="form-display" th:text="${product.discountRate + '%'}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-container gender">
+                                <label class="label-text">성별</label>
+                            </div>
+                            <div class="form-display gender-type" th:switch="${product.targetCustomerType}">
+                                <span th:case="'MEN'" class="gender-tag men">남성</span>
+                                <span th:case="'WOMEN'" class="gender-tag women">여성</span>
+                                <span th:case="'UNISEX'" class="gender-tag unisex">공용</span>
+                                <span th:case="'KIDS'" class="gender-tag kids">키즈</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-container date">
+                                <label class="label-text">등록일</label>
+                            </div>
+                            <div class="form-display" th:text="${#temporals.format(product.productRegisterDate, 'yyyy-MM-dd HH:mm')}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 사이즈 및 재고 -->
+        <div class="panel">
+            <div class="panel-header">
+                <h3>사이즈 및 재고 관리</h3>
+            </div>
+            <div class="panel-body">
+                <div id="sizeStockContainer">
+
+                    <!-- ✅ 헤더는 별도 클래스로 분리 -->
+                    <div class="size-stock-header">
+                        <div class="size-stock-column">
+                            <span class="label-text">사이즈</span>
+                        </div>
+                        <div class="size-stock-column">
+                            <span class="label-text">재고 수량</span>
+                        </div>
+                    </div>
+
+                    <!-- ✅ 실제 재고 데이터 반복 -->
+                    <div class="size-stock-row" th:each="stock : ${stocks}">
+                        <div class="size-stock-column">
+                            <div class="form-display size-value" th:text="${stock.shoeSize}"></div>
+                        </div>
+                        <div class="size-stock-column">
+                            <div class="form-display" th:text="${stock.stockQuantity}"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 상품 이미지 -->
+        <div class="panel">
+            <div class="panel-header">
+                <h3>상품 이미지</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="label-container main-image">
+                        <label class="label-text">메인 이미지</label>
+                    </div>
+                    <div class="image-preview">
+                        <img th:src="@{'/images/products/' + ${product.productId} + '/' + ${product.mainImage}}"
+                             alt="메인 이미지" style="max-width: 300px;">
+                    </div>
+                </div>
+
+                <div class="form-group" th:if="${additionalImages != null and not #lists.isEmpty(additionalImages)}">
+                    <div class="label-container additional-image">
+                        <label class="label-text">추가 이미지</label>
+                    </div>
+                    <div class="additional-images-preview">
+                        <div th:each="img : ${additionalImages}" class="additional-image-item">
+                            <img th:src="@{'/images/products/' + ${product.productId} + '/' + ${img}}"
+                                 alt="추가 이미지" style="max-width: 150px;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a th:href="@{/admin/product/edit/{id}(id=${product.productId})}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> 수정하기
+            </a>
+            <a th:href="@{/admin/product/list}" class="btn btn-cancel">
+                <i class="fas fa-arrow-left"></i> 목록으로
+            </a>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

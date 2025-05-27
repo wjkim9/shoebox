@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ShoeBox</title>
+<link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
+<link rel="stylesheet" th:href="@{/member/css/shoebox_2.css}">
+<link rel="stylesheet" th:href="@{/member/css/shoebox_3.css}">
+<style>
+</style>
+</head>
+<body>
+	<th:block th:replace="~{inc/header.html :: header}"></th:block>
+	<div class="product-detail-wrap">
+		<div class="product-main">
+			<div class="product-main-left"
+				style="display: flex; flex-direction: column;">
+				<!-- 이미지/썸네일 -->
+				<div class="product-gallery">
+					<img th:src="'/common/images/' + ${firstImage.fileName}"
+						class="product-main-img" id="mainImg" alt="">
+
+					<div class="product-thumbs">
+						<img th:each="item : ${productImageDTOList}"
+							th:src="'/common/images/' + ${item.fileName}"
+							class="product-thumb" alt="" onclick="switchImg(this)">
+					</div>
+
+
+				</div>
+				<!-- 상품만족도 -->
+				<div class="product-score-box">
+					<div class="product-score-left">
+						<div class="product-score-label">상품만족도</div>
+						<div class="product-score-num-row">
+							<span th:text="${rating}" class="product-score-num"></span><span
+								class="product-score-point">점</span>
+						</div>
+						<div class="product-score-star">★★★★★</div>
+					</div>
+					<div class="product-score-right">
+						<table class="product-score-table">
+							<tr>
+								<td class="label">사이즈</td>
+								<td>정 사이즈</td>
+							</tr>
+							<tr>
+								<td class="label">색상</td>
+								<td>화면과 같음</td>
+							</tr>
+							<tr>
+								<td class="label">발볼</td>
+								<td>적당함</td>
+							</tr>
+							<tr>
+								<td class="label">발등</td>
+								<td>적당함</td>
+							</tr>
+							<tr>
+								<td class="label">착화감</td>
+								<td>적당함</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+			<!-- 상품 정보/옵션 -->
+			<div class="product-info-box">
+				<div class="product-brand-row">
+					<span th:text="${brandDTO.brandName}" class="product-brand">나이키</span>
+					<span class="product-icons">
+						<button class="icon-btn">♡</button>
+					</span>
+				</div>
+				<div class="product-title" th:text="${productDTO.productName}">우먼스
+					나이키 줌 벨라 6</div>
+				<div class="product-title-en">W NIKE ZOOM BELLA 6</div>
+				<div class="product-price-row">
+					<span class="product-price-label">판매가</span> <span
+						th:text="${#numbers.formatInteger(productDTO.productPrice, 3, 'COMMA')} + '원'"
+						class="product-price" id="infoPrice">179,000원</span>
+				</div>
+				<div class="product-member-row">
+					<span class="product-member-label">신규 회원가</span> <img
+						src="/member/images/coupon.png" class="product-member-coupon-img"
+						style="width: 30px;"> <span class="product-member-coupon">신규회원가입
+						10% 쿠폰받기</span> <span class="product-member-price">172,000원</span>
+				</div>
+				<div class="product-shipping">
+					<strong style="font-size: 1.1em;">배송비 안내</strong><br>
+					<div style="margin-top: 5px;">20,000원 이상 무료배송 | 상품별 개별배송 가능 |
+						기본배송비: 3,000원</div>
+				</div>
+				<div class="product-size-row">
+					<span class="product-size-label">사이즈 선택</span>
+					<div class="product-size-options" id="sizeOptions">
+						<button th:each="ps : ${productStockDTOList}"
+							th:text="${ps.shoeSize}" class="product-size-btn"
+							th:attr="data-productstockId=${ps.productStockId}, data-size=${ps.shoeSize}">230</button>
+
+						<!-- <button class="product-size-btn" data-size="235">235</button>
+						<button class="product-size-btn" data-size="235">285</button> -->
+					</div>
+				</div>
+
+				<hr class="product-divider">
+
+				<div id="selectedSizeList" style="display: none;">
+					<div class="selected-size-info">
+						<span id="selectedSizeText">260</span>
+						<div class="quantity-control">
+							<button class="qty-btn" onclick="changeQty(-1)">-</button>
+							<input type="number" id="qtyInput" value="1" min="1" readonly>
+							<button class="qty-btn" onclick="changeQty(1)">+</button>
+						</div>
+						<span id="selectedItemPrice">179,000원</span>
+						<button class="delete-btn" onclick="resetSelection()">×</button>
+					</div>
+				</div>
+
+				<div class="total-price-row">
+					<span class="total-price-label">총 결제금액</span>
+					<div class="total-price">
+						<span class="total-price-value" id="totalPrice">0</span> <span
+							class="total-price-won">원</span>
+					</div>
+				</div>
+
+				<div class="product-btn-row">
+					<button class="product-cart-btn">장바구니</button>
+					<!-- onclick="window.location.href='/mypage/cart'" -->
+					<button type="submit" class="product-buy-btn">바로구매</button>
+					<!-- onclick="window.location.href='/payment/orderlist'" -->
+					<button class="product-npay-btn">
+						<img src="/member/images/naver_logo.png" alt="네이버페이">Pay
+					</button>
+				</div>
+			</div>
+		</div>
+
+
+		<!-- 상세 탭 -->
+		<div class="product-tab-row">
+			<div class="product-tab active" onclick="showTab('info')">상품정보</div>
+			<div class="product-tab" onclick="showTab('review')">
+				상품후기 (<span id="review-count"
+					th:text="${mYOrderReviewMapDTOList.size()}">4</span>)
+			</div>
+			<div class="product-tab" onclick="showTab('qa')">
+				상품 Q&A (<span id="qa-count"
+					th:text="${mYProductPostQnaMapDTOList.size()}">0</span>)
+			</div>
+		</div>
+		<!-- 탭별 컨텐츠 -->
+		<div id="tab-info" class="tab-content" style="display: block;">
+			<!-- 상품정보 내용 (예: 상세 이미지, 고시 등) -->
+			<div class="product-detail-img-box">
+
+				<img th:each="ppi : ${productPostImageDTOList}"
+					th:src="'/common/images/' + ${ppi.fileName}"
+					class="product-detail-img" alt="상세이미지">
+			</div>
+			<!-- 상품정보제공고시 -->
+			<div class="product-info-table-wrap">
+				<table class="product-info-table">
+					<tr>
+						<th>소재</th>
+						<td>폴리에스터+합성가죽</td>
+						<th>색상</th>
+						<td>WOO</td>
+					</tr>
+					<tr>
+						<th>치수</th>
+						<td>220/225/230/235/240/245/250/255/260</td>
+						<th>굽높이</th>
+						<td>약 3.0cm</td>
+					</tr>
+					<tr>
+						<th>제조사</th>
+						<td>Nike Inc.</td>
+						<th>제조국</th>
+						<td>INDIA</td>
+					</tr>
+					<tr>
+						<th>A/S 책임자와 전화번호</th>
+						<td>슈박스 A/S센터 070-123-4567</td>
+						<th>제조년월</th>
+						<td>상품 입고시기에 따라 상이하며, 배송 확인 시 확인이 가능합니다.</td>
+					</tr>
+					<tr>
+						<th>품질보증기준</th>
+						<td colspan="3">관련 법 및 소비자 분쟁 해결 기준에 따름</td>
+					</tr>
+					<tr>
+						<th>소비자상담</th>
+						<td colspan="3">고객센터 080-789-7770</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div id="tab-review" class="tab-content" style="display: none;">
+			<!-- 상품후기 내용 -->
+			<div style="padding: 50px 0; text-align: center; color: #888;">아직
+				등록된 후기가 없습니다.</div>
+		</div>
+		<div id="tab-qa" class="tab-content" style="display: none;">
+			<!-- 상품 Q&A 내용 -->
+			<div style="padding: 50px 0; text-align: center; color: #888;">등록된
+				Q&A가 없습니다.</div>
+		</div>
+	</div>
+	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
+</body>
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script>
+
+	let selectedItems = [];
+
+    // 썸네일 클릭시 메인 이미지 변경
+    function switchImg(el) {
+      document.getElementById('mainImg').src = el.src;
+      document.querySelectorAll('.product-thumb').forEach(t => t.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+    // 수량 증감 및 총금액 계산(예시)
+    function changeQty(delta) {
+		const input = document.getElementById('qtyInput');
+		let qty = parseInt(input.value, 10) + delta;
+		if (qty < 1) qty = 1;
+		input.value = qty;
+		updateTotal();
+    }
+
+    document.getElementById('qtyInput').addEventListener('input', updateTotal);
+
+    function updateTotal() {
+		const qty = parseInt(document.getElementById('qtyInput').value, 10) || 1;
+		const price = 172000;
+		document.getElementById('totalPrice').innerText = (price * qty).toLocaleString() + '원';
+    }
+
+    updateTotal();
+
+    function showTab(tab) {
+		// 모든 탭 콘텐츠 숨김
+		document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+		// 선택한 탭만 표시
+		document.getElementById('tab-' + tab).style.display = 'block';
+		// 탭 버튼 active 클래스 처리
+		document.querySelectorAll('.product-tab').forEach(el => el.classList.remove('active'));
+		if(tab === 'info') document.querySelectorAll('.product-tab')[0].classList.add('active');
+		if(tab === 'review') document.querySelectorAll('.product-tab')[1].classList.add('active');
+		if(tab === 'qa') document.querySelectorAll('.product-tab')[2].classList.add('active');
+	}
+
+	//가격 정보 
+	document.addEventListener('DOMContentLoaded', function() {
+		const productPrice = (() => {
+			const priceText = document.getElementById('infoPrice').innerText;
+			return parseInt(priceText.replace(/[^0-9]/g, ''));
+		})();
+
+		// 사이즈 버튼 클릭
+		document.querySelectorAll('.product-size-btn').forEach(btn => {
+			btn.addEventListener('click', function() {
+		    	const size = this.getAttribute('data-size');
+		    	const productStockId = this.getAttribute('data-productStockId');
+			    	// 이미 선택된 사이즈면 무시
+			      	if (selectedItems.find(item => item.size === size)) return;
+			      	selectedItems.push({size, qty: 1, productStockId});
+			      	renderSelectedList();
+			});
+		});
+
+		// 선택된 항목 렌더링
+		function renderSelectedList() {
+			const list = document.getElementById('selectedSizeList');
+			// 1. 항목 없으면 전체 영역 숨김
+			if(selectedItems.length === 0) {
+				list.style.display = 'none';
+	    	} else {
+	    		list.style.display = 'block';
+	    	}
+	    	// 2. 내용 갱신
+	    	list.innerHTML = '';
+	    	selectedItems.forEach((item, idx) => {
+	      		const div = document.createElement('div');
+	      		div.className = 'selected-size-info';
+	      		div.innerHTML = `
+	        		<span class="selected-size-label">${item.size}</span>
+	        		<div class="quantity-control">
+	          		<button class="qty-btn" data-idx="${idx}" data-delta="-1">-</button>
+	          		<input type="number" class="qty-input" value="${item.qty}" min="1" readonly>
+					<input type="hidden" class="product-stock-id" data-productStockid="${item.productStockId}">
+	          		<button class="qty-btn" data-idx="${idx}" data-delta="1">+</button>
+	        		</div>
+	        		<span class="selected-item-price">${numberWithCommas(productPrice * item.qty)}원</span>
+	        		<button class="delete-btn" data-idx="${idx}">×</button>
+	      		`;
+		      	list.appendChild(div);
+		    });
+		    	
+		    updateTotal();
+		    addQtyListeners();
+		    addDeleteListeners();
+		}
+
+	  	// 수량 버튼 이벤트
+	  	function addQtyListeners() {
+	    	document.querySelectorAll('.qty-btn').forEach(btn => {
+		      	btn.onclick = function() {
+		        	const idx = parseInt(this.getAttribute('data-idx'));
+		        	const delta = parseInt(this.getAttribute('data-delta'));
+		        	selectedItems[idx].qty = Math.max(1, selectedItems[idx].qty + delta);
+		        	renderSelectedList();
+		      	}
+	    	});
+	  	}
+
+	 	// 삭제 버튼 이벤트
+	 	function addDeleteListeners() {
+	   		document.querySelectorAll('.delete-btn').forEach(btn => {
+		    	btn.onclick = function() {
+		        	const idx = parseInt(this.getAttribute('data-idx'));
+		        	selectedItems.splice(idx, 1);
+		        	renderSelectedList();
+		      	}
+	    	});
+	  	}
+	
+	  	// 총 결제금액 계산
+		function updateTotal() {
+			const sum = selectedItems.reduce((acc, item) => acc + (productPrice * item.qty), 0);
+			document.getElementById('totalPrice').innerText = numberWithCommas(sum);
+		}
+			
+		function numberWithCommas(x) {
+			return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		}
+			
+		// 페이지 진입 시 숨김 처리
+		document.getElementById('selectedSizeList').style.display = 'none';
+		document.getElementById('totalPrice').innerText = '0';
+	});
+	
+	document.querySelector('.product-buy-btn').addEventListener('click', () => {
+		if (selectedItems.length === 0) {
+			alert('상품을 선택하세요.');
+			return;
+		}
+
+		fetch('/main/test', {
+			method: 'POST',
+			headers: {
+			'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ items: selectedItems })
+		})
+		.then(res => {
+			if (res.redirected) {
+			window.location.href = res.url;
+			} else {
+			return res.text(); // 혹은 res.json()
+			}
+		})
+		.catch(err => {
+			console.error('주문 전송 실패', err);
+		});
+	});
+
+	document.querySelector('.product-cart-btn').addEventListener('click', () => {
+		if (selectedItems.length === 0) {
+			alert('상품을 선택하세요.');
+			return;
+		}
+
+		fetch('/main/add', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ items: selectedItems })
+			})
+			.then(res => res.json())
+			.then(data => {
+				if (data.needLogin) {
+					alert('로그인이 필요합니다.');
+					window.location.href = '/main/login'; // 실제 로그인 URL
+				} else if (data.success) {
+					alert('장바구니에 추가되었습니다.');
+					location.reload();
+					//selectedItems = [];
+					//renderSelectedList2(); // 선택 초기화
+				} else {
+					alert('추가에 실패했습니다: ' + (data.message || '알 수 없는 오류'));
+				}
+			})
+			.catch(err => {
+				console.error('요청 실패:', err);
+				alert('서버 통신 중 오류가 발생했습니다.');
+		});
+	});
+
+
+  </script>
+</html>

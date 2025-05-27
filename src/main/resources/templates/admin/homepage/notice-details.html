@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+</head>
+<body>
+<section layout:fragment="content" th:fragment="content">
+    <link rel="stylesheet" th:href="@{/admin/css/homepage-qna.css}"/>
+
+    <div class="admin-container" style="margin-top: var(--header-height);">
+        <div class="page-header">
+            <h2>공지사항 상세보기</h2>
+            <a href="/admin/homepage/notice" class="btn btn-outline">
+                <i class="fas fa-chevron-left"></i> 목록으로
+            </a>
+        </div>
+
+        <div class="panel">
+            <div class="panel-body">
+                <div class="qna-details">
+                    <div class="qna-details-row">
+                        <div class="qna-details-label">제목</div>
+                        <div class="qna-details-value" th:text="${notice.title}">공지 제목</div>
+                    </div>
+                    <div class="qna-details-row">
+                        <div class="qna-details-label">작성자</div>
+                        <div class="qna-details-value" th:text="${notice.author}">관리자</div>
+                    </div>
+                    <div class="qna-details-row">
+                        <div class="qna-details-label">작성일</div>
+                        <div class="qna-details-value" th:text="${notice.createdAt}">2025-05-19 09:30</div>
+                    </div>
+                    <div class="qna-details-row">
+                        <div class="qna-details-label">조회수</div>
+                        <div class="qna-details-value" th:text="${notice.viewCount}">32</div>
+                    </div>
+                </div>
+
+                <div class="qna-content">
+                    <h4>내용</h4>
+                    <div class="qna-content-text" th:text="${notice.content}">
+                        여기에 공지사항 내용이 들어갑니다.
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <a th:href="@{/admin/homepage/notice/edit/{id}(id=${notice.id})}" class="btn btn-primary">수정</a>
+                    <button type="button" class="btn btn-danger delete-btn" th:data-id="${notice.id}">삭제</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

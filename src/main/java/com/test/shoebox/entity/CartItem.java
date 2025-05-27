@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.persistence.FetchType;
 
 @Entity
 @Table(name = "CartItem")
@@ -35,11 +36,11 @@ public class CartItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productstock_id", nullable = false)
     private ProductStock productStock;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "members_id", nullable = false)
     private Members members;
 
@@ -51,4 +52,7 @@ public class CartItem {
                 .membersId(this.members.getMembersId())
                 .build();
     }
+
+
+
 }

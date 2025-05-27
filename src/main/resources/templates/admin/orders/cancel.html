@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+</head>
+<body>
+<section layout:fragment="content" th:fragment="content">
+  <!-- 공통 CSS 재사용 -->
+  <link rel="stylesheet" th:href="@{/admin/css/orders-cancel.css}"/>
+
+  <div class="admin-container" style="margin-top: var(--header-height);">
+    <!-- 헤더 -->
+    <div class="page-header">
+      <h2>취소 요청 관리</h2>
+      <div>
+        <button id="exportCancellationsBtn" class="btn btn-outline">
+          <i class="fas fa-file-export"></i> 엑셀 내보내기
+        </button>
+      </div>
+    </div>
+
+    <!-- 검색 폼 -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>취소 요청 검색</h3>
+      </div>
+      <div class="panel-body">
+        <form id="searchForm" th:action="@{/admin/orders/cancel-search}" method="get">
+          <div class="form-row">
+            <div class="form-column">
+              <div class="form-group">
+                <label for="requestDateStart">요청 기간</label>
+                <div class="date-range-picker">
+                  <input type="date" class="form-input" id="requestDateStart" name="requestDateStart"
+                         th:value="${#dates.format(param.requestDateStart,'yyyy-MM-dd')}"
+                         placeholder="시작일">
+                  <span class="date-separator">~</span>
+                  <input type="date" class="form-input" id="requestDateEnd" name="requestDateEnd"
+                         th:value="${#dates.format(param.requestDateEnd,'yyyy-MM-dd')}"
+                         placeholder="종료일">
+                </div>
+              </div>
+            </div>
+            <div class="form-column">
+              <div class="form-group">
+                <label for="cancelStatus">요청 상태</label>
+                <select class="form-select" id="cancelStatus" name="cancelStatus">
+                  <option value="">전체</option>
+                  <option value="CANCELLED" th:selected="${param.cancelStatus=='CANCELLED'}">
+                    취소 요청
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-column">
+              <div class="form-group">
+                <label for="searchType">검색어 유형</label>
+                <select class="form-select" id="searchType" name="searchType">
+                  <option value="orderNumber"
+                          th:selected="${param.searchType=='orderNumber'}">주문번호
+                  </option>
+                  <option value="customerName"
+                          th:selected="${param.searchType=='customerName'}">주문자명
+                  </option>
+                  <option value="customerPhone"
+                          th:selected="${param.searchType=='customerPhone'}">연락처
+                  </option>
+                  <option value="productName"
+                          th:selected="${param.searchType=='productName'}">상품명
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="form-column">
+              <div class="form-group">
+                <label for="searchKeyword">검색어</label>
+                <input type="text" class="form-input" id="searchKeyword" name="searchKeyword"
+                       th:value="${param.searchKeyword}" placeholder="검색어 입력">
+              </div>
+            </div>
+          </div>
+
+          <div class="search-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-search"></i> 검색
+            </button>
+            <button type="button" id="resetBtn" class="btn btn-outline">
+              <i class="fas fa-redo"></i> 초기화
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 취소 요청 목록 -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>취소 요청 목록</h3>
+        <span class="order-count" th:text="'총 ' + ${cancellations.size()} + '건'">총 0건</span>
+      </div>
+      <div class="table-responsive">
+        <table class="order-table">
+          <thead>
+          <tr>
+            <th>요청번호</th>
+            <th>요청일시</th>
+            <th>주문자</th>
+            <th>상품정보</th>
+            <th>결제금액</th>
+            <th>상태</th>
+            <th>관리</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:if="${cancellations}">
+            <td colspan="8" class="no-data">취소 요청 내역이 없습니다.</td>
+          </tr>
+          <tr th:each="cancel : ${cancellations}">
+            <td th:text="${cancel.orderNumber}">EXC-0001</td>
+            <td th:text="${cancel.orderDateStr}">2025-05-16 15:00</td>
+            <td class="customer-info">
+              <div th:text="${cancel.customerName}">홍길동</div>
+              <div class="text-light" th:text="${cancel.customerPhone}">010-1234-5678</div>
+            </td>
+            <td class="product-info">
+              <div class="product-name"
+                   th:text="${cancel.mainProductName + (cancel.productCount > 1 ? ' 외 ' + (cancel.productCount - 1) + '건' : '')}">
+                나이키 에어맥스 90 외 1건
+              </div>
+              <div class="order-option text-light"
+                   th:text="${'사이즈: ' + cancel.mainProductSize}">사이즈: 260</div>
+            </td>
+            <td class="price-info">
+              <div th:text="${#numbers.formatInteger(cancel.totalAmount,0,'COMMA') + '원'}">89,000원</div>
+              <div class="payment-method text-light"
+                   th:text="${cancel.paymentMethod}">카드결제</div>
+            </td>
+            <td>
+              <span class="status-badge"
+                    th:classappend="${'status-' + #strings.toLowerCase(cancel.status)}"
+                    th:text="${cancel.statusName}">취소 요청</span>
+            </td>
+            <td class="action-buttons">
+              <a th:href="@{'/admin/orders/cancel/' + ${cancel.id}}"
+                 class="btn btn-icon btn-outline">
+                <i class="fas fa-eye"></i>
+              </a>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 공통 JS 재사용 -->
+<script th:src="@{/admin/js/orders-list.js}"></script>
+</body>
+</html>

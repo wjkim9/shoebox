@@ -42,6 +42,8 @@ public class Coupon {
     @Column(name = "max_discount_price")
     private Integer maxDiscountPrice;
 
+
+
     public CouponDTO toDTO() {
         return CouponDTO.builder()
                 .couponId(this.couponId)

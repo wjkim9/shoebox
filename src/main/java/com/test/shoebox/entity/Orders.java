@@ -68,10 +68,10 @@ public class Orders {
     @Column(name = "destination_road_address", nullable = false, length = 255)
     private String destinationRoadAddress;
 
-    @Column(name = "destination_jibun_address", nullable = false, length = 255)
+    @Column(name = "destination_jibun_address", length = 255)
     private String destinationJibunAddress;
 
-    @Column(name = "destination_detail_address", nullable = false, length = 255)
+    @Column(name = "destination_detail_address", length = 255)
     private String destinationDetailAddress;
 
     @Column(name = "destination_reference", length = 255)
@@ -81,11 +81,11 @@ public class Orders {
     private LocalDateTime ordersDate;
 
     @ManyToOne
-    @JoinColumn(name = "issuedcoupon_id", nullable = false)
+    @JoinColumn(name = "issuedcoupon_id")
     private IssuedCoupon issuedCoupon;
 
     @ManyToOne
-    @JoinColumn(name = "members_id", nullable = false)
+    @JoinColumn(name = "members_id")
     private Members members;
 
     public OrdersDTO toDTO() {
@@ -106,8 +106,8 @@ public class Orders {
                 .destinationDetailAddress(this.destinationDetailAddress)
                 .destinationReference(this.destinationReference)
                 .ordersDate(this.ordersDate)
-                .issuedCouponId(this.issuedCoupon.getIssuedCouponId())
-                .membersId(this.members.getMembersId())
+                .issuedCouponId(this.issuedCoupon != null ? this.issuedCoupon.getIssuedCouponId() : null)
+                .membersId(this.members != null ? this.members.getMembersId() : null)
                 .build();
     }
     

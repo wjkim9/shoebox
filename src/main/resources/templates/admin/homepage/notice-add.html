@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+</head>
+<body>
+<section layout:fragment="content" th:fragment="content">
+  <link rel="stylesheet" th:href="@{/admin/css/homepage-notice-add.css}"/>
+
+  <div class="admin-container" style="margin-top: var(--header-height);">
+    <div class="page-header">
+      <h2>공지사항 등록</h2>
+      <a href="/admin/homepage/notice" class="btn btn-outline">
+        <i class="fas fa-chevron-left"></i> 목록으로
+      </a>
+    </div>
+
+    <form th:action="@{/admin/homepage/notice/addok}" method="post" class="notice-form">
+      <div class="panel">
+        <div class="panel-body">
+
+          <!-- 제목 입력 -->
+          <div class="form-group">
+            <label for="title">제목</label>
+            <input type="text" id="title" name="title" class="form-input" placeholder="공지 제목을 입력하세요" required>
+          </div>
+
+          <!-- 내용 입력 -->
+          <div class="form-group">
+            <label for="content">내용</label>
+            <textarea id="content" name="content" class="form-input" placeholder="공지 내용을 입력하세요" required></textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 등록 버튼 -->
+      <div class="notice-form-actions">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-check"></i> 등록하기
+        </button>
+        <button type="reset" class="btn btn-outline">
+          <i class="fas fa-undo"></i> 초기화
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+<script th:src="@{/admin/js/homepage-notice-create.js}"></script>
+</body>
+</html>

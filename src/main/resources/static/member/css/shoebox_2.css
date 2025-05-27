@@ -1,0 +1,900 @@
+.signup-container {
+	width: 400px;
+	margin: 40px auto;
+	border-radius: 12px;
+	background: #fff;
+}
+
+.signup-container h1 {
+	text-align: center;
+	font-size: 2rem;
+	font-weight: 700;
+	margin-bottom: 10px;
+	letter-spacing: -1px;
+}
+
+.signup-container p {
+	text-align: center;
+	margin-bottom: 30px;
+	color: #222;
+	font-size: 1rem;
+}
+
+.form-group {
+	margin-bottom: 18px;
+}
+
+.form-group label {
+	display: block;
+	font-weight: 500;
+	margin-bottom: 4px;
+	color: #222;
+}
+
+.form-row {
+	display: flex;
+	gap: 10px;
+}
+
+input[type="password"], input[type="email"], select, .rigtext {
+	width: 100%;
+	height: 43px;
+	padding: 12px;
+	border: 1.5px solid #e0e0e0;
+	border-radius: 6px;
+	font-size: 1rem;
+	box-sizing: border-box;
+	outline: none;
+	transition: border-color 0.2s;
+	background: #fafafa;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus,
+	select:focus {
+	border-color: #0099ff;
+	background: #fff;
+}
+
+.email-domain-select {
+	width: 160px;
+	border: 1.5px solid #e0e0e0;
+	border-radius: 6px;
+	font-size: 1rem;
+	background: #fafafa;
+	transition: border-color 0.2s;
+}
+
+.email-domain-select:focus {
+	border-color: #0099ff;
+	background: #fff;
+}
+
+.btn-check {
+	padding: 10px 0;
+	width: 110px;
+	background: #222;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	font-weight: 400;
+	font-size: 1rem;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.btn-check:hover {
+	background: #ba0a0a;
+}
+
+.form-error {
+	color: #ff3b30;
+	font-size: 0.98rem;
+	margin-top: 3px;
+	margin-bottom: 0;
+	min-height: 18px;
+	font-weight: 400;
+}
+
+.form-birth {
+	display: flex;
+	gap: 10px;
+}
+
+.form-birth select {
+	flex: 1;
+}
+
+.form-address {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 10px;
+}
+
+.form-address select {
+	flex: 1;
+}
+
+.form-address input[type="text"] {
+	flex: 2;
+}
+
+.btn-row {
+	display: flex;
+	gap: 10px;
+	margin-top: 20px;
+}
+
+.btn-submit {
+	flex: 1;
+	padding: 10px 0;
+	background: #ba0a0a;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	font-size: 1rem;
+	font-weight: 400;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.btn-submit:hover {
+	background: #222;
+}
+
+.btn-cancel {
+	flex: 1;
+	padding: 14px 0;
+	background: #222;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	font-size: 1rem;
+	font-weight: 700;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.btn-cancel:hover {
+	background: #888;
+}
+/* 이메일 row */
+.form-email {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+.form-email input[type="text"] {
+	flex: 2;
+}
+
+.form-email span {
+	flex: 0 0 auto;
+	font-size: 1rem;
+	color: #888;
+}
+
+.complete-wrap {
+	max-width: 600px;
+	margin: 80px auto 0 auto;
+	text-align: center;
+}
+
+.complete-title {
+	font-size: 2em;
+	font-weight: 700;
+	margin-bottom: 32px;
+	letter-spacing: -1px;
+}
+
+.complete-icon {
+	width: 90px;
+	height: 90px;
+	border-radius: 50%;
+	/* border: 3px solid #ff3c00; */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 28px auto;
+}
+
+.complete-icon svg {
+	width: 48px;
+	height: 48px;
+	color: #ff3c00;
+}
+
+.complete-desc {
+	font-size: 1.15em;
+	color: #444;
+	margin-bottom: 40px;
+}
+
+.complete-buttons {
+	display: flex;
+	justify-content: center;
+	gap: 16px;
+	margin-bottom: 10px;
+}
+
+.complete-btn {
+	flex: 1 1 0;
+	max-width: 180px;
+	background: #ba0a0a;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	padding: 14px 0;
+	font-size: 1em;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.complete-btn.orange {
+	background: #ba0a0a;
+	color: #fff;
+}
+
+.complete-btn:not(.orange):hover {
+	background: #444;
+}
+
+.complete-btn.orange:hover {
+	background: #ba0a0a;
+}
+.detail-wrap {
+    max-width: 1100px;
+    margin: 40px auto 0 auto;
+    background: #fff;
+    padding: 30px 24px 40px 24px;
+}
+
+/* 1. 주문 단계 표시 */
+.order-steps {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	font-size: 0.97em;
+	color: #bbb;
+	margin-bottom: 16px;
+	gap: 6px;
+	font-weight: 500;
+}
+
+.order-steps .active {
+	color: #222;
+	font-weight: 700;
+}
+
+.order-steps .divider {
+	color: #bbb;
+	font-weight: 400;
+	margin: 0 4px;
+}
+
+/* 2. 주문리스트 */
+.product-list {
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	margin-bottom: 24px;
+	overflow: hidden;
+	background: #fff;
+}
+
+.product-header, .product-row {
+	display: flex;
+	align-items: center;
+	padding: 14px 20px;
+}
+
+.product-header {
+	background: #f2f2f2;
+	font-weight: 700;
+	font-size: 1em;
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.product-row {
+	border-bottom: 1px solid #ececec;
+	background: #fff;
+}
+
+.product-row:last-child {
+	border-bottom: none;
+}
+
+.product-img {
+	width: 100px;
+	height: 100px;
+	border: 1px solid #eee;
+	border-radius: 6px;
+	object-fit: cover;
+	background: #fafafa;
+	margin-right: 18px;
+}
+
+.product-info {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.product-name {
+	font-size: 1.08em;
+	font-weight: 500;
+}
+
+.product-desc {
+	color: #888;
+	font-size: 0.97em;
+}
+
+.product-price {
+	width: 110px;
+	text-align: right;
+	font-weight: 700;
+	color: #ba0a0a;
+	font-size: 1.08em;
+}
+
+.product-qty {
+	width: 60px;
+	text-align: center;
+	color: #888;
+}
+
+.product-ship {
+	width: 80px;
+	text-align: center;
+	color: #888;
+	font-size: 0.95em;
+}
+
+/* 3. 주문정보수정 버튼 */
+.order-edit-btn {
+	background: #fff;
+	color: #222;
+	border: 1px solid #bbb;
+	border-radius: 4px;
+	padding: 5px 15px;
+	font-size: 0.97em;
+	margin-left: 10px;
+	cursor: pointer;
+	transition: border 0.2s;
+}
+
+.order-edit-btn:hover {
+	border: 1.5px solid #ba0a0a;
+	color: #ba0a0a;
+}
+
+/* 4. 결제 정보 센터 정렬 */
+.summary-row {
+	display: flex;
+	justify-content: center;
+	gap: 30px;
+	border-top: 1px solid #eee;
+	padding: 20px 0 20px 0;
+	margin-top: 0;
+	font-size: 1.1em;
+	background: #fafafa;
+}
+
+.summary-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	min-width: 170px;
+	/* 필요시 조정 */
+	gap: 70px;
+}
+
+.summary-label {
+	color: #222;
+	font-weight: 500;
+}
+
+.summary-item.total {
+	color: #ba0a0a;
+	font-weight: 700;
+	font-size: 1.18em;
+}
+
+.summary-icon {
+	position: relative;
+	top: 6px;
+	width: 30px;
+	height: 30px;
+	object-fit: contain;
+	vertical-align: middle;
+	margin: 0 2px;
+	user-select: none;
+}
+
+.summary-row span {
+	font-weight: 500;
+}
+
+.summary-row .total {
+	color: #ba0a0a;
+	font-weight: 700;
+	font-size: 1.18em;
+}
+
+.detail-section {
+	display: flex;
+	gap: 36px;
+	margin-top: 32px;
+}
+
+.customer-form {
+	flex: 1.5 1 0;
+	background: #fafafa;
+	border-radius: 10px;
+	padding: 20px 18px;
+	min-width: 0;
+}
+
+.pay-methods {
+	flex: 1 1 0;
+	background: #fafafa;
+	border-radius: 10px;
+	padding: 20px 18px;
+	min-width: 0;
+}
+
+.form-title {
+	font-weight: 700;
+	margin-bottom: 12px;
+	font-size: 1.1em;
+}
+
+.form-row {
+	display: flex;
+	align-items: center;
+	margin-bottom: 12px;
+}
+
+.form-row label {
+	margin-right: 15px;
+	padding-right: 15px;
+	width: 90px;
+	min-width: 90px;
+	font-size: 1em;
+	color: #222;
+}
+
+.form-row input[type="text"], .form-row input[type="tel"] {
+	flex: 1 1 0;
+	padding: 7px 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 1em;
+}
+
+.form-row input:focus {
+	outline: 2px solid #ba0a0a;
+}
+
+/* 5. 배송지 선택 라디오 버튼 */
+.address-select-row {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 10px;
+}
+
+.addr-radio {
+	appearance: none;
+	width: 18px;
+	height: 18px;
+	border: 2px solid #ccc;
+	border-radius: 50%;
+	outline: none;
+	margin-right: 5px;
+	vertical-align: middle;
+	background: #fff;
+	position: relative;
+	top: 3px;
+	cursor: pointer;
+	transition: border 0.2s;
+}
+
+.addr-radio:checked {
+	border: 6px solid #222;
+	background: #fff;
+}
+
+.addr-label {
+	font-size: 1em;
+	color: #bbb;
+	font-weight: 500;
+	cursor: pointer;
+	transition: color 0.2s;
+}
+
+.addr-radio:checked+.addr-label {
+	color: #222;
+	font-weight: 700;
+}
+
+/* 6. 배송요청사항 메뉴얼/직접입력 */
+.req-row {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	gap: 7px;
+}
+
+.req-select {
+	flex: 1 1 0;
+	padding: 7px 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 1em;
+	background: #fff;
+}
+
+.req-input {
+	flex: 1 1 0;
+	padding: 7px 10px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 1em;
+	background: #fff;
+	transition: border 0.2s, background 0.2s;
+}
+
+.req-input:disabled {
+	background: #f5f5f5;
+	color: #bbb;
+}
+
+.pay-methods {
+	background: #f6f6f6;
+	min-width: 220px;
+}
+
+.pay-title {
+	font-weight: 700;
+	margin-bottom: 10px;
+	font-size: 1.07em;
+}
+
+.agree-title {
+	font-weight: 700;
+	margin-bottom: 10px;
+	font-size: 1.07em;
+}
+
+.pay-options {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 14px;
+}
+
+.pay-btn {
+	background: #fff;
+	border: 1.5px solid #bbb;
+	border-radius: 6px;
+	padding: 7px 16px;
+	font-size: 0.98em;
+	cursor: pointer;
+	transition: border 0.2s;
+}
+
+.pay-btn.selected, .pay-btn:hover {
+	border: 2px solid #ba0a0a;
+	color: #ba0a0a;
+	font-weight: 600;
+}
+
+.order-agree {
+	margin: 18px 0;
+	font-size: 0.98em;
+}
+
+.order-btn-row {
+	text-align: right;
+	margin-top: 18px;
+}
+
+.order-btn {
+	display: block;
+	/* 한 줄 전체 차지 */
+	width: 100%;
+	/* 부모 영역 꽉 채움 */
+	max-width: 420px;
+	/* 너무 길어지지 않게 최대값(선택) */
+	margin: 24px auto 0 auto;
+	/* 가운데 정렬 */
+	background: #222;
+	color: #fff;
+	border: none;
+	border-radius: 6px;
+	padding: 13px 36px;
+	font-size: 1.1em;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+
+.order-btn:hover {
+	background: #ba0a0a;
+}
+
+.order-edit-btn {
+	position: relative;
+	margin-bottom: 10px;
+	left: 970px;
+}
+
+.section-divider {
+	border-bottom: 3px solid #222;
+	margin-bottom: 15px;
+}
+
+.semi-divider {
+	border-bottom: 1px solid #c0c0c0;
+	/* 검정색, 두께 2px */
+	margin-bottom: 24px;
+	/* 아래 여백 */
+	padding-bottom: 10px;
+	/* 구분선과 내용 간 간격 */
+}
+
+.address-row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	max-width: 350px;
+	/* 필요시 조정 */
+}
+
+.zipcode-input {
+	width: 120px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	padding: 0 10px;
+	font-size: 1em;
+	background: #f9f9f9;
+	color: #222;
+}
+
+.zipcode-btn {
+	height: 36px;
+	padding: 0 18px;
+	background: #fff;
+	border: 1.5px solid #222;
+	border-radius: 4px;
+	font-size: 1em;
+	font-weight: 500;
+	color: #222;
+	cursor: pointer;
+	transition: background 0.2s, color 0.2s, border 0.2s;
+}
+
+.required-label {
+	position: relative;
+}
+
+.required-label::after {
+	content: '';
+	display: inline-block;
+	width: 4px;
+	height: 4px;
+	background: #ba0a0a;
+	border-radius: 50%;
+	position: relative;
+	top: 50%;
+	left: 4px;
+	bottom: 5px;
+	transform: translateY(-50%);
+}
+
+.zipcode-btn:hover {
+	background: #222;
+	color: #fff;
+}
+.mypage-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 32px;
+    box-sizing: border-box;
+}
+
+/* flex 레이아웃 */
+.mypage-main {
+    display: flex;
+    gap: 48px;
+    align-items: flex-start;
+}
+
+/* 프로필 박스 */
+.profile-box {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 32px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fafafa;
+    margin-bottom: 40px;
+}
+
+.profile-info {
+    display: flex;
+    align-items: center;
+}
+
+.profile-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #eee;
+    margin-right: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: #aaa;
+}
+
+.profile-text {
+    line-height: 1.7;
+}
+
+.profile-text strong {
+    font-size: 1.22em;
+}
+
+.profile-detail {
+    margin-top: 6px;
+    font-size: 1em;
+    color: #666;
+}
+
+/* 상단 아이콘, 하단 문구 스타일 */
+.profile-status {
+    display: flex;
+    gap: 56px;
+    justify-content: flex-start;
+    margin-left: 36px;
+}
+.status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+}
+.status-item img {
+    margin-bottom: 10px;
+}
+.status-label {
+    margin-top: 2px;
+    font-size: 1.07em;
+    color: #222;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+.point { color: #e74c3c; }
+.coupon { color: #3498db; }
+.cart { color: #27ae60; }
+.wish { color: #e67e22; }
+
+/* 아코디언 메뉴 스타일 */
+.mypage-menu {
+    width: 220px;
+text-align: center;
+}
+.mypage-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.menu-title {
+    font-style: bold;
+    width: 100%;
+    text-align: left;
+    background: #f5f5f5;
+    border: none;
+    padding: 16px 20px;
+    font-size: 1.08em;
+    cursor: pointer;
+    outline: none;
+    border-bottom: 1px solid #e0e0e0;
+    transition: background 0.2s;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+.menu-title:hover {
+    background: #e0e0e0;
+}
+.submenu {
+    display: none;
+    padding: 8px 0 8px 24px;
+    background: #fafafa;
+}
+.submenu li {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.8em;
+    cursor: pointer;
+}
+.mypage-menu li.active .submenu {
+    display: block;
+}
+
+/* 우측 컨텐츠 */
+.mypage-content {
+    flex: 1;
+    padding-top: 0;
+}
+
+/* 주문 현황 */
+.order-status {
+    display: flex;
+    border-bottom: 2px solid #222;
+    padding-bottom: 20px;
+    gap: 44px;
+    margin-bottom: 36px;
+    justify-content: flex-start;
+    
+}
+
+.order-status-item {
+    text-align: center;
+    min-width: 80px;
+}
+
+.order-status-item strong {
+    display: block;
+    font-size: 2em;
+    margin-bottom: 5px;
+}
+
+.order-status-label {
+    color: #888;
+    font-size: 1em;
+}
+
+.inquiry-section {
+    margin-top: 56px;
+}
+
+.inquiry-title {
+    font-weight: bold;
+    font-size: 1.13em;
+    border-bottom: 2px solid #222;
+    padding-bottom: 10px;
+}
+
+.no-inquiry {
+    text-align: center;
+    color: #aaa;
+    margin-top: 70px;
+    font-size: 1.12em;
+}
+
+.order-table-horizontal {
+    width: 100%;
+    border-collapse: collapse;
+    gap: 10px;
+    margin: auto;
+}
+.order-table-horizontal th,
+.order-table-horizontal td {
+    text-align: center;
+}
+.order-table-horizontal th {
+    background: #f7f7f7;
+    font-weight: 600;
+    color: #222;
+}
+.order-table-horizontal td {
+    background: #fff;
+    color: #444;
+}
+

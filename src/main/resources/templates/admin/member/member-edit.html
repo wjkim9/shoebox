@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout.html}">
+<head>
+    <title>회원 정보 수정</title>
+</head>
+<body>
+<main layout:fragment="content" th:fragment="content">
+	<link rel="stylesheet" th:href="@{/admin/css/member-edit.css}"/>
+
+    <div class="admin-container" style="margin-top: var(--header-height);">
+        <div class="page-header">
+            <h2>회원 정보 수정</h2>
+        </div>
+
+        <form th:action="@{/admin/member/update}" method="post" class="panel">
+            <input type="hidden" name="membersId" th:value="${member.membersId}" />
+
+            <div class="form-group">
+                <label>아이디</label>
+                <input type="text" name="accountName" th:value="${member.accountName}" readonly class="form-input"/>
+            </div>
+
+            <div class="form-group">
+                <label>이름</label>
+                <input type="text" name="name" th:value="${member.name}" class="form-input"/>
+            </div>
+
+            <div class="form-group">
+                <label>닉네임</label>
+                <input type="text" name="nickname" th:value="${member.nickname}" class="form-input"/>
+            </div>
+
+            <div class="form-group">
+                <label>이메일</label>
+                <input type="email" name="email" th:value="${member.email}" class="form-input"/>
+            </div>
+
+            <div class="form-group">
+                <label>연락처( - 포함)</label>
+                <input type="text" name="contact" th:value="${member.contact}" class="form-input"/>
+            </div>
+
+            <div class="form-group">
+                <label>발 사이즈</label>
+                <input type="number" name="footSize" th:value="${member.footSize}" class="form-input"/>
+            </div>
+
+            <div class="form-group">
+                <label>포인트</label>
+                <input type="number" name="point" th:value="${member.point}" class="form-input"/>
+            </div>
+
+            <div class="form-group">
+                <label>회원 상태</label>
+                <select name="isDeleted" class="form-select">
+                    <option value="0" th:selected="${member.isDeleted == 0}">정상</option>
+                    <option value="1" th:selected="${member.isDeleted == 1}">탈퇴</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>등급</label>
+                <select name="gradeName" class="form-select">
+                    <option value="Bronze" th:selected="${member.gradeName == 'Bronze'}">Bronze</option>
+                    <option value="Silver" th:selected="${member.gradeName == 'Silver'}">Silver</option>
+                    <option value="Gold" th:selected="${member.gradeName == 'Gold'}">Gold</option>
+                    <option value="VIP" th:selected="${member.gradeName == 'VIP'}">VIP</option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">저장</button>
+                <a th:href="@{/admin/member/member-list}" class="btn btn-secondary">취소</a>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

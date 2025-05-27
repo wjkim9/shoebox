@@ -1,0 +1,128 @@
+<!-- src/main/resources/templates/admin/member/member-list.html -->
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout.html}">
+
+<!--<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>-->
+
+<section layout:fragment="content" th:fragment="content">
+    <link rel="stylesheet" th:href="@{/admin/css/member-list.css}"/>
+    <div class="admin-container" style="margin-top: var(--header-height);">
+        <div class="page-header">
+            <h2>회원 목록</h2>
+        </div>
+
+        <!-- 검색 폼 -->
+        <form class="panel" th:action="@{/admin/member/member-list}" method="get">
+            <div class="panel-header">
+                <h3>회원 검색</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-row">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="keyword">이름/아이디/연락처( - 포함)</label>
+                            <input type="text" id="keyword" name="keyword" class="form-input" th:value="${param.keyword}">
+                        </div>
+                    </div>
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="is_deleted">회원상태</label>
+                            <select id="is_deleted" name="is_deleted" class="form-select">
+                                <option value="">전체</option>
+                                <option value="0" th:selected="${param.is_deleted == '0'}">정상</option>
+                                <option value="1" th:selected="${param.is_deleted == '1'}">탈퇴</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="search-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-search"></i> 검색
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- 회원 목록 테이블 -->
+        <div class="panel">
+            <div class="panel-header">
+                <h3>회원 목록</h3>
+                <span class="order-count" th:text="'총 ' + ${memberPage.totalElements} + '명'">총 0명</span>
+            </div>
+            <div class="panel-body table-responsive">
+                <table class="order-table">
+                    <thead>
+                        <tr>
+                            <th>회원번호</th>
+                            <th>아이디</th>
+                            <th>이름</th>
+                            <th>닉네임</th>
+                            <th>이메일</th>
+                            <th>연락처</th>
+                            <th>발 사이즈</th>
+                            <th>포인트</th>
+                            <th>가입일</th>
+                            <th>상태</th>
+                            <th>등급</th>
+                            <th>관리</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${memberPage.totalElements == 0}">
+                            <td colspan="12" class="no-data">회원 정보가 없습니다.</td>
+                        </tr>
+                        <tr th:each="member : ${memberPage.content}">
+                            <td th:text="${member.membersId}">1</td>
+                            <td th:text="${member.accountName}">user123</td>
+                            <td th:text="${member.name}">홍길동</td>
+                            <td th:text="${member.nickname}">길동이</td>
+                            <td th:text="${member.email}">test@example.com</td>
+                            <td th:text="${member.contact}">010-1234-5678</td>
+                            <td th:text="${member.footSize != null ? member.footSize.intValue() : '-'}">250</td>
+                            <td th:text="${member.point}">1000</td>
+                            <td th:text="${#temporals.format(member.joinDatetime, 'yyyy-MM-dd')}">2024-05-19</td>
+                            <td>
+                                <span th:class="'status-badge ' + (${member.isDeleted} == 0 ? 'status-payment_complete' : 'status-canceled')"
+                                      th:text="${member.isDeleted == 0 ? '정상' : '탈퇴'}">정상</span>
+                            </td>
+                            <td th:text="${member.gradeName}">Bronze</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a th:href="@{|/admin/member/${member.membersId}|}" class="btn btn-outline btn-icon" title="상세보기">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
+                                    <a th:href="@{|/admin/member/edit/${member.membersId}|}" class="btn btn-primary btn-icon" title="수정">
+                                        <i class="fa fa-edit"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div class="pagination-container" th:if="${memberPage.totalPages > 1}">
+                <ul class="pagination">
+                    <li th:classappend="${memberPage.first} ? 'disabled'">
+                        <span th:if="${memberPage.first}">&laquo;</span>
+                        <a th:if="${!memberPage.first}" th:href="@{/admin/member/member-list(page=0, size=${memberPage.size}, keyword=${param.keyword}, is_deleted=${param.is_deleted})}">&laquo;</a>
+                    </li>
+                    <li th:each="pageNum : ${#numbers.sequence(0, memberPage.totalPages - 1)}"
+                        th:classappend="${pageNum == memberPage.number} ? 'active'">
+                        <a th:href="@{/admin/member/member-list(page=${pageNum}, size=${memberPage.size}, keyword=${param.keyword}, is_deleted=${param.is_deleted})}"
+                           th:text="${pageNum + 1}">1</a>
+                    </li>
+                    <li th:classappend="${memberPage.last} ? 'disabled'">
+                        <span th:if="${memberPage.last}">&raquo;</span>
+                        <a th:if="${!memberPage.last}"
+                           th:href="@{/admin/member/member-list(page=${memberPage.totalPages - 1}, size=${memberPage.size}, keyword=${param.keyword}, is_deleted=${param.is_deleted})}">&raquo;</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/admin/js/member-list.js}"></script>
+</section>

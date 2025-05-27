@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
+<link rel="stylesheet" th:href="@{/member/css/shoebox_2.css}">
+<link rel="stylesheet" th:href="@{/member/css/shoebox_3.css}">
+<head>
+<meta charset="UTF-8">
+<title>카테고리 상품 리스트</title>
+<style>
+</style>
+</head>
+<body>
+	<th:block th:replace="~{inc/header.html :: header}"></th:block>
+	
+	<div class="container">
+		<!-- 좌측 카테고리/필터 -->
+		<aside class="side-filter">
+			
+			<h2 th:text="${#strings.toUpperCase(menu)}">WOMEN</h2>
+			
+			<ul class="category-list" th:if="${search == 0}">
+				
+				<th:block th:if="${menu == 'brand'}">
+				<li class="selected" data-brandId="all">ALL</li>
+				<li th:each="item : ${brandOnFilterList}" th:text="${item.brandName}" th:attr="data-brandId=${item.brandId}">Nike</li>
+				</th:block>
+				
+				<th:block th:if="${menu == 'etc'}">
+				<li class="selected" data-categoriesId="all" onclick="location.href='/main/listProduct?menu=etc&categoriesId=7'">ALL</li>
+				</th:block>
+				
+				<th:block th:unless="${menu == 'brand' || menu == 'etc'}">
+				<li class="selected" data-categoriesId="all">ALL</li>
+				<li th:each="item : ${categoriesOnFilterList}" th:text="${item.categoriesName}" th:attr="data-categoriesId=${item.categoriesId}">운동화</li>
+				</th:block>
+				
+				
+				<!-- 
+				<li>운동화</li>
+				<li>슬리퍼/샌들</li>
+				<li>쪼리</li>
+				<li>부츠</li>
+				 -->
+			</ul>
+			<div class="section-title">필터</div>
+			<hr>
+			<!-- 필터 그룹: 카테고리 -->
+			<div class="filter-group">
+				<button class="filter-header" aria-expanded="false" type="button">
+					카테고리 <span class="arrow"> <svg width="18" height="18"
+							viewBox="0 0 20 20">
+          <polyline points="6 8 10 12 14 8" fill="none" stroke="#222"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+					</span>
+				</button>
+				<div class="filter-content">
+					<select id="filterCategory">
+						<option value="0">전체</option>
+						<option th:each="item : ${categoriesOnFilterList}" th:text="${item.categoriesName}" th:value="${item.categoriesId}">운동화</option>
+						<!-- 
+						<option>운동화</option>
+						<option>슬리퍼/샌들</option>
+						<option>쪼리</option>
+						<option>부츠</option>
+						 -->
+					</select>
+				</div>
+			</div>
+			<!-- 필터 그룹: 브랜드 -->
+			<div class="filter-group">
+				<button class="filter-header" aria-expanded="false" type="button">
+					브랜드 <span class="arrow"> <svg width="18" height="18"
+							viewBox="0 0 20 20">
+          <polyline points="6 8 10 12 14 8" fill="none" stroke="#222"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+					</span>
+				</button>
+				<div class="filter-content">
+					<select id="filterBrand">
+						<option value="0">전체</option>
+						<option th:each="item : ${brandOnFilterList}" th:text="${item.brandName}" th:value="${item.brandId}">NIKE</option>
+						<!-- 
+						<option>NIKE</option>
+						<option>ADIDAS</option>
+						<option>CROCS</option>
+						<option>DISCOVERY</option>
+						 -->
+					</select>
+				</div>
+			</div>
+			<!-- 필터 그룹: 가격 -->
+			<div class="filter-group">
+				<button class="filter-header" aria-expanded="false" type="button">
+					가격 <span class="arrow"> <svg width="18" height="18"
+							viewBox="0 0 20 20">
+          <polyline points="6 8 10 12 14 8" fill="none" stroke="#222"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+					</span>
+				</button>
+				<div class="filter-content">
+					<div class="filter-price">
+						<form id="price-filter-form">
+							<input type="number" id="startPrice" class="price-input" name="min_price" min="0"
+								value="0" placeholder="0" /> <span class="price-separator">~</span>
+							<input type="number" id="endPrice" class="price-input" name="max_price" min="0"
+								value="0" placeholder="0" />
+						</form>
+
+					</div>
+				</div>
+			</div>
+			<div class="filter-btns">
+				<button type="button">초기화</button>
+				<button type="button" class="search">검색</button>
+			</div>
+		</aside>
+		<!-- 우측 상품 리스트 -->
+		<main class="main-area">
+			<th:block th:unless="${search == 1}">
+			
+			<th:block th:if="${menu == 'brand'}">
+			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(menu)} + ' > ' + ${brand.brandName}"></div>
+			</th:block>
+			<th:block th:unless="${menu == 'brand'}">
+			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(menu)} + ' > ' + ${categories.categoriesName}"></div>
+			</th:block>
+			
+			</th:block>
+			<div class="topbar">
+				
+				<th:block th:if="${search == 1}">
+				<div class="category-title" th:text="${searchWord} + ': 검색 결과'">Nike</div>
+				</th:block>
+				
+				<th:block th:unless= "${search == 1}">
+				
+				<th:block th:if="${menu == 'brand'}">
+				<div class="category-title" th:text="${brand.brandName}">Nike</div>
+				</th:block>
+				<th:block th:unless="${menu == 'brand'}">
+				<div class="category-title" th:text="${categories.categoriesName}">런닝화</div>
+				</th:block>
+				
+				</th:block>
+				
+				<div class="sort-dropdown">
+					<select id="orderSelect" class="sort-select">
+						<option value="orderBestDesc">베스트상품순</option>
+						<option value="orderNewDesc">신상품순</option>
+						<option value="orderDiscountDesc">할인율 높은순</option>
+						<option value="orderReviewDesc">상품평순</option>
+						<option value="orderPriceAsc">낮은가격순</option>
+						<option value="orderPriceDesc">높은가격순</option>
+					</select>
+				</div>
+			</div>
+			<div class="product-grid">
+				<a th:each="product : ${productList}" th:href="'/main/detailpage/productPostId=' + ${product.productPostId}" href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img th:src="'/common/images/product/' + ${product.fileName}" th:alt="${product.productName}" src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
+						<div class="item-info">
+							<h3 th:text="${product.brandName}" class="item-info-brand" style="color: #222">아디다스</h3>
+							<p th:text="${product.productName}" class="item-info-name">GRADAS</p>
+							<p th:text="${#numbers.formatInteger(product.productPrice, '0', 'COMMA')} + '원'" class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+				<!-- 
+				<a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">아디다스</h3>
+							<p class="item-info-name">GRADAS</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+                <a href="/main/detailpage" class="new-item-link">
+				</a> <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/adidas/CLOUDFOAM WALK LOUNGER (3).jpg"
+							alt="아디다스">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">아디다스</h3>
+							<p class="item-info-name">CLOUDFOAM WALK LOUNGER</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a> <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">아디다스</h3>
+							<p class="item-info-name">GRADAS</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a> <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/adidas/SAMBA OG W (5).jpg" alt="아디다스">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">아디다스</h3>
+							<p class="item-info-name">SAMBA OG W</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a> <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/adidas/SAMBAE W (2).jpg" alt="아디다스">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">아디다스</h3>
+							<p class="item-info-name">SAMBAE W</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a> <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/nike/BIG NIKE LOW (1).jpg" alt="나이키">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">나이키</h3>
+							<p class="item-info-name">BIG NIKE LOW</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a> <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/nike/COURT SHOT (3).jpg" alt="나이키">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">나이키</h3>
+							<p class="item-info-name">COURT SHOT</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a> <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/nike/NIKE AIR MAX EXCEE 365 (3).jpg"
+							alt="나이키">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">나이키</h3>
+							<p class="item-info-name">NIKE AIR MAX EXCEE 365</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a> <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/nike/NIKE AIR MAX NUAXIS (2).jpg"
+							alt="나이키">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">나이키</h3>
+							<p class="item-info-name">NIKE AIR MAX NUAXIS</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+				 -->
+			</div>
+			<!--  <nav class="pagination">
+        <button class="active">1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>4</button>
+        <button>5</button>
+      </nav> -->
+			<br> <br> <br> <br>
+			<th:block th:utext="${sb}"></th:block>
+		</main>
+	</div>
+	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
+</body>
+<script th:inline="javascript">
+	
+	const form = document.getElementById('price-filter-form');
+	form.addEventListener('submit', function(e) {
+	  e.preventDefault();
+	  const minPrice = Number(form.min_price.value) * 10000;
+	  const maxPrice = Number(form.max_price.value) * 10000;
+	  // minPrice, maxPrice를 원 단위로 활용
+	});
+
+</script>
+</html>

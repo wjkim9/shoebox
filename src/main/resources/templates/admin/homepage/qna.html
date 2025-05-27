@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+</head>
+<body>
+<section layout:fragment="content" th:fragment="content">
+  <!-- 페이지별 CSS -->
+  <link rel="stylesheet" th:href="@{/admin/css/homepage-qna.css}"/>
+
+  <div class="admin-container" style="margin-top: var(--header-height);">
+    <!-- 페이지 헤더 -->
+    <div class="page-header">
+      <h2>Q&amp;A 관리</h2>
+    </div>
+
+    <!-- 검색 폼 -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>문의 검색</h3>
+      </div>
+      <div class="panel-body">
+        <form id="searchForm" th:action="@{/admin/qna}" method="get">
+          <div class="form-row">
+            <!-- 작성 기간 -->
+            <div class="form-column">
+              <div class="form-group">
+                <label for="qnaDateStart">작성 기간</label>
+                <div class="date-range-picker">
+                  <input type="date" class="form-input" id="qnaDateStart" name="qnaDateStart"
+                         th:value="${#dates.format(param.qnaDateStart,'yyyy-MM-dd')}"
+                         placeholder="시작일">
+                  <span class="date-separator">~</span>
+                  <input type="date" class="form-input" id="qnaDateEnd" name="qnaDateEnd"
+                         th:value="${#dates.format(param.qnaDateEnd,'yyyy-MM-dd')}"
+                         placeholder="종료일">
+                </div>
+              </div>
+            </div>
+            <!-- 검색 유형 -->
+            <div class="form-column">
+              <div class="form-group">
+                <label for="searchType">검색어 유형</label>
+                <select class="form-select" id="searchType" name="searchType">
+                  <option value="authorName" th:selected="${param.searchType=='authorName'}">작성자</option>
+                  <option value="category" th:selected="${param.searchType=='category'}">카테고리</option>
+                  <option value="title" th:selected="${param.searchType=='title'}">제목</option>
+                  <option value="content" th:selected="${param.searchType=='content'}">내용</option>
+                </select>
+              </div>
+            </div>
+            <!-- 키워드 입력 -->
+            <div class="form-column">
+              <div class="form-group">
+                <label for="searchKeyword">검색어</label>
+                <input type="text" class="form-input" id="searchKeyword" name="searchKeyword"
+                       th:value="${param.searchKeyword}" placeholder="검색어 입력">
+              </div>
+            </div>
+          </div>
+          <div class="search-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-search"></i> 검색
+            </button>
+            <button type="button" id="resetBtn" class="btn btn-outline">
+              <i class="fas fa-redo"></i> 초기화
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Q&A 목록 -->
+    <div class="panel">
+      <div class="panel-header">
+        <h3>Q&amp;A 목록</h3>
+        <span class="order-count" th:text="'총 ' + ${qnas.size()} + '건'">총 0건</span>
+      </div>
+      <div class="table-responsive">
+        <table class="order-table">
+          <thead>
+          <tr>
+            <th>
+              <label class="checkbox-label">
+                <input type="checkbox" id="selectAll">
+                <span class="checkmark"></span>
+              </label>
+            </th>
+            <th>작성자</th>
+            <th>작성일시</th>
+            <th>제목</th>
+            <th>카테고리</th>
+            <th>답변 여부</th>
+            <th>관리</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:if="${qnas}">
+            <td colspan="7" class="no-data">문의가 없습니다.</td>
+          </tr>
+          <tr th:each="qna : ${qnas}">
+            <td>
+              <label class="checkbox-label">
+                <input type="checkbox" class="order-checkbox" th:value="${qna.id}">
+                <span class="checkmark"></span>
+              </label>
+            </td>
+            <td th:text="${qna.authorName}">홍길동</td>
+            <td th:text="${#dates.format(qna.writeDate,'yyyy-MM-dd HH:mm')}">2025-05-16 17:00</td>
+            <td>
+              <a th:href="@{/admin/homepage/details/{id}(id=${qna.id})}" th:text="${qna.title}">
+                배송 지연 문의
+              </a>
+            </td>
+            <td th:text="${qna.category}">배송</td>
+            <td th:text="${qna.answerContent != null ? '답변 완료' : '미답변'}">미답변</td>
+            <td class="action-buttons">
+              <button type="button"
+                      class="btn btn-icon btn-danger delete-btn"
+                      th:data-id="${qna.id}">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script th:src="@{/admin/js/homepage-qna.js}"></script>
+</body>
+</html>

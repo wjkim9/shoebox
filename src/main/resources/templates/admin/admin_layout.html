@@ -1,0 +1,65 @@
+<!-- src/main/resources/templates/admin/admin_layout.html -->
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>신발 쇼핑몰 관리자</title>
+
+    <!-- 공통 CSS -->
+    <link rel="stylesheet" th:href="@{/admin/css/admin.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+    <!-- 레이아웃 전용 스타일 -->
+    <style>
+        .layout-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;       /* 사이드바 고정 너비 */
+            flex-shrink: 0;     /* 축소되지 않도록 */
+        }
+        .main-area {
+            flex-grow: 1;       /* 남은 공간 전부 차지 */
+            display: flex;
+            flex-direction: column;
+        }
+        .content-wrapper {
+            flex-grow: 1;       /* 헤더/푸터 제외한 영역 채우기 */
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="layout-wrapper">
+    <!-- 사이드바 -->
+    <aside class="sidebar" layout:fragment="sidebar">
+        <div th:insert="~{admin/fragments/sidebar :: sidebar}"></div>
+    </aside>
+
+    <!-- 메인 영역 (헤더 + 콘텐츠 + 푸터) -->
+    <div class="main-area">
+        <!-- 헤더 -->
+        <header layout:fragment="header">
+            <div th:insert="~{admin/fragments/header :: header}"></div>
+        </header>
+
+        <!-- 콘텐츠 -->
+        <main class="content-wrapper" layout:fragment="content">
+            <!-- 자식 템플릿의 content fragment가 여기로 삽입됩니다 -->
+        </main>
+
+        <!-- 푸터 -->
+        <footer layout:fragment="footer">
+            <div th:insert="~{admin/fragments/footer :: footer}"></div>
+            <!-- 공통 스크립트 -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            <script th:src="@{/admin/js/admin.js}"></script>
+        </footer>
+    </div>
+</div>
+</body>
+</html>
