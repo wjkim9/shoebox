@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -120,21 +121,24 @@ public class MembersService {
             )).collect(Collectors.toList());
 
         // 4. 쿠폰 정보
-        List<Object[]> couponResults = issuedCouponRepository.findValidCouponsByMembersId(membersId);
-        //FIXME
-        List<IssuedCouponDTO> issuedCoupons = couponResults.stream()
-            .map(result -> new IssuedCouponDTO(
-                toLong(result[0]),
-                ((Timestamp) result[1]).toLocalDateTime(),
-                ((Timestamp) result[2]).toLocalDateTime(),
-                toLong(result[3]),
-                toLong(result[4]),
-                (String) result[5],
-                toDouble(result[6]),
-                result[7] != null ? toInt(result[7]) : null,
-                result[8] != null ? toInt(result[8]) : null
-            )).collect(Collectors.toList());
+//        List<Object[]> couponResults = issuedCouponRepository.findValidCouponsByMembersId(membersId);
+//        List<IssuedCouponDTO> issuedCoupons = couponResults.stream()
+//        	    .map(result -> IssuedCouponDTO.builder()
+//        	        .issuedCouponId(toLong(result[0]))
+//        	        .issueDatetime(((Timestamp) result[1]).toLocalDateTime())
+//        	        .expireDatetime(((Timestamp) result[2]).toLocalDateTime())
+//        	        .couponId(toLong(result[3]))
+//        	        .membersId(toLong(result[4]))
+//        	        .couponName((String) result[5])
+//        	        .discountRate(toDouble(result[6]))
+//        	        .minOrderPrice(result[7] != null ? toInt(result[7]) : null)
+//        	        .maxDiscountAmount(result[8] != null ? toInt(result[8]) : null)
+//        	        .build()
+//        	    )
+//        	    .collect(Collectors.toList());
 
+        List<IssuedCouponDTO> issuedCoupons = new ArrayList<>();
+        
      // 5. 채팅 정보 조회
         List<Object[]> chatResults = chatMessageRepository.findChatMessagesByMembersId(membersId);
         List<ChatMessageDTO> chatMessages = chatResults.stream()

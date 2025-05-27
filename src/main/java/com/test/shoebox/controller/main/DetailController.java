@@ -21,6 +21,8 @@ import com.test.shoebox.dto.CategoriesDTO;
 import com.test.shoebox.dto.DetailMap;
 import com.test.shoebox.dto.MYOrderReviewMapDTO;
 import com.test.shoebox.dto.MYProductPostQnaMapDTO;
+import com.test.shoebox.dto.OrderForm;
+import com.test.shoebox.dto.OrderItemDTO;
 import com.test.shoebox.dto.ProductDTO;
 import com.test.shoebox.dto.ProductGroupDTO;
 import com.test.shoebox.dto.ProductImageDTO;
@@ -122,12 +124,8 @@ public class DetailController {
 		List<ProductStockDTO> productStockDTOList = new ArrayList<>();
 		
 		for (ProductStock ps : productStockList) {
-
-
 			ProductStockDTO dto = ps.toDTO();
 
-			//System.out.println("사이즈: " + dto.getShoeSize() + " _ 수량 " + dto.getStockQuantity());
-			
 			productStockDTOList.add(dto);
 		}
 

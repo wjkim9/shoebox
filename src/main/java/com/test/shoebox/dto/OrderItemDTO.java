@@ -1,4 +1,4 @@
-package com.test.shoebox.controller.main;
+package com.test.shoebox.dto;
 
 import lombok.Data;
 

@@ -24,6 +24,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/payment")
+@RequiredArgsConstructor
 public class PaymentController {
     
     private final PaymentService paymentService;
@@ -100,7 +101,7 @@ public class PaymentController {
                 Payment payment = paymentService.verifyPayment(imp_uid, merchant_uid, amount);
                 return ResponseEntity.ok(payment);
             } catch (Exception e) {
-                log.error("결제 검증 중 오류 발생", e);
+                //log.error("결제 검증 중 오류 발생", e);
                 return ResponseEntity.badRequest().body("결제 검증 중 오류가 발생했습니다: " + e.getMessage());
             }
         }
@@ -112,7 +113,7 @@ public class PaymentController {
                 Payment payment = paymentService.getPaymentStatus(imp_uid);
                 return ResponseEntity.ok(payment);
             } catch (Exception e) {
-                log.error("결제 상태 조회 중 오류 발생", e);
+                //log.error("결제 상태 조회 중 오류 발생", e);
                 return ResponseEntity.badRequest().body("결제 상태 조회 중 오류가 발생했습니다: " + e.getMessage());
             }
         }

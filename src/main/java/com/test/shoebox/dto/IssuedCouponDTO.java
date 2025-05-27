@@ -39,7 +39,7 @@ public class IssuedCouponDTO {
                 .coupon(coupon)
                 .build();
     }
-    //FIXME
+    
     // 쿠폰 정보 (조인용)
     private String couponName;
     private Double discountRate;

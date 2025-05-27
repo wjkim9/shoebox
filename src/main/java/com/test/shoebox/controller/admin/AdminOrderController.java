@@ -79,10 +79,10 @@ public class AdminOrderController {
     /**
      * 주문 상세 페이지
      */
-    @GetMapping("/{orderId}")
-    public String orderDetail(@PathVariable Long orderId, Model model,@RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
+    @GetMapping("/{ordersId}")
+    public String orderDetail(@PathVariable("ordersId") Long ordersId, Model model, @RequestHeader(value = "X-Requested-With", required = false) String requestedWith) {
         // 서비스에서 주문 상세 정보 가져오기
-        OrderDetailDTO order = ordersService.getOrderDetail(orderId);
+        OrderDetailDTO order = ordersService.getOrderDetail(ordersId);
 
         model.addAttribute("order", order);
 

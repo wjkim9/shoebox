@@ -1,18 +1,35 @@
 package com.test.shoebox.service.admin;
 
-import com.test.shoebox.dto.*;
-import com.test.shoebox.entity.*;
-import com.test.shoebox.repository.DeliveryProgressRepository;
-import com.test.shoebox.repository.OrdersRepository;
-import com.test.shoebox.repository.ProductStockOrderRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.test.shoebox.dto.DeliveryProgressDTO;
+import com.test.shoebox.dto.MembersDTO;
+import com.test.shoebox.dto.OrderDetailDTO;
+import com.test.shoebox.dto.OrdersDTO;
+import com.test.shoebox.dto.OrdersListDTO;
+import com.test.shoebox.dto.ProductStockOrderDTO;
+import com.test.shoebox.entity.Coupon;
+import com.test.shoebox.entity.DeliveryProgress;
+import com.test.shoebox.entity.IssuedCoupon;
+import com.test.shoebox.entity.Members;
+import com.test.shoebox.entity.Orders;
+import com.test.shoebox.entity.Product;
+import com.test.shoebox.entity.ProductImage;
+import com.test.shoebox.entity.ProductStock;
+import com.test.shoebox.entity.ProductStockOrder;
+import com.test.shoebox.repository.DeliveryProgressRepository;
+import com.test.shoebox.repository.OrdersRepository;
+import com.test.shoebox.repository.ProductImageRepository;
+import com.test.shoebox.repository.ProductStockOrderRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +37,7 @@ public class OrdersService {
     private final OrdersRepository ordersRepository;
     private final ProductStockOrderRepository productStockOrderRepository;
     private final DeliveryProgressRepository deliveryProgressRepository;
+    private final ProductImageRepository productImageRepository;
 
 
     // 상태 코드 → 한글 상태명 매핑
@@ -80,34 +98,39 @@ public class OrdersService {
 
 
     //상품 상세조회를 위한 dto
-    public OrderDetailDTO getOrderDetail(Long orderId) {
-        Orders order = ordersRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문이 존재하지 않습니다: id=" + orderId));
-
+    public OrderDetailDTO getOrderDetail(Long ordersId) {
+    	System.out.println("주문 ID 확인: " + ordersId);
+        Optional<Orders> orderEntity = ordersRepository.findById(ordersId);
+        System.out.println("주문 조회 결과: " + orderEntity.isPresent());
+        
+        Orders order = orderEntity.get();
+        
         // 주문 DTO 변환
-        OrdersDTO ordersDTO = OrdersDTO.builder()
-                .ordersId(order.getOrdersId())
-                .ordersStatus(order.getOrdersStatus())
-                .statusName(getStatusName(order.getOrdersStatus()))
-                .paymentAmount(order.getPaymentAmount())
-                .paymentPoint(order.getPaymentPoint())
-                .shippingFee(order.getShippingFee())
-                .receiverName(order.getReceiverName())
-                .receiverEmail(order.getReceiverEmail())
-                .receiverContact(order.getReceiverContact())
-                .paymentMethod(order.getPaymentMethod())
-                .paymentInfo(order.getPaymentInfo())
-                .destinationZipCode(order.getDestinationZipCode())
-                .destinationRoadAddress(order.getDestinationRoadAddress())
-                .destinationJibunAddress(order.getDestinationJibunAddress())
-                .destinationDetailAddress(order.getDestinationDetailAddress())
-                .destinationReference(order.getDestinationReference())
-                .ordersDate(order.getOrdersDate())
-                .issuedCouponId(order.getIssuedCoupon().getIssuedCouponId())
-                .membersId(order.getMembers().getMembersId())
-                .build();
+        OrdersDTO ordersDTO = order.toDTO();
+//        		OrdersDTO.builder()
+//                .ordersId(order.getOrdersId())
+//                .ordersStatus(order.getOrdersStatus())
+//                .statusName(getStatusName(order.getOrdersStatus()))
+//                .paymentAmount(order.getPaymentAmount())
+//                .paymentPoint(order.getPaymentPoint())
+//                .shippingFee(order.getShippingFee())
+//                .receiverName(order.getReceiverName())
+//                .receiverEmail(order.getReceiverEmail())
+//                .receiverContact(order.getReceiverContact())
+//                .paymentMethod(order.getPaymentMethod())
+//                .paymentInfo(order.getPaymentInfo())
+//                .destinationZipCode(order.getDestinationZipCode())
+//                .destinationRoadAddress(order.getDestinationRoadAddress())
+//                .destinationJibunAddress(order.getDestinationJibunAddress())
+//                .destinationDetailAddress(order.getDestinationDetailAddress())
+//                .destinationReference(order.getDestinationReference())
+//                .ordersDate(order.getOrdersDate())
+//                .issuedCouponId(order.getIssuedCoupon().getIssuedCouponId())
+//                .membersId(order.getMembers().getMembersId())
+//                .build();
 
         // 회원 DTO 생성
+        if (order.getMembers() != null) {
         Members member = order.getMembers();
         MembersDTO memberDTO = MembersDTO.builder()
                 .membersId(member.getMembersId())
@@ -115,12 +138,16 @@ public class OrdersService {
                 .contact(member.getContact())
                 .email(member.getEmail())
                 .build();
-
+        }
+        
         // 주문 상품 리스트
         List<ProductStockOrderDTO> itemDTOs = productStockOrderRepository.findByOrders(order).stream()
                 .map(pso -> {
                     ProductStock ps = pso.getProductStock();
                     Product product = ps.getProduct();
+                    
+                    Optional<ProductImage> productImage =  productImageRepository.findByProductAndSortOrderLessThan(product, 2);
+                    
                     return ProductStockOrderDTO.builder()
                             .productStockOrderId(pso.getProductStockOrderId())
                             .quantity(pso.getQuantity())
@@ -129,7 +156,7 @@ public class OrdersService {
                             .ordersId(order.getOrdersId())
                             .productId(product.getProductId())
                             .productName(product.getProductName())
-                            .productImageUrl("/images/product/" + product.getProductId() + ".jpg")
+                            .productImageUrl("/common/images/product/" + (productImage.get() != null ? productImage.get().getFileName() : " "))
                             .shoeSize(ps.getShoeSize())
                             .build();
                 })
@@ -150,12 +177,9 @@ public class OrdersService {
             );
         }
 
-
-
         int totalOrderPrice = itemDTOs.stream()
                 .mapToInt(item -> item.getQuantity() * item.getOrderPrice())
                 .sum();
-
 
         IssuedCoupon issuedCoupon = order.getIssuedCoupon();
         Coupon coupon = issuedCoupon != null ? issuedCoupon.getCoupon() : null;
@@ -165,10 +189,9 @@ public class OrdersService {
 
         int discountAmount = (totalOrderPrice * discountRate) / 100;
 
-
         return OrderDetailDTO.builder()
                 .orders(ordersDTO)
-                .member(memberDTO)
+                .member(order.getMembers() != null ? order.getMembers().toDTO() : null)
                 .orderItems(itemDTOs)
                 .deliveryProgressList(progressList)
                 .totalOrderPrice(totalOrderPrice)
@@ -180,7 +203,6 @@ public class OrdersService {
     public List<OrdersListDTO> searchOrders(LocalDate orderDateStart, LocalDate orderDateEnd,
                                             String orderStatus, String searchType, String searchKeyword) {
         List<Orders> ordersList = ordersRepository.findAll(); // 일단 전체 불러오기
-
 
         // 필터 조건 적용
         return ordersList.stream()
