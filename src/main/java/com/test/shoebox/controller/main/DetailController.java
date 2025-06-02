@@ -46,6 +46,19 @@ import com.test.shoebox.service.main.CustomOAuth2User;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 상품 상세 페이지 관련 요청을 처리하는 컨트롤러입니다.
+ * 
+ * <p>다음과 같은 기능을 제공합니다:
+ * <ul>
+ *   <li>상품 상세 페이지 조회</li>
+ *   <li>상품을 장바구니에 추가</li>
+ *   <li>장바구니 테스트용 POST 처리</li>
+ * </ul>
+ * </p>
+ *
+ * @author 김원중
+ */
 @Controller
 @RequestMapping("/main")
 @RequiredArgsConstructor
@@ -60,6 +73,16 @@ public class DetailController {
     private final CartItemRepository cartItemRepository;
     private final MembersRepository membersRepository;
 	
+    /**
+     * 상품 상세 페이지를 출력합니다.
+     * 
+     * <p>상품 게시글 ID를 기반으로 관련된 모든 상품 정보(상품, 카테고리, 브랜드, 이미지, 재고, Q&A 등)를 조회하여
+     * 모델에 담아 반환합니다.</p>
+     *
+     * @param productPostId 조회할 상품 게시글 ID
+     * @param model 모델 객체
+     * @return 상세 페이지 뷰 이름
+     */
 	@GetMapping("/detailpage")
 	public String detailpage(@RequestParam("productPostId") String productPostId, Model model) {
 		
@@ -167,6 +190,15 @@ public class DetailController {
 		return "main/detailpage";
 	}
 	
+	/**
+     * 주문 항목 데이터를 테스트로 받아 출력합니다.
+     * 
+     * <p>AJAX 테스트를 위한 임시 API이며, 실제 주문 처리 로직은 포함되어 있지 않습니다.</p>
+     *
+     * @param orderForm 주문 항목 폼
+     * @param model 모델 객체
+     * @return 리다이렉트 경로 문자열
+     */
 	@PostMapping("/test")
 	@ResponseBody
 	public String test(@RequestBody OrderForm orderForm, Model model) {
@@ -180,6 +212,17 @@ public class DetailController {
 	    return "redirect:/main/"; // 또는 redirect
 	}
 	
+	/**
+     * 로그인된 사용자의 장바구니에 상품을 추가합니다.
+     * 
+     * <p>상품이 이미 장바구니에 있을 경우 수량을 증가시키고,
+     * 없을 경우 새로 추가합니다. 로그인하지 않은 경우에는
+     * {@code needLogin = true}를 반환하여 프론트에서 로그인 유도 가능.</p>
+     *
+     * @param orderForm 장바구니에 담을 상품 목록
+     * @param user 현재 로그인한 사용자 정보
+     * @return 장바구니 추가 결과 Map
+     */
 	@PostMapping("/add")
 	@ResponseBody
 	public Map<String, Object> addToCart(@RequestBody OrderForm orderForm, @AuthenticationPrincipal CustomOAuth2User user) {
