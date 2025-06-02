@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+<link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
+<meta charset="UTF-8">
+<title>Sheobox</title>
+<style>
+    body {
+      background: #fff;
+      margin: 0;
+      font-family: 'Noto Sans KR', Arial, sans-serif;
+      color: #222;
+    }
+    .container {
+      display: flex;
+      max-width: 1440px;
+      margin: 40px auto 0 auto;
+      gap: 46px;
+    }
+    /* 좌측 카테고리/필터 */
+    .side-filter {
+      width: 240px;
+      padding: 48px 0 40px 0;
+      box-sizing: border-box;
+    }
+    .side-filter h2 {
+    padding-bottom: 10px;
+    border-bottom: 2.5px solid;
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 18px 0;
+      letter-spacing: 1px;
+    }
+    .side-filter .category-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 30px 0;
+      font-size: 15px;
+    }
+    .side-filter .category-list li {
+      margin-bottom: 7px;
+      color: #888;
+      cursor: pointer;
+      font-weight: 400;
+    }
+    .side-filter .category-list li.selected,
+    .side-filter .category-list li:first-child {
+      color: #222;
+      font-weight: 700;
+      text-decoration: underline;
+    }
+    .side-filter .section-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 26px 0 12px 0;
+      letter-spacing: 0.5px;
+    }
+    .side-filter hr {
+      border: none;
+      border-top: 2.5px solid #222;
+    }
+    /* 아코디언 필터 */
+    .filter-group {
+      border-bottom: 1px solid #eee;
+      margin-bottom: 0;
+    }
+    .filter-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 15px 0 15px 0;
+      font-size: 16px;
+      font-weight: 600;
+      background: none;
+      border: none;
+      width: 100%;
+      outline: none;
+      transition: background 0.15s;
+    }
+    .filter-header .arrow {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      transition: transform 0.2s;
+      margin-left: 4px;
+    }
+    .filter-header[aria-expanded="true"] .arrow {
+      transform: rotate(180deg);
+    }
+    .filter-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s cubic-bezier(.4,0,.2,1);
+      background: #fff;
+      font-size: 15px;
+      padding: 0 0;
+    }
+    .filter-group.open .filter-content {
+      max-height: 400px;
+      padding: 0 0 14px 0;
+      /* 실제 내용 높이에 맞춰 조정 */
+    }
+    /* 필터 내용 예시 */
+    .filter-content label,
+    .filter-content select {
+      display: block;
+      margin: 0 0 6px 0;
+      font-size: 15px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .filter-content input{
+      margin: 0 0 6px 0;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+
+    .filter-btns {
+      display: flex;
+      gap: 6px;
+      margin: 22px 0 0 0;
+    }
+    .filter-btns button {
+      flex: 1;
+      padding: 8px 0;
+      font-size: 15px;
+      border-radius: 3px;
+      border: 1px solid #222;
+      cursor: pointer;
+      background: #fff;
+      color: #222;
+      font-weight: 600;
+      transition: background 0.15s, color 0.15s;
+    }
+    .filter-btns button.search {
+      background: #222;
+      color: #fff;
+      border: 1px solid #222;
+    }
+
+    .filter-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.price-input {
+  width: 110px;
+  height: 36px;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  background: #f8f8f8;
+  text-align: right;
+  padding: 0 8px;
+  font-size: 15px;
+}
+.price-separator {
+  font-size: 18px;
+  color: #888;
+}
+.price-apply-btn {
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  height: 36px;
+  padding: 0 16px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+    /* 메인 상품 영역 */
+    .main-area {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .main-area .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .main-area .breadcrumb {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    .main-area .category-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0 0 0 0;
+    }
+    .main-area .sort-dropdown {
+      position: relative;
+      display: inline-block;
+      font-size: 15px;
+    }
+    .main-area .sort-select {
+      font-size: 15px;
+      padding: 7px 32px 7px 10px;
+      border: 1px solid #222;
+      border-radius: 3px;
+      background: #fff url('data:image/svg+xml;utf8,<svg fill="black" height="14" viewBox="0 0 20 20" width="14" xmlns="http://www.w3.org/2000/svg"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>') no-repeat right 8px center/16px 16px;
+      appearance: none;
+      min-width: 160px;
+      cursor: pointer;
+    }
+    /* 상품 그리드 */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px 18px;
+    }
+            .new-item {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .new-item img {
+            width: 100%;
+            /* height: 200px; */
+            object-fit: cover;
+        }
+
+        .item-info {
+            padding: 0px 0 10px 4px;
+            background: white;
+        }
+
+        .item-info h3 {
+            font-size: 1.10em;
+            margin-top: 8px;
+            margin-bottom: 5px;
+        }
+
+        .item-info-name{
+        color:#6b6b6b;
+        font-size: 1.10em;
+        margin-top: 3px;
+        font-weight: bold;
+        }
+
+        .price{
+            font-weight: 600;
+            font-size:1.2em;
+        }
+    /* 페이지네이션 */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 7px;
+      margin: 36px 0 0 0;
+    }
+    .pagination button {
+      border: none;
+      background: #fff;
+      color: #444;
+      font-size: 15px;
+      padding: 6px 13px;
+      border-radius: 4px;
+      cursor: pointer;
+      border: 1px solid #ddd;
+      transition: background 0.2s, color 0.2s;
+    }
+    .pagination button.active {
+      background: #222;
+      color: #fff;
+      border-color: #222;
+    }
+    @media (max-width: 1100px) {
+      .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    @media (max-width: 900px) {
+      .container {
+        flex-direction: column;
+        gap: 0;
+      }
+      .side-filter {
+        width: 100%;
+        min-width: 0;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 24px;
+      }
+      .main-area {
+        padding: 0 8px;
+      }
+      .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+	
+	
+	<th:block th:replace="~{inc/header.html :: header}"></th:block>
+
+	<div class="container">
+	    <!-- 좌측 카테고리/필터 -->
+	    <aside class="side-filter">
+	    <h2>WOMEN</h2>
+	    <ul class="category-list">
+	      <li class="selected">ALL</li>
+	      <li>운동화</li>
+	      <li>슬리퍼/샌들</li>
+	      <li>쪼리</li>
+	      <li>부츠</li>
+	    </ul>
+	    <div class="section-title">필터</div>
+	    <hr>
+	    <!-- 필터 그룹: 카테고리 -->
+	    <div class="filter-group">
+	      <button class="filter-header" aria-expanded="false" type="button">
+	        카테고리
+	        <span class="arrow">
+	          <svg width="18" height="18" viewBox="0 0 20 20"><polyline points="6 8 10 12 14 8" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+	        </span>
+	      </button>
+	      <div class="filter-content">
+	        <select>
+	          <option>전체</option>
+	          <option>운동화</option>
+	          <option>슬리퍼/샌들</option>
+	          <option>쪼리</option>
+	          <option>부츠</option>
+	        </select>
+	      </div>
+	    </div>
+	    <!-- 필터 그룹: 브랜드 -->
+	    <div class="filter-group">
+	      <button class="filter-header" aria-expanded="false" type="button">
+	        브랜드
+	        <span class="arrow">
+	          <svg width="18" height="18" viewBox="0 0 20 20"><polyline points="6 8 10 12 14 8" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+	        </span>
+	      </button>
+	      <div class="filter-content">
+	        <select>
+	          <option>전체</option>
+	          <option>NIKE</option>
+	          <option>ADIDAS</option>
+	          <option>CROCS</option>
+	          <option>DISCOVERY</option>
+	        </select>
+	      </div>
+	    </div>
+	    <!-- 필터 그룹: 가격 -->
+	    <div class="filter-group">
+	      <button class="filter-header" aria-expanded="false" type="button">
+	        가격
+	        <span class="arrow">
+	          <svg width="18" height="18" viewBox="0 0 20 20"><polyline points="6 8 10 12 14 8" fill="none" stroke="#222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+	        </span>
+	      </button>
+	      <div class="filter-content">
+	        <div class="filter-price">
+	      <form id="price-filter-form">
+	        <input 
+	          type="number" 
+	          class="price-input" 
+	          name="min_price" 
+	          min="0" 
+	          value="0" 
+	          placeholder="0" 
+	        />
+	        <span class="price-separator">~</span>
+	        <input 
+	          type="number" 
+	          class="price-input" 
+	          name="max_price" 
+	          min="0" 
+	          value="0" 
+	          placeholder="0" 
+	        />
+	        <!-- <button type="submit" class="price-apply-btn">적용</button> -->
+	      </form>
+	  <!-- <button class="price-apply-btn">적용</button> -->
+	</div>
+	      </div>
+	    </div>
+	    <div class="filter-btns">
+	      <button type="button">초기화</button>
+	      <button type="button" class="search">검색</button>
+	    </div>
+	  </aside>
+	    <!-- 우측 상품 리스트 -->
+	    <main class="main-area">
+	      <div class="breadcrumb">HOME &gt; WOMEN &gt; 신발 &gt; 스포츠 &gt; 런닝화</div>
+	      <div class="topbar">
+	        <div class="category-title">런닝화</div>
+	        <div class="sort-dropdown">
+	          <select class="sort-select">
+	            <option>베스트상품순</option>
+	            <option>신상품순</option>
+	            <option>할인율 높은순</option>
+	            <option>상품평순</option>
+	            <option>낮은가격순</option>
+	            <option>높은가격순</option>
+	          </select>
+	        </div>
+	      </div>
+	      <div class="product-grid">
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	                        <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	                        <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	                        <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	            <div class="new-item">
+	                <img src="/images/23732_1712905511772.jpg" alt="아디다스">
+	                <div class="item-info">
+	                    <h3 class="item-info-brand">아디다스</h3>
+	                    <p class="item-info-name">삼바</p>
+	                    <p class="price">109,000원</p>
+	                </div>
+	            </div>
+	      </div>
+	      <nav class="pagination">
+	        <button class="active">1</button>
+	        <button>2</button>
+	        <button>3</button>
+	        <button>4</button>
+	        <button>5</button>
+	      </nav>
+	    </main>
+	  </div>
+	
+	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
+	<script>
+	  // 아코디언 필터 토글 (여러 필터 동시 열림 가능)
+	  document.querySelectorAll('.filter-header').forEach(function(header) {
+	    header.addEventListener('click', function() {
+	      var group = header.parentElement;
+	      var isOpen = group.classList.contains('open');
+	      // 현재 클릭한 필터만 열기/닫기 토글
+	      if (isOpen) {
+	        group.classList.remove('open');
+	        header.setAttribute('aria-expanded', 'false');
+	      } else {
+	        group.classList.add('open');
+	        header.setAttribute('aria-expanded', 'true');
+	      }
+	    });
+	  });
+
+	  
+	</script>
+</body>
+</html>
+
+
+
+
