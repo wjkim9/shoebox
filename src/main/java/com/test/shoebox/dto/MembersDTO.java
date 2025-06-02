@@ -9,9 +9,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -40,15 +42,15 @@ public class MembersDTO {
     private Integer point;
 
     private Integer isDeleted;
-    
+
     private String role;
 
-    
     public Members toEntity() {
         return Members.builder()
                 .membersId(this.membersId)
                 .accountName(this.accountName)
                 .nickname(this.nickname)
+                .password(this.password)
                 .name(this.name)
                 .email(this.email)
                 .contact(this.contact)

@@ -1,0 +1,952 @@
+<meta charset="UTF-8">
+<html lang="ko">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+<!-- 
+
+작업 해야할것 
+
+review_title_result - DB와 연동하여 동기화
+user_review_title_result - DB와 연동하여 동기화
+average_star_rating_number - DB와 연동하여 별점 평균처리
+average_star_rating_icon    - 평균별점이 나오면 갯수 반올림하여 보여주기
+review_header_img_item      - 리뷰에 올린 사진 DB와 연동하여 동기화, 사진 누르면 해당 리뷰 보여주기
+user_review_filter_all      - 리뷰 전체 정렬 (최신순) AJAX
+user_review_filter_star     - 별점별 리뷰 정렬 AJAX
+
+
+user_review_list_header     - 유저가 리뷰 등록시 정보 가져오기
+user_review_list_content    - 유저가 리뷰 등록시 정보 가져오기
+user_review_list_product_img_item   - DB와 연동하여 리뷰작성에 사진이 있으면 사진 보여주기
+user_review_list_content_mcomment_icon_item - 관리자 마크 넣어주기
+user_review_list_footer     - 유저가 리뷰 등록시 정보 가져오기
+
+user_review_list_content_mcomment   - 관리자 답변 작성시 보여주기
+user_review_list_content_zoom_mcomment_icon - 관리자 답변 작성시 보여주기
+
+user_review_list_paging     - 페이지네이션 구현
+
+-->
+
+<style>
+    /* 구분선 */
+    /* .review_main {
+        border: solid 1px red;
+    } */
+    /* .review_header {
+        border: solid 1px black;
+    }
+    .average_star_rating {
+        border: solid 1px red;
+        }
+    .review_header_img{
+    border: solid 1px blue;
+    } */
+    /* .review_header_img_item{
+        border: solid 1px black;
+    } */
+/*     .user_review_list_product_img{
+        border: solid 1px red;
+    }
+    .user_review_list_product_img_item{
+        border: solid 1px blue;
+    } */
+
+    /* .user_review_list_content_mcomment_icon{
+        border: solid 1px black;
+    }
+    .user_review_list_content_mcomment_footer{
+        border: solid 1px red;
+    }
+    .user_review_list_content_mcomment{
+        border: solid 1px blue;
+    }
+    .user_review_list_content_mcomment_content{
+        border: solid 1px green;
+    } */
+
+
+
+    /*리뷰 메인 박스*/
+    .review_main {
+        width: 1000px;
+        margin-top: 10px;
+    }
+    /* REVIEW */
+    .review_title {
+        /* 사이즈 기본값 16 */
+        font-size: 20px;
+    }
+    /* (리뷰수) */
+    .review_title_result {
+        font-weight: bold;
+    }
+
+    /* 별점과 사진 박스 */
+    .review_header {
+        margin-top: 5px;
+        border-top: solid 3px rgb(126, 126, 126);
+        border-bottom: solid 3px rgb(126, 126, 126);
+        width: auto;
+        height: 150px;
+        display: flex;             
+        align-items: center;      
+    }
+    /* 별점박스 */
+    .average_star_rating {
+        width: 132px;
+        height: 150px;
+    }
+    
+    /* 별점(숫자,점) */
+    .average_star_rating_result {
+        display: flex;
+        justify-content: center;
+        margin-top: 32px;
+    }
+    /* 별점(숫자) */
+    .average_star_rating_number {
+        font-weight: bold;
+        font-size: 40px;
+        color: darkorange;
+    }
+    /* 별점("점") */
+    .average_star_rating_number_text {
+        margin-top: 30px;
+    }
+    /* 별점(아이콘) */
+    .average_star_rating_icon {
+        font-size: 12px;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* 리뷰 사진모음 박스 버튼 */
+    .review_header_img_left, .review_header_img_rignt {
+        border-radius: 5px;
+        border: 1px solid #999999;
+        background-color: #ffffff;
+        color: #999999;
+        padding: 0;
+        height: 130px;
+        width: 18px;
+        cursor: pointer;
+    }
+    .review_header_img_left:hover,
+    .review_header_img_rignt:hover {
+        border-color: #000;
+        color: #000;
+    }
+
+    /* 리뷰 사진모음 박스 */
+    .review_header_img {
+        width: 822px;
+        height: 130px;
+        padding-right: 10px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        position: relative;
+    }
+    .review_header_img_track {
+        display: flex;
+        transition: transform 0.3s cubic-bezier(.77,0,.18,1);
+        will-change: transform;
+    }
+
+    /* 리뷰 사진모음 요소 */
+    .review_header_img_item {
+        width: 125px;
+        height: 125px;
+        margin-left: 10px;
+        flex-shrink: 0;
+        cursor: pointer;
+        background: #eee;
+        border: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    
+    /* 유저리뷰 타이틀 */
+    .user_review_title {
+        margin-top: 20px;
+        width: auto;
+        display: flex;
+        align-items: center;
+    }
+    .user_review_title_text {
+        font-weight: bold;
+    }
+    .user_review_title_result {
+        color: crimson;        
+    }
+    .user_review_filter_review_btn {
+        margin-left: auto;
+    }
+    .user_review_filter_all, .user_review_filter_star {
+        border-radius: 5px;
+        border: 1px solid #999999;
+        background-color: #ffffff;
+        color: #4d4d4d;
+        padding: 2px;
+        cursor: pointer;
+    }
+    .user_review_filter_star i {
+        position: relative;
+        top: -3px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .user_review_filter_all:hover,
+    .user_review_filter_star:hover,
+    .user_review_filter_star i:hover {
+        border-color: #000;
+        color: #000;
+    }
+
+
+
+    /* 유저리뷰 리스트 */
+    .user_review_list{
+        margin-top: 5px;
+        border-top: 1px solid #4d4d4d;
+    }
+
+
+    /* 개인별 유저리뷰 스타일 시작  */
+
+
+    /* 유저리뷰 없음 */
+    .user_review_no_comment{
+        padding: 50px;
+        text-align: center;
+        color: #4d4d4d;
+    }
+    /* 유저리뷰 */
+    .user_review{
+        padding: 20px;
+        border-bottom: 1px solid #a1a1a1;
+        
+    }
+    /* 유저리뷰 별점, 제품정보 */
+    .user_review_list_header{
+        display: flex;
+        align-items: center;
+    }
+    /* 유저리뷰 별점 */
+    .user_review_list_star_rating_icon{
+        color: darkorange;
+    }
+    /* 유저리뷰 제품정보 */
+    .user_review_list_order_details{
+        margin-left: 15px;
+        color: #4d4d4d;
+        font-size: 14px;
+    }
+    /* 구역나눔 */
+    .divline{
+        font-size: 13px;
+        position: relative;
+        top: -1px;
+    }
+    /* 유저리뷰 내용 */
+    .user_review_list_content{
+        margin-top: 20px;
+    }
+    /* 유저리뷰 확장버튼 */
+    .user_review_list_content_zoom_review_btn{
+        display: flex;
+        align-items: center;
+        color: #4d4d4d;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: 0%;
+    }
+    /* 관리자 답변 등록확인 영역지정 */
+    .user_review_list_content_zoom_mcomment_box{
+        width: 850px;
+    }
+    /* 관리자 답변 등록 확인 아이콘 @@@디스플레이논@@@ <-- 관리자 코멘트 등록시 보여짐 */
+    .user_review_list_content_zoom_mcomment_icon{
+        margin-left: 720px;
+        font-size: 14px;
+        /* display: none; */
+    }
+    .user_review_list_content_zoom_mcomment_icon i{
+        color: crimson;
+    }
+
+    /* 리뷰사진 박스 */
+    .user_review_list_product_img{
+        display: flex;
+        align-items: center;
+    }
+    /* 리뷰사진 요소 */
+    .user_review_list_product_img_item{
+        width: 100px;
+        height: 100px;
+        margin-right: 10px;
+    }
+    /* 리뷰사진 요소 확장 <-- 확장시 보여짐 */
+    /* .user_review_list_product_img_item{
+        width: 300px;
+        height: 300px;
+        margin-right: 10px;
+    } */
+    /* 리뷰하단 등록정보 */
+    .user_review_list_footer{
+        margin-top: 10px;
+        color: #4d4d4d;
+        font-size: 14px;
+    }
+
+    
+    /* 관리자 답변 박스 @@@디스플레이논@@@ <-- 관리자 코멘트 등록, 확장시 보여짐 */
+    .user_review_list_content_mcomment{
+        display: flex;
+        width: auto;
+        background: #eeeeee;
+        margin-top: 10px;
+        display: none;
+    }
+    /* 관리자답변 아이콘 박스, L */
+    .user_review_list_content_mcomment_icon{
+        display: flex;
+        justify-content: center;
+    }
+    /* 관리자 답변 아이콘 */
+    .user_review_list_content_mcomment_icon i{
+        margin-top: 14px;
+        margin-left: 10px;
+        width: 50px;
+        height: 50px;
+        font-size: 40px;
+        color: crimson;
+        /* border: 1px solid red; */
+    }
+    /* 관리자 답변 레이아웃 R */
+    .user_review_list_content_mcomment_r{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    /* 관리자 답변 내용 */
+    .user_review_list_content_mcomment_content{
+        padding: 10px;
+    }
+    /* 관리자답변 등록정보 */
+    .user_review_list_content_mcomment_footer{
+        padding-left: 10px;
+        padding-bottom: 10px;
+        color: #4d4d4d;
+        font-size: 14px;
+    }
+
+    /* 확장 상태에서만 적용될 클래스 */
+    .user_review.expanded .user_review_list_product_img_item {
+        width: 300px;
+        height: 300px;
+        margin-right: 10px;
+    }
+    .user_review.expanded .user_review_list_content_mcomment {
+        display: flex !important;
+    }
+    
+
+
+    /* ////개인별 유저리뷰 스타일 끝//// */
+
+
+
+
+    
+
+    /* 페이징 */
+    .review_pagination-list {
+    display: flex;
+    gap: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 16px 0;
+    justify-content: center;
+    align-items: center;
+    }
+    .review_btn-page {
+        min-width: 36px;
+        height: 36px;
+        padding: 0 10px;
+        border: 1px solid #ddd;
+        background: #fff;
+        color: #333;
+        font-size: 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: 
+            background 0.2s, 
+            color 0.2s, 
+            border-color 0.2s;
+        outline: none;
+    }
+
+    .review_btn-page:hover {
+        background: #f0f6ff;
+        color: black;
+        border-color: black;
+    }
+
+    .review_btn-page.selected {
+        background: black;
+        color: #fff;
+        border-color: black;
+        font-weight: bold;
+        cursor: default;
+    }
+
+    .review_btn-page.first,
+    .review_btn-page.last,
+    .review_btn-page.prev,
+    .review_btn-page.next {
+        font-size: 14px;
+        color: #888;
+        background: #f8f8f8;
+        border-color: #eee;
+    }
+
+    .review_btn-page.first:hover,
+    .review_btn-page.last:hover,
+    .review_btn-page.prev:hover,
+    .review_btn-page.next:hover {
+        color: black;
+        background: #e7e7e7;
+        border-color: black;
+    }
+
+    .review_btn-page[disabled],
+    .review_btn-page[disabled]:hover {
+        color: #ccc;
+        background: #fafafa;
+        border-color: #eee;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    .user_review_filter_star_wrap {
+    position: relative;
+    display: inline-block;
+}
+
+
+
+.user_review_star_dropdown {
+    display: none;
+    position: absolute;
+    top: 110%;
+    left: -66px;
+    min-width: 120px;
+    background: #fff;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px #0002;
+    z-index: 100;
+    padding: 6px 0;
+}
+
+.user_review_star_dropdown.active {
+    display: block;
+}
+
+.user_review_star_option {
+    padding: 6px 16px;
+    font-size: 15px;
+    color: #333;
+    cursor: pointer;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.15s;
+}
+.user_review_star_option:hover {
+    background: #f0f0f0;
+}
+.user_review_star_icon {
+    color: gold;
+    font-size: 16px;
+}
+    
+    
+</style>
+
+<body>
+    <!-- 리뷰 메인  -->
+    <div class="review_main">
+        
+        <!-- REVIEW(*) -->
+        <div class="review_title">
+            REVIEW <span class="review_title_result">(63)</span>
+        </div>
+        <!-- /REVIEW(*) -->
+        
+        <!-- 리뷰헤더(별점, 리뷰사진모음) -->
+        <div class="review_header">
+            <!-- 별점 -->
+            <div class="average_star_rating">
+                <div class="average_star_rating_result">
+                    <span class="average_star_rating_number">3.6</span>
+                    <span class="average_star_rating_number_text">점</span>
+                </div>
+                <div class="average_star_rating_icon">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star-half-stroke"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+            </div>
+            <!-- 리뷰사진모음 -->
+            <button class="review_header_img_left"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="review_header_img">
+                <div class="review_header_img_track">
+                    <img class="review_header_img_item" src="/review/images/ex/191324026720200210223017177.jpg">
+                    <img class="review_header_img_item" src="/review/images/ex/198021364820200108223551775.jpg">
+                    <img class="review_header_img_item" src="/review/images/ex/23463_1583890164443.jpeg">
+                    <img class="review_header_img_item" src="/review/images/ex/25158521620200207095432445.jpeg">
+                    <img class="review_header_img_item" src="/review/images/ex/41253_1746844943440.jpeg">
+                    <img class="review_header_img_item" src="/review/images/ex/47284_1742189572305.jpeg">
+                    <img class="review_header_img_item" src="/review/images/ex/52203_1602061176568.jpg">
+                    <img class="review_header_img_item" src="/review/images/ex/68447_1737462057743.jpg">
+                    <img class="review_header_img_item" src="/review/images/ex/75437_1737692391258.jpeg">
+                    <img class="review_header_img_item" src="/review/images/ex/80787_1746844943833.jpeg">
+                </div>
+        </div>
+            <button class="review_header_img_rignt"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+        <!-- /리뷰헤더(별점, 리뷰사진모음) -->
+
+        <!-- 리뷰 서브타이틀 -->
+        <div class="user_review_title">
+            <div class="user_review_title_text">
+                총 <span class="user_review_title_result">63</span>개의 리뷰가 있습니다.
+            </div>
+            <div></div>
+            <div class="user_review_filter_review_btn">
+                <button class="user_review_filter_all">&nbsp;전체보기&nbsp;</button>
+                
+<div class="user_review_filter_star_wrap">
+    <button class="user_review_filter_star">&nbsp;별점보기&nbsp;<i class="fa-solid fa-sort-down"></i>&nbsp;</button>
+    <div class="user_review_star_dropdown">
+        <div class="user_review_star_option" data-star="5">
+            <span>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+            </span>
+        </div>
+        <div class="user_review_star_option" data-star="4">
+            <span>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+            </span>
+        </div>
+        <div class="user_review_star_option" data-star="3">
+            <span>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+            </span>
+        </div>
+        <div class="user_review_star_option" data-star="2">
+            <span>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+            </span>
+        </div>
+        <div class="user_review_star_option" data-star="1">
+            <span>
+                <i class="fa-solid fa-star user_review_star_icon"></i>
+            </span>
+        </div>
+    </div>
+</div>
+            </div>
+        </div>
+
+        <!-- 유저 리뷰 리스트 -->
+        <div class="user_review_list">
+            <!-- 유저 리뷰 없음 -->
+            <!-- <div class="user_review_no_comment">
+                등록된 리뷰가 없습니다.
+            </div> -->
+            <!-- 유저 리뷰 -->
+            <div class="user_review">
+                <!-- 유저 리뷰 별점, 제품정보 -->
+                <div class="user_review_list_header">
+                    <!-- 유저리뷰 별점 -->
+                    <div class="user_review_list_star_rating_icon">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                    </div>
+                    <!-- 유저리뷰 제품정보 -->
+                    <div class="user_review_list_order_details">
+                        <span>나이키 NIKE MOTIVA(제품명)</span>
+                        <span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span>
+                        <span>260(사이즈)</span>
+                    </div>
+                </div>
+                <!-- 유저리뷰 내용 -->
+                <div class="user_review_list_content">
+                    넘 좋아하는 신발인데 봄신상 컬러 나왔길래 바로 겟 했어욤ㅎㅎ이쁩니당
+                </div>
+                <!-- 리뷰확장 버튼 -->
+                <div class="user_review_list_content_zoom_review_btn">
+                    <div class="user_review_list_content_zoom_mcomment_box">
+                        <div class="user_review_list_content_zoom_mcomment_icon"><i class="fa-solid fa-comments"></i> 관리자 답변 등록</div>
+                    </div>
+                    <i class="fa-solid fa-angle-down"></i>
+                </div>
+                <!-- 리뷰사진 박스 -->
+                <div class="user_review_list_product_img">
+                    <!-- 리뷰사진 요소 -->
+                    <img class="user_review_list_product_img_item" src="/review/images/ex/191324026720200210223017177.jpg">
+                    <img class="user_review_list_product_img_item" src="/review/images/ex/96262_1746942415972.jpeg">
+                    <img class="user_review_list_product_img_item" src="/review/images/ex/80787_1746844943833.jpeg">
+                </div>
+                <!-- 리뷰하단 등록정보 -->
+                <div class="user_review_list_footer">
+                    <span>유저아이디(s******4)</span><span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span><span>2025.10.08 12:13:55</span>
+                </div>
+                <!-- 관리자 답변 박스 -->
+                <div class="user_review_list_content_mcomment">
+                    <!-- 관리자답변 아이콘 -->
+                    <div class="user_review_list_content_mcomment_icon">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <!-- 관리자답변 레이아웃 오른쪽 -->
+                     <div class="user_review_list_content_mcomment_r">
+                        <!-- 관리자 답변 내용 -->
+                        <div class="user_review_list_content_mcomment_content">
+                            안녕하세요 고객님
+                            고객님의 소중한 후기 정말 감사드립니다.
+
+                            고객님이 첨부해주신 이미지는 상품의 '실물'을 직접 촬영한 이미지 파일이 아니므로,
+                            일반 상품 후기 포인트 (500P)가 적립됨을 알려드립니다.
+
+                            상품 포장 사진이나 판매 이미지 원본, 캡쳐본 등 첨부하신 이미지가
+                            구매상품에 대한 촬영 사진이 아닌 경우 포토 포인트 지급이 불가합니다.
+
+                            앞으로도 다양한 상품과 서비스로 고객님께 만족을 드리기 위해
+                            열심히 노력하는 A-RT 가 되겠습니다.
+
+                            이용해 주셔서 감사합니다.
+                            좋은 하루 되세요.
+                        </div>
+                        <!-- 관리자답변 등록정보 -->
+                        <div class="user_review_list_content_mcomment_footer">2025.10.08 12:59:11</div>
+                    </div>
+                </div>
+            </div>
+        
+
+
+
+            <!-- 유저 리뷰2 -->
+            <div class="user_review">
+                <!-- 유저 리뷰 별점, 제품정보 -->
+                <div class="user_review_list_header">
+                    <!-- 유저리뷰 별점 -->
+                    <div class="user_review_list_star_rating_icon">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+                    <!-- 유저리뷰 제품정보 -->
+                    <div class="user_review_list_order_details">
+                        <span>나이키 NIKE MOTIVA(제품명)</span>
+                        <span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span>
+                        <span>240(사이즈)</span>
+                    </div>
+                </div>
+                <!-- 유저리뷰 내용 -->
+                <div class="user_review_list_content">
+                    사이즈가 너무 작아요
+                </div>
+                <div class="user_review_list_footer">
+                    <span>유저아이디(2***z)</span><span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span><span>2025.9.18 15:23:45</span>
+                </div>
+            </div>
+            
+            <!-- 유저 리뷰3 -->
+            <div class="user_review">
+                <!-- 유저 리뷰 별점, 제품정보 -->
+                <div class="user_review_list_header">
+                    <!-- 유저리뷰 별점 -->
+                    <div class="user_review_list_star_rating_icon">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+                    <!-- 유저리뷰 제품정보 -->
+                    <div class="user_review_list_order_details">
+                        <span>나이키 NIKE MOTIVA(제품명)</span>
+                        <span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span>
+                        <span>230(사이즈)</span>
+                    </div>
+                </div>
+                <!-- 유저리뷰 내용 -->
+                <div class="user_review_list_content">
+                    색이 맘에 안들어요
+                </div>
+                <div class="user_review_list_footer">
+                    <span>유저아이디(l*****s)</span><span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span><span>2025.9.18 15:23:45</span>
+                </div>
+            </div>
+            <!-- 유저 리뷰4 -->
+            <div class="user_review">
+                <!-- 유저 리뷰 별점, 제품정보 -->
+                <div class="user_review_list_header">
+                    <!-- 유저리뷰 별점 -->
+                    <div class="user_review_list_star_rating_icon">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+                    <!-- 유저리뷰 제품정보 -->
+                    <div class="user_review_list_order_details">
+                        <span>나이키 NIKE MOTIVA(제품명)</span>
+                        <span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span>
+                        <span>250(사이즈)</span>
+                    </div>
+                </div>
+                <!-- 유저리뷰 내용 -->
+                <div class="user_review_list_content">
+                    배송이 느려요 신발은 이쁘네요
+                </div>
+                <div class="user_review_list_footer">
+                    <span>유저아이디(s*****g)</span><span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span><span>2025.9.18 15:23:45</span>
+                </div>
+            </div>
+            <!-- 유저 리뷰2 -->
+            <div class="user_review">
+                <!-- 유저 리뷰 별점, 제품정보 -->
+                <div class="user_review_list_header">
+                    <!-- 유저리뷰 별점 -->
+                    <div class="user_review_list_star_rating_icon">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+                    <!-- 유저리뷰 제품정보 -->
+                    <div class="user_review_list_order_details">
+                        <span>나이키 NIKE MOTIVA(제품명)</span>
+                        <span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span>
+                        <span>240(사이즈)</span>
+                    </div>
+                </div>
+                <!-- 유저리뷰 내용 -->
+                <div class="user_review_list_content">
+                    디자인이 생각했던거랑 달라요
+                </div>
+                <div class="user_review_list_footer">
+                    <span>유저아이디(i***5)</span><span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span><span>2025.9.18 15:23:45</span>
+                </div>
+            </div>
+            
+            
+            
+        </div>
+        <div class="user_review_list_paging">
+            <div>
+                <ol class="review_pagination-list">	
+                    <li class="review_pagination-item">
+                        <button type="button" id="review_btn_first" pagenum="1" class="review_btn-page first">처음으로</button>		
+                    </li>
+                    <li class="review_pagination-item" id="li_prev">			
+                        <button type="button" id="review_btn_prev" class="review_btn-page prev" pagenum="">이전</button>		
+                    </li>		
+                    <li class="review_pagination-item" name="li_page">			
+                        <button type="button" class="review_btn-page review_btn-page-num " pagenum="1">1</button>		
+                    </li>		
+                    <li class="review_pagination-item" name="li_page">			
+                        <button type="button" class="review_btn-page review_btn-page-num selected" pagenum="2">2</button>		
+                    </li>		
+                    <li class="review_pagination-item" name="li_page">			
+                        <button type="button" class="review_btn-page review_btn-page-num " pagenum="3">3</button>		
+                    </li>		
+                    <li class="review_pagination-item" name="li_page">			
+                        <button type="button" class="review_btn-page review_btn-page-num " pagenum="4">4</button>		
+                    </li>		
+                    <li class="review_pagination-item" name="li_page">			
+                        <button type="button" class="review_btn-page review_btn-page-num " pagenum="5">5</button>		
+                    </li>		
+                    <li class="review_pagination-item" name="li_page">			
+                        <button type="button" class="review_btn-page review_btn-page-num " pagenum="6">6</button>		
+                    </li>		
+                    <li class="review_pagination-item" name="li_page">			
+                        <button type="button" class="review_btn-page review_btn-page-num " pagenum="7">7</button>		
+                    </li>		
+                    <li class="review_pagination-item" name="li_page">			
+                        <button type="button" class="review_btn-page review_btn-page-num " pagenum="8">8</button>	
+                    </li>		
+                    <li class="review_pagination-item" name="li_page">			
+                        <button type="button" class="review_btn-page review_btn-page-num " pagenum="9">9</button>		
+                    </li>		
+                    <li class="review_pagination-item" name="li_page">			
+                        <button type="button" class="review_btn-page review_btn-page-num " pagenum="10">10</button>		
+                    </li>		
+                    <li class="review_pagination-item">			
+                        <button type="button" class="review_btn-page next" pagenum="" id="review_btn_next">다음</button>		
+                    </li>		
+                    <li class="review_pagination-item">			
+                        <button type="button" class="review_btn-page last" id="review_btn_last" pagenum="44">마지막으로</button>		
+                    </li>	
+                </ol>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /리뷰 메인  -->
+
+</body>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+
+$('.user_review_filter_star').on('click', function(e) {
+    e.stopPropagation();
+    $('.user_review_star_dropdown').toggleClass('active');
+});
+
+// 바깥 클릭 시 닫기
+$(document).on('click', function() {
+    $('.user_review_star_dropdown').removeClass('active');
+});
+
+// 옵션 클릭 시 동작(필터링 등)
+$('.user_review_star_option').on('click', function(e) {
+    var star = $(this).data('star');
+    alert(star + "점 별점 선택됨! (필터링 기능 구현 가능)");
+    $('.user_review_star_dropdown').removeClass('active');
+});
+
+
+
+
+
+
+
+
+
+
+//사진리뷰 유무 확인, 커서 포인터
+$('.user_review').each(function() {
+	  if ($(this).find('.user_review_list_content_zoom_review_btn').length > 0) {
+	    $(this).css('cursor', 'pointer');
+	  }
+	});
+
+$(function() {
+    // user_review 클릭 시 확장/축소 토글
+    $('.user_review').on('click', function(e) {
+        // 클릭 이벤트가 중첩되지 않도록 stopPropagation (선택사항)
+        // e.stopPropagation();
+
+        // 확장/축소 토글
+        $(this).toggleClass('expanded');
+    });
+});
+
+
+    // 리뷰사진모음 동작처리
+    $(function() {
+        var $leftreview_Btn = $('.review_header_img_left');
+        var $rightreview_Btn = $('.review_header_img_rignt');
+        var $track = $('.review_header_img_track');
+        var $items = $('.review_header_img_item');
+        var visibleCount = 6;
+        var itemWidth = 127 + 11; // width + margin-left
+        var totalCount = $items.length;
+
+        var currentIndex = 0;
+        var animating = false;
+        var lastRequestedIndex = 0;
+
+        function updateButtons() {
+            $leftreview_Btn.prop('disabled', currentIndex === 0);
+            $rightreview_Btn.prop('disabled', currentIndex >= totalCount - visibleCount);
+            if(totalCount <= visibleCount) {
+                $leftreview_Btn.prop('disabled', true);
+                $rightreview_Btn.prop('disabled', true);
+            }
+        }
+
+        function animateToIndex(targetIndex) {
+            if (animating) {
+                lastRequestedIndex = targetIndex;
+                return;
+            }
+            animating = true;
+            $track.css('transition', 'transform 0.3s cubic-bezier(.77,0,.18,1)');
+            $track.css('transform', 'translateX(' + (-itemWidth * targetIndex) + 'px)');
+
+            $track.one('transitionend webkitTransitionEnd oTransitionEnd', function() {
+                animating = false;
+                currentIndex = targetIndex;
+                updateButtons();
+                // 여러 번 클릭 시 마지막 요청만 실행
+                if (lastRequestedIndex !== currentIndex) {
+                    var nextIndex = lastRequestedIndex;
+                    lastRequestedIndex = currentIndex;
+                    animateToIndex(nextIndex);
+                }
+            });
+        }
+
+        $leftreview_Btn.on('click', function() {
+            if (totalCount <= visibleCount) return;
+            var targetIndex = Math.max(0, currentIndex - 1);
+            lastRequestedIndex = targetIndex;
+            animateToIndex(targetIndex);
+        });
+
+        $rightreview_Btn.on('click', function() {
+            if (totalCount <= visibleCount) return;
+            var targetIndex = Math.min(totalCount - visibleCount, currentIndex + 1);
+            lastRequestedIndex = targetIndex;
+            animateToIndex(targetIndex);
+        });
+
+        // 초기 버튼 상태
+        updateButtons();
+    });
+
+
+</script>
+</html>

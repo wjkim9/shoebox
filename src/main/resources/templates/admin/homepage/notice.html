@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+</head>
+<body>
+<section layout:fragment="content" th:fragment="content">
+  <link rel="stylesheet" th:href="@{/admin/css/homepage-qna.css}"/>
+
+  <div class="admin-container" style="margin-top: var(--header-height);">
+    <div class="page-header">
+      <h2>공지사항 관리</h2>
+      <a href="/admin/homepage/notice/create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> 공지사항 추가
+      </a>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h3>공지사항 목록</h3>
+        <span class="order-count" th:text="'총 ' + ${notices.size()} + '건'">총 0건</span>
+      </div>
+      <td class="table-responsive">
+        <table class="order-table">
+          <thead>
+          <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>작성자</th>
+            <th>작성일</th>
+            <th>조회수</th>
+            <th>관리</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:if="${notices.empty}">
+            <td colspan="6" class="no-data">등록된 공지사항이 없습니다.</td>
+          </tr>
+          <tr th:each="notice, stat : ${notices}">
+            <td th:text="${notices.size() - stat.index}">1</td>
+            <td>
+              <a th:href="@{/admin/homepage/notice/{id}(id=${notice.id})}"
+                 th:text="${notice.title}">공지 제목</a>
+            </td>
+            <td th:text="${notice.author}">관리자</td>
+            <td th:text="${notice.createdAt}">2025-05-19 09:30</td>
+            <td th:text="${notice.viewCount}">12</td>
+            <td class="action-buttons">
+              <a th:href="@{/admin/homepage/notice/edit/{id}(id=${notice.id})}" class="btn btn-outline btn-icon">
+                <i class="fas fa-edit"></i>
+              </a>
+              <button type="button" class="btn btn-danger btn-icon delete-btn" th:data-id="${notice.id}">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script th:src="@{/admin/js/homepage-notice.js}"></script>
+</body>
+</html>

@@ -19,6 +19,13 @@ public class ProductStockOrderDTO {
 	private Integer orderPrice;
 	private Long ordersId;
 	private Long productStockId;
+
+
+	//조인할것들
+	private Long productId;
+	private String productName;
+	private String productImageUrl;
+	private String shoeSize;
 	
 	public ProductStockOrder toEntity(Orders orders, ProductStock productStock) {
         return ProductStockOrder.builder()

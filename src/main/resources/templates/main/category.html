@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" th:href="@{/member/css/shoebox.css}">
+<link rel="stylesheet" th:href="@{/member/css/shoebox_2.css}">
+<link rel="stylesheet" th:href="@{/member/css/shoebox_3.css}">
+<head>
+<meta charset="UTF-8">
+<title>카테고리 상품 리스트</title>
+<style>
+</style>
+</head>
+<body>
+	<th:block th:replace="~{inc/header.html :: header}"></th:block>
+	
+	<div class="container">
+		<!-- 좌측 카테고리/필터 -->
+		<aside class="side-filter">
+			
+			<h2 th:text="${#strings.toUpperCase(menu)}">WOMEN</h2>
+			
+			<ul class="category-list" th:if="${search == 0}">
+				
+				<th:block th:if="${menu == 'brand'}">
+				<li class="selected" data-brandId="all">ALL</li>
+				<li th:each="item : ${brandOnFilterList}" th:text="${item.brandName}" th:attr="data-brandId=${item.brandId}">Nike</li>
+				</th:block>
+				
+				<th:block th:if="${menu == 'etc'}">
+				<li class="selected" data-categoriesId="all" onclick="location.href='/main/listProduct?menu=etc&categoriesId=7'">ALL</li>
+				</th:block>
+				
+				<th:block th:unless="${menu == 'brand' || menu == 'etc'}">
+				<li class="selected" data-categoriesId="all">ALL</li>
+				<li th:each="item : ${categoriesOnFilterList}" th:text="${item.categoriesName}" th:attr="data-categoriesId=${item.categoriesId}">운동화</li>
+				</th:block>
+				
+				
+				<!-- 
+				<li>운동화</li>
+				<li>슬리퍼/샌들</li>
+				<li>쪼리</li>
+				<li>부츠</li>
+				 -->
+			</ul>
+			<div class="section-title">필터</div>
+			<hr>
+			<!-- 필터 그룹: 카테고리 -->
+			<div class="filter-group">
+				<button class="filter-header" aria-expanded="false" type="button">
+					카테고리 <span class="arrow"> <svg width="18" height="18"
+							viewBox="0 0 20 20">
+          <polyline points="6 8 10 12 14 8" fill="none" stroke="#222"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+					</span>
+				</button>
+				<div class="filter-content">
+					<select id="filterCategory">
+						<option value="0">전체</option>
+						<option th:each="item : ${categoriesOnFilterList}" th:text="${item.categoriesName}" th:value="${item.categoriesId}">운동화</option>
+						<!-- 
+						<option>운동화</option>
+						<option>슬리퍼/샌들</option>
+						<option>쪼리</option>
+						<option>부츠</option>
+						 -->
+					</select>
+				</div>
+			</div>
+			<!-- 필터 그룹: 브랜드 -->
+			<div class="filter-group">
+				<button class="filter-header" aria-expanded="false" type="button">
+					브랜드 <span class="arrow"> <svg width="18" height="18"
+							viewBox="0 0 20 20">
+          <polyline points="6 8 10 12 14 8" fill="none" stroke="#222"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+					</span>
+				</button>
+				<div class="filter-content">
+					<select id="filterBrand">
+						<option value="0">전체</option>
+						<option th:each="item : ${brandOnFilterList}" th:text="${item.brandName}" th:value="${item.brandId}">NIKE</option>
+						<!-- 
+						<option>NIKE</option>
+						<option>ADIDAS</option>
+						<option>CROCS</option>
+						<option>DISCOVERY</option>
+						 -->
+					</select>
+				</div>
+			</div>
+			<!-- 필터 그룹: 가격 -->
+			<div class="filter-group">
+				<button class="filter-header" aria-expanded="false" type="button">
+					가격 <span class="arrow"> <svg width="18" height="18"
+							viewBox="0 0 20 20">
+          <polyline points="6 8 10 12 14 8" fill="none" stroke="#222"
+								stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+					</span>
+				</button>
+				<div class="filter-content">
+					<div class="filter-price">
+						<form id="price-filter-form">
+							<input type="number" id="startPrice" class="price-input" name="min_price" min="0"
+								value="0" placeholder="0" /> <span class="price-separator">~</span>
+							<input type="number" id="endPrice" class="price-input" name="max_price" min="0"
+								value="0" placeholder="0" />
+							<!-- <button type="submit" class="price-apply-btn">적용</button> -->
+						</form>
+						<!-- <button class="price-apply-btn">적용</button> -->
+					</div>
+				</div>
+			</div>
+			<div class="filter-btns">
+				<button type="button">초기화</button>
+				<button type="button" class="search">검색</button>
+			</div>
+		</aside>
+		<!-- 우측 상품 리스트 -->
+		<main class="main-area">
+			<th:block th:unless="${search == 1}">
+			
+			<th:block th:if="${menu == 'brand'}">
+			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(menu)} + ' > ' + ${brand.brandName}"></div>
+			</th:block>
+			<th:block th:unless="${menu == 'brand'}">
+			<div class="breadcrumb" th:text="'HOME > ' + ${#strings.toUpperCase(menu)} + ' > ' + ${categories.categoriesName}"></div>
+			</th:block>
+			
+			</th:block>
+			<div class="topbar">
+				
+				<th:block th:if="${search == 1}">
+				<div class="category-title" th:text="${searchWord} + ': 검색 결과'">Nike</div>
+				</th:block>
+				
+				<th:block th:unless= "${search == 1}">
+				
+				<th:block th:if="${menu == 'brand'}">
+				<div class="category-title" th:text="${brand.brandName}">Nike</div>
+				</th:block>
+				<th:block th:unless="${menu == 'brand'}">
+				<div class="category-title" th:text="${categories.categoriesName}">런닝화</div>
+				</th:block>
+				
+				</th:block>
+				
+				<div class="sort-dropdown">
+					<select id="orderSelect" class="sort-select">
+						<option value="orderBestDesc">베스트상품순</option>
+						<option value="orderNewDesc">신상품순</option>
+						<option value="orderDiscountDesc">할인율 높은순</option>
+						<option value="orderReviewDesc">상품평순</option>
+						<option value="orderPriceAsc">낮은가격순</option>
+						<option value="orderPriceDesc">높은가격순</option>
+					</select>
+				</div>
+			</div>
+			<div class="product-grid">
+				<a th:each="product : ${productList}" th:href="'/main/detailpage/productPostId=' + ${product.productPostId}" href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img th:src="'/common/images/product/' + ${product.fileName}" th:alt="${product.productName}" src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
+						<div class="item-info">
+							<h3 th:text="${product.brandName}" class="item-info-brand" style="color: #222">아디다스</h3>
+							<p th:text="${product.productName}" class="item-info-name">GRADAS</p>
+							<p th:text="${#numbers.formatInteger(product.productPrice, '0', 'COMMA')} + '원'" class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+				<!-- 
+				<a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">아디다스</h3>
+							<p class="item-info-name">GRADAS</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+                <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/adidas/CLOUDFOAM WALK LOUNGER (3).jpg"
+							alt="아디다스">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">아디다스</h3>
+							<p class="item-info-name">CLOUDFOAM WALK LOUNGER</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+                    <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/adidas/GRADAS (3).jpg" alt="아디다스">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">아디다스</h3>
+							<p class="item-info-name">GRADAS</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+				    <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/adidas/SAMBA OG W (5).jpg" alt="아디다스">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">아디다스</h3>
+							<p class="item-info-name">SAMBA OG W</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+				    <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/adidas/SAMBAE W (2).jpg" alt="아디다스">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">아디다스</h3>
+							<p class="item-info-name">SAMBAE W</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+				    <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/nike/BIG NIKE LOW (1).jpg" alt="나이키">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">나이키</h3>
+							<p class="item-info-name">BIG NIKE LOW</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+				    <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/nike/COURT SHOT (3).jpg" alt="나이키">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">나이키</h3>
+							<p class="item-info-name">COURT SHOT</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+				    <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/nike/NIKE AIR MAX EXCEE 365 (3).jpg"
+							alt="나이키">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">나이키</h3>
+							<p class="item-info-name">NIKE AIR MAX EXCEE 365</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+				    <a href="/main/detailpage" class="new-item-link">
+					<div class="new-item">
+						<img src="/common/images/nike/NIKE AIR MAX NUAXIS (2).jpg"
+							alt="나이키">
+						<div class="item-info">
+							<h3 class="item-info-brand" style="color: #222">나이키</h3>
+							<p class="item-info-name">NIKE AIR MAX NUAXIS</p>
+							<p class="price" style="color: #ba0a0a">109,000원</p>
+						</div>
+					</div>
+				</a>
+				 -->
+			</div>
+			<!--  <nav class="pagination">
+        <button class="active">1</button>
+        <button>2</button>
+        <button>3</button>
+        <button>4</button>
+        <button>5</button>
+      </nav> -->
+			<br> <br> <br> <br>
+			<th:block th:utext="${sb}"></th:block>
+		</main>
+	</div>
+	<th:block th:replace="~{inc/footer.html :: footer}"></th:block>
+</body>
+<script th:inline="javascript">
+	// 아코디언 필터 토글 (여러 필터 동시 열림 가능)
+	document.querySelectorAll('.filter-header').forEach(function(header) {
+		header.addEventListener('click', function() {
+			var group = header.parentElement;
+			var isOpen = group.classList.contains('open');
+			// 현재 클릭한 필터만 열기/닫기 토글
+			if (isOpen) {
+				group.classList.remove('open');
+				header.setAttribute('aria-expanded', 'false');
+			} else {
+				group.classList.add('open');
+				header.setAttribute('aria-expanded', 'true');
+			}
+		});
+	});
+	
+	//좌측 메뉴 클릭 이벤트
+	if([[${menu}]] == 'brand') {
+		document.querySelectorAll('.side-filter .category-list li').forEach(category => {
+			category.addEventListener('click', (target) =>{
+				
+				if(target.target.getAttribute('data-brandid') == 'all') {
+					location.href = '/main/listProduct?menu=' + [[${menu}]];
+				} else {
+					location.href = '/main/listProduct?menu=' + [[${menu}]] + '&brandId=' + target.target.getAttribute('data-brandid');
+				}
+				
+				
+			});
+			
+		});
+	}
+	if([[${menu}]] == 'men' || [[${menu}]] == 'women' || [[${menu}]] == 'kids') {
+		document.querySelectorAll('.side-filter .category-list li').forEach(category => {
+			category.addEventListener('click', (target) =>{
+				
+				if(target.target.getAttribute('data-categoriesid') == 'all') {
+					location.href = '/main/listProduct?menu=' + [[${menu}]] + '&targetCustomerType=' + [[${targetCustomerType}]];
+				} else {
+					location.href = '/main/listProduct?menu=' + [[${menu}]] + '&categoriesId=' + target.target.getAttribute('data-categoriesid') + '&targetCustomerType=' + [[${targetCustomerType}]];
+				}
+				
+				
+			});
+			
+		});
+	}
+	
+	
+	
+	
+	//필터 검색 버튼 이벤트
+	document.querySelectorAll('.filter-btns .search').forEach(btn => {
+		btn.addEventListener('click', (target) =>{
+			
+			let filterCategory = document.getElementById('filterCategory');
+			let filterBrand = document.getElementById('filterBrand');
+			let startPrice = document.getElementById('startPrice');
+			let endPrice = document.getElementById('endPrice');
+			
+			let queryStringBuilder = '/main/listProduct?';
+			let existPrevVar = false; 
+			
+			
+			if(filterCategory.value != '0') {
+				queryStringBuilder += 'categoriesId=' + filterCategory.value;
+				existPrevVar = true;
+			}
+			
+			if(filterBrand.value != '0') {
+				if(existPrevVar) {
+					queryStringBuilder += '&brandId=' + filterBrand.value;
+				} else {
+					queryStringBuilder += 'brandId=' + filterBrand.value;
+				}
+				existPrevVar = true;
+			}
+			
+			if(startPrice != null) {
+				if(existPrevVar) {
+					queryStringBuilder += '&startPrice=' + startPrice.value;
+				} else {
+					queryStringBuilder += 'startPrice=' + startPrice.value;
+				}
+				existPrevVar = true;
+			}
+			
+			if(endPrice != null) {
+				if(existPrevVar) {
+					queryStringBuilder += '&endPrice=' + endPrice.value;
+				} else {
+					queryStringBuilder += 'endPrice=' + endPrice.value;
+				}
+				existPrevVar = true;
+			}
+			
+			if([[${menu}]] != null) {
+				if(existPrevVar) {
+					queryStringBuilder += '&menu=' + [[${menu}]];
+				} else {
+					queryStringBuilder += 'menu=' + [[${menu}]];
+				}
+				existPrevVar = true;
+			}
+			
+			if([[${targetCustomerType}]] != null) {
+				if(existPrevVar) {
+					queryStringBuilder += '&targetCustomerType=' + [[${targetCustomerType}]];
+				} else {
+					queryStringBuilder += 'targetCustomerType=' + [[${targetCustomerType}]];
+				}
+				existPrevVar = true;
+			}
+			
+			
+			if(existPrevVar) {
+				queryStringBuilder += '&filter=1';
+			} else {
+				queryStringBuilder += 'filter=1';
+			}
+			
+			
+			location.href = queryStringBuilder;
+			
+			
+			
+		});
+		
+	});
+	
+	//정렬방법 셀렉트박스 이벤트
+	let orderSelect = document.getElementById('orderSelect');
+	const param = new URLSearchParams(window.location.search);
+	if(param.get('order') != null) {
+		orderSelect.value = param.get('order');
+	}
+	
+	orderSelect.addEventListener('change', (target) => {
+		//alert(target.target.value);
+		
+		param.set('order', target.target.value);
+		
+		//console.log(`${window.location.pathname}?${param.toString()}`);
+		//alert(`${window.location.pathname}?${param.toString()}`);
+		location.href = `${window.location.pathname}?${param.toString()}`;
+	});
+	
+	
+	//필터 정보 상태 유지
+	window.addEventListener('load', function() {
+		if([[${filter}]] == 1) {
+			
+			if([[${categoriesId}]] != null) {
+				filterCategory.value = [[${categoriesId}]];				
+			}
+			if([[${brandId}]] != null) {
+				filterBrand.value = [[${brandId}]];				
+			}
+			
+			if([[${startPrice}]] != null) {
+				startPrice.value = [[${startPrice}]];				
+			}
+			
+			if([[${endPrice}]] != null) {
+				endPrice.value = [[${endPrice}]];				
+			}
+
+		}
+	});
+	
+	
+	
+</script>
+</html>

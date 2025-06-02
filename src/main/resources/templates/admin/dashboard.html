@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/admin_layout}">
+<head>
+
+</head>
+<body>
+    <!-- 대시보드 메인 콘텐츠 -->
+    <section layout:fragment="content" th:fragment="content">
+        <link rel="stylesheet" th:href="@{/admin/css/dashboard.css}"/>
+        <!-- 페이지 제목 -->
+        <div class="d-flex justify-content-between align-items-center mb-4" style="margin-top: var(--header-height);">
+            <h1 class="h3 mb-0 text-gray-800">관리자 대시보드</h1>
+            <div>
+                <button class="btn btn-primary">
+                    <i class="fas fa-download fa-sm"></i> 리포트 다운로드
+                </button>
+            </div>
+        </div>
+        
+        <!-- 상태 카드 영역 -->
+        <div class="row">
+            <!-- 주문 건수 카드 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    오늘 주문 건수
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${todayOrderCount}">25</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 매출액 카드 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                    오늘 매출액
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#numbers.formatInteger(todaySales, 3, 'COMMA') + '원'}">1,215,000원</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 신규 회원 카드 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    오늘 신규 회원
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${todayNewMembers}">12</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-user-plus fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 방문자 수 카드 -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-warning shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    오늘 방문자 수
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${todayVisitors}">458</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-eye fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- 차트 영역 -->
+        <div class="row">
+            <!-- 판매 추이 차트 -->
+            <div class="col-xl-8 col-lg-7">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">월별 판매 추이</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+                            <canvas id="salesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 카테고리별 판매 비율 차트 -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">카테고리별 판매 비율</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-pie pt-4 pb-2">
+                            <canvas id="categoryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 최근 주문 테이블 -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">최근 주문 내역</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>주문번호</th>
+                                <th>주문일시</th>
+                                <th>고객명</th>
+                                <th>주문상품</th>
+                                <th>결제금액</th>
+                                <th>주문상태</th>
+                                <th>상세보기</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="order : ${recentOrders}">
+                                <td th:text="${order.orderNumber}">ORDER-20250509-001</td>
+                                <td th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm')}">2025-05-09 10:30</td>
+                                <td th:text="${order.customerName}">홍길동</td>
+                                <td th:text="${order.productName}">나이키 에어맥스 97</td>
+                                <td th:text="${#numbers.formatInteger(order.totalAmount, 3, 'COMMA') + '원'}">189,000원</td>
+                                <td>
+                                    <span th:text="${order.orderStatus}">결제완료</span>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="btn btn-sm btn-primary">상세보기</a>
+                                </td>
+                            </tr>
+                            <!-- 샘플 데이터 -->
+                            <tr th:if="${#lists.isEmpty(recentOrders)}">
+                                <td>ORDER-20250509-001</td>
+                                <td>2025-05-09 10:30</td>
+                                <td>홍길동</td>
+                                <td>나이키 에어맥스 97</td>
+                                <td>189,000원</td>
+                                <td><span class="badge bg-success">결제완료</span></td>
+                                <td><a href="#" class="btn btn-sm btn-primary">상세보기</a></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recentOrders)}">
+                                <td>ORDER-20250509-002</td>
+                                <td>2025-05-09 11:15</td>
+                                <td>김철수</td>
+                                <td>아디다스 울트라부스트</td>
+                                <td>229,000원</td>
+                                <td><span class="badge bg-primary">배송중</span></td>
+                                <td><a href="#" class="btn btn-sm btn-primary">상세보기</a></td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(recentOrders)}">
+                                <td>ORDER-20250509-003</td>
+                                <td>2025-05-09 13:45</td>
+                                <td>이영희</td>
+                                <td>뉴발란스 991</td>
+                                <td>259,000원</td>
+                                <td><span class="badge bg-warning">취소요청</span></td>
+                                <td><a href="#" class="btn btn-sm btn-primary">상세보기</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 차트 스크립트 -->
+        <script th:inline="javascript">
+            // 판매 추이 차트
+            var ctx = document.getElementById("salesChart");
+            var salesData = /*[[${salesTrendData}]]*/ {
+                labels: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],
+                data: [4215000, 5312000, 6251000, 7841000, 9120000, 8950000, 7654000, 8521000, 9654000, 10256000, 11520000, 12540000]
+            };
+            
+            var myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: salesData.labels,
+                    datasets: [{
+                        label: "월별 매출액",
+                        lineTension: 0.3,
+                        backgroundColor: "rgba(78, 115, 223, 0.05)",
+                        borderColor: "rgba(78, 115, 223, 1)",
+                        pointRadius: 3,
+                        pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                        pointBorderColor: "rgba(78, 115, 223, 1)",
+                        pointHoverRadius: 3,
+                        pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                        pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                        pointHitRadius: 10,
+                        pointBorderWidth: 2,
+                        data: salesData.data,
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 25,
+                            top: 25,
+                            bottom: 0
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            time: {
+                                unit: 'date'
+                            },
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                maxTicksLimit: 7
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                maxTicksLimit: 5,
+                                padding: 10,
+                                callback: function(value, index, values) {
+                                    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '원';
+                                }
+                            },
+                            gridLines: {
+                                color: "rgb(234, 236, 244)",
+                                zeroLineColor: "rgb(234, 236, 244)",
+                                drawBorder: false,
+                                borderDash: [2],
+                                zeroLineBorderDash: [2]
+                            }
+                        }],
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        titleMarginBottom: 10,
+                        titleFontColor: '#6e707e',
+                        titleFontSize: 14,
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        intersect: false,
+                        mode: 'index',
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function(tooltipItem, chart) {
+                                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                                return datasetLabel + ': ' + tooltipItem.yLabel.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + '원';
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // 카테고리별 판매 비율 차트
+            var ctxPie = document.getElementById("categoryChart");
+            var categoryData = /*[[${categorySalesData}]]*/ {
+                labels: ["러닝화", "스니커즈", "캐주얼화", "트레이닝화", "기타"],
+                data: [35, 30, 15, 15, 5]
+            };
+            var myPieChart = new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: categoryData.labels,
+                    datasets: [{
+                        data: categoryData.data,
+                        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
+                        hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#dda20a', '#be2617'],
+                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom'
+                    },
+                    cutoutPercentage: 60,
+                },
+            });
+        </script>
+    </section>
+</body>
+</html>

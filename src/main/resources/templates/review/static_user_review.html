@@ -1,0 +1,265 @@
+<meta charset="UTF-8">
+<html lang="ko">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+<style>
+
+    /* 유저리뷰 리스트 */
+    .user_review_list{
+        width: 1000px;
+        margin-top: 5px;
+        border-top: 1px solid #4d4d4d;
+    }
+    
+    /* 유저리뷰 없음 */
+    .user_review_no_comment{
+        padding: 50px;
+        text-align: center;
+        color: #4d4d4d;
+    }
+    /* 유저리뷰 */
+    .user_review{
+        padding: 20px;
+        border-bottom: 1px solid #a1a1a1;
+        
+    }
+    /* 유저리뷰 별점, 제품정보 */
+    .user_review_list_header{
+        display: flex;
+        align-items: center;
+    }
+    /* 유저리뷰 별점 */
+    .user_review_list_star_rating_icon{
+        color: darkorange;
+    }
+    /* 유저리뷰 제품정보 */
+    .user_review_list_order_details{
+        margin-left: 15px;
+        color: #4d4d4d;
+        font-size: 14px;
+    }
+    /* 구역나눔 */
+    .divline{
+        font-size: 13px;
+        position: relative;
+        top: -1px;
+    }
+    
+    /* 수정, 삭제 버튼 */
+    .user_my{
+        margin-left: auto;
+    }
+    .user_my_btn {
+	    width: 50px;
+	    padding: 2px 0;
+	    background: #222;
+	    color: #fff;
+	    font-weight: bold;
+	    border: none;
+	    border-radius: 8px;
+	    cursor: pointer;
+	    margin-left: 2px
+    }
+    .user_my_btn:hover {
+        background: #444;
+    }
+    
+    /* 유저리뷰 내용 */
+    .user_review_list_content{
+        margin-top: 20px;
+    }
+    /* 유저리뷰 확장버튼 */
+    .user_review_list_content_zoom_review_btn{
+        display: flex;
+        align-items: center;
+        color: #4d4d4d;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        margin-left: 0%;
+    }
+    /* 관리자 답변 등록확인 영역지정 */
+    .user_review_list_content_zoom_mcomment_box{
+        width: 850px;
+    }
+    /* 관리자 답변 등록 확인 아이콘 @@@디스플레이논@@@ <-- 관리자 코멘트 등록시 보여짐 */
+    .user_review_list_content_zoom_mcomment_icon{
+        margin-left: 720px;
+        font-size: 14px;
+        /* display: none; */
+    }
+    .user_review_list_content_zoom_mcomment_icon i{
+        color: crimson;
+    }
+
+    /* 리뷰사진 박스 */
+    .user_review_list_product_img{
+        display: flex;
+        align-items: center;
+    }
+    /* 리뷰사진 요소 */
+    .user_review_list_product_img_item{
+        width: 100px;
+        height: 100px;
+        margin-right: 10px;
+    }
+    /* 리뷰사진 요소 확장 <-- 확장시 보여짐 */
+    .user_review_list_product_img_item{
+        width: 300px;
+        height: 300px;
+        margin-right: 10px;
+    }
+    /* 리뷰하단 등록정보 */
+    .user_review_list_footer{
+        margin-top: 10px;
+        color: #4d4d4d;
+        font-size: 14px;
+    }
+
+    
+    /* 관리자 답변 박스 @@@디스플레이논@@@ <-- 관리자 코멘트 등록, 확장시 보여짐 */
+    .user_review_list_content_mcomment{
+        display: flex;
+        width: auto;
+        background: #eeeeee;
+        margin-top: 10px;
+        /* display: none; */
+    }
+    /* 관리자답변 아이콘 박스, L */
+    .user_review_list_content_mcomment_icon{
+        display: flex;
+        justify-content: center;
+    }
+    /* 관리자 답변 아이콘 */
+    .user_review_list_content_mcomment_icon i{
+        margin-top: 14px;
+        margin-left: 10px;
+        width: 50px;
+        height: 50px;
+        font-size: 40px;
+        color: crimson;
+        /* border: 1px solid red; */
+    }
+    /* 관리자 답변 레이아웃 R */
+    .user_review_list_content_mcomment_r{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    /* 관리자 답변 내용 */
+    .user_review_list_content_mcomment_content{
+        padding: 10px;
+    }
+    /* 관리자답변 등록정보 */
+    .user_review_list_content_mcomment_footer{
+        padding-left: 10px;
+        padding-bottom: 10px;
+        color: #4d4d4d;
+        font-size: 14px;
+    }
+
+    /* 확장 상태에서만 적용될 클래스 */
+    .user_review.expanded .user_review_list_product_img_item {
+        width: 300px;
+        height: 300px;
+        margin-right: 10px;
+    }
+    .user_review.expanded .user_review_list_content_mcomment {
+        /* display: flex !important; */
+    }
+    
+    
+    
+    
+</style>
+
+<body>
+	<div class="user_review_list">
+	    <!-- 유저 리뷰 -->
+		<div class="user_review">
+		    <!-- 유저 리뷰 별점, 제품정보 -->
+		    <div class="user_review_list_header">
+		        <!-- 유저리뷰 별점 -->
+		        <div class="user_review_list_star_rating_icon">
+		            <i class="fa-solid fa-star"></i>
+		            <i class="fa-solid fa-star"></i>
+		            <i class="fa-solid fa-star"></i>
+		            <i class="fa-solid fa-star"></i>
+		            <i class="fa-solid fa-star"></i>
+		        </div>
+		        <!-- 유저리뷰 제품정보 -->
+		        <div class="user_review_list_order_details">
+		            <span>나이키 NIKE MOTIVA(제품명)</span>
+		            <span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span>
+		            <span>260(사이즈)</span>
+		        </div>
+		        <!-- 수정, 삭제 버튼 -->
+		        <div class="user_my">
+                    <button class="user_my_btn" onclick="window.open('/review/static/update', '_blank', 'width=900,height=900')">수정</button>
+                    <button class="user_my_btn" onclick="alert('삭제되었습니다')">삭제</button>
+		        
+		        </div>
+		    </div>
+		    <!-- 유저리뷰 내용 -->
+		    <div class="user_review_list_content">
+		        넘 좋아하는 신발인데 봄신상 컬러 나왔길래 바로 겟 했어욤ㅎㅎ이쁩니당
+		    </div>
+		    <!-- 리뷰확장 버튼 -->
+		    <div class="user_review_list_content_zoom_review_btn">
+		        <div class="user_review_list_content_zoom_mcomment_box">
+		            <div class="user_review_list_content_zoom_mcomment_icon"><i class="fa-solid fa-comments"></i> 관리자 답변 등록</div>
+		        </div>
+		        <i class="fa-solid fa-angle-down"></i>
+		    </div>
+		    <!-- 리뷰사진 박스 -->
+		    <div class="user_review_list_product_img">
+		        <!-- 리뷰사진 요소 -->
+		        <img class="user_review_list_product_img_item" src="/review/images/ex/191324026720200210223017177.jpg">
+		        <img class="user_review_list_product_img_item" src="/review/images/ex/96262_1746942415972.jpeg">
+		        <img class="user_review_list_product_img_item" src="/review/images/ex/80787_1746844943833.jpeg">
+		    </div>
+		    <!-- 리뷰하단 등록정보 -->
+		    <div class="user_review_list_footer">
+		        <span>유저아이디(s******4)</span><span class="divline"><i class="fa-solid fa-minus fa-rotate-90"></i></span><span>2025.10.08 12:13:55</span>
+		    </div>
+		    <!-- 관리자 답변 박스 -->
+		    <div class="user_review_list_content_mcomment">
+		        <!-- 관리자답변 아이콘 -->
+		        <div class="user_review_list_content_mcomment_icon">
+		            <i class="fa-solid fa-comments"></i>
+		        </div>
+		        <!-- 관리자답변 레이아웃 오른쪽 -->
+		         <div class="user_review_list_content_mcomment_r">
+		            <!-- 관리자 답변 내용 -->
+		            <div class="user_review_list_content_mcomment_content">
+		                안녕하세요 고객님
+		                고객님의 소중한 후기 정말 감사드립니다.
+		
+		                고객님이 첨부해주신 이미지는 상품의 '실물'을 직접 촬영한 이미지 파일이 아니므로,
+		                일반 상품 후기 포인트 (500P)가 적립됨을 알려드립니다.
+		
+		                상품 포장 사진이나 판매 이미지 원본, 캡쳐본 등 첨부하신 이미지가
+		                구매상품에 대한 촬영 사진이 아닌 경우 포토 포인트 지급이 불가합니다.
+		
+		                앞으로도 다양한 상품과 서비스로 고객님께 만족을 드리기 위해
+		                열심히 노력하는 A-RT 가 되겠습니다.
+		
+		                이용해 주셔서 감사합니다.
+		                좋은 하루 되세요.
+		            </div>
+		            <!-- 관리자답변 등록정보 -->
+		            <div class="user_review_list_content_mcomment_footer">2025.10.08 12:59:11</div>
+		        </div>
+		    </div>
+		</div>
+	</div>
+</body>
+	
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+
+
+
+
+</script>
+</html>
+            
